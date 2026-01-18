@@ -1,0 +1,19 @@
+<svg width="500" height="350" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="500" height="350" rx="16" fill="#f8fafc"/>
+  <rect x="50" y="50" width="400" height="250" rx="12" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Shield icon -->
+  <path d="M250 80L180 110V170C180 220 250 260 250 260C250 260 320 220 320 170V110L250 80Z" fill="#10a37f" fill-opacity="0.15" stroke="#10a37f" stroke-width="3"/>
+
+  <!-- Lock inside shield -->
+  <rect x="225" y="150" width="50" height="40" rx="4" fill="#10a37f"/>
+  <path d="M235 150V140C235 132 242 125 250 125C258 125 265 132 265 140V150" stroke="#10a37f" stroke-width="4" fill="none"/>
+  <circle cx="250" cy="170" r="5" fill="white"/>
+
+  <!-- Checkmark -->
+  <path d="M235 180L245 190L265 165" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Local processing indicator -->
+  <rect x="150" y="270" width="200" height="20" rx="10" fill="#10a37f" fill-opacity="0.1"/>
+  <text x="250" y="284" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#10a37f">Processed Locally in Browser</text>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EEF2FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="400" fill="url(#bgGrad)" rx="16"/>
+
+  <!-- Browser window -->
+  <rect x="50" y="40" width="500" height="320" rx="12" fill="white" filter="drop-shadow(0 10px 40px rgba(0,0,0,0.1))"/>
+  <rect x="50" y="40" width="500" height="40" rx="12" fill="#F3F4F6"/>
+  <rect x="50" y="68" width="500" height="12" fill="#F3F4F6"/>
+
+  <!-- Browser dots -->
+  <circle cx="74" cy="60" r="6" fill="#EF4444"/>
+  <circle cx="94" cy="60" r="6" fill="#F59E0B"/>
+  <circle cx="114" cy="60" r="6" fill="#10B981"/>
+
+  <!-- URL bar -->
+  <rect x="140" y="50" width="300" height="20" rx="4" fill="white"/>
+  <text x="155" y="64" font-family="monospace" font-size="10" fill="#6B7280">chat.openai.com</text>
+
+  <!-- ChatGPT interface mockup -->
+  <rect x="70" y="100" width="460" height="240" fill="#FAFAFA"/>
+
+  <!-- Chat messages -->
+  <rect x="90" y="120" width="280" height="40" rx="8" fill="#F3F4F6"/>
+  <rect x="100" y="130" width="200" height="8" rx="2" fill="#D1D5DB"/>
+  <rect x="100" y="144" width="140" height="8" rx="2" fill="#D1D5DB"/>
+
+  <!-- Extension popup -->
+  <rect x="320" y="150" width="190" height="170" rx="12" fill="white" filter="drop-shadow(0 8px 30px rgba(79,70,229,0.3))"/>
+  <rect x="320" y="150" width="190" height="40" rx="12" fill="url(#cardGrad)"/>
+  <rect x="320" y="178" width="190" height="12" fill="url(#cardGrad)"/>
+
+  <!-- Extension header -->
+  <text x="340" y="175" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="white">FileUploadGPT</text>
+
+  <!-- File upload area -->
+  <rect x="335" y="205" width="160" height="60" rx="8" fill="#F3F4F6" stroke="#E5E7EB" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="370" y="235" font-family="Inter, sans-serif" font-size="10" fill="#6B7280">Drop file here</text>
+  <text x="380" y="250" font-family="Inter, sans-serif" font-size="9" fill="#9CA3AF">or click to browse</text>
+
+  <!-- Upload button -->
+  <rect x="335" y="280" width="160" height="30" rx="6" fill="url(#cardGrad)"/>
+  <text x="380" y="300" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="white">Upload File</text>
+
+  <!-- Arrow pointing to extension -->
+  <path d="M280 200 Q300 180 320 190" stroke="#4F46E5" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4F46E5"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,35 @@
+<svg width="500" height="350" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="500" height="350" rx="16" fill="#f8fafc"/>
+  <rect x="50" y="50" width="400" height="250" rx="12" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Chrome Web Store mockup -->
+  <rect x="100" y="80" width="300" height="180" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Extension card -->
+  <rect x="130" y="110" width="240" height="120" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Extension icon -->
+  <rect x="150" y="130" width="60" height="60" rx="12" fill="#10a37f"/>
+  <path d="M180 145L165 160H175V175H185V160H195L180 145Z" fill="white"/>
+  <rect x="165" y="180" width="30" height="4" rx="2" fill="white"/>
+
+  <!-- Extension name and rating -->
+  <text x="225" y="150" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#1e293b">FileUploadGPT</text>
+  <text x="225" y="170" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Upload large files to ChatGPT</text>
+
+  <!-- Stars -->
+  <g fill="#f59e0b">
+    <path d="M225 180L226.5 184H231L227 186.5L228.5 191L225 188L221.5 191L223 186.5L219 184H223.5L225 180Z"/>
+    <path d="M238 180L239.5 184H244L240 186.5L241.5 191L238 188L234.5 191L236 186.5L232 184H236.5L238 180Z"/>
+    <path d="M251 180L252.5 184H257L253 186.5L254.5 191L251 188L247.5 191L249 186.5L245 184H249.5L251 180Z"/>
+    <path d="M264 180L265.5 184H270L266 186.5L267.5 191L264 188L260.5 191L262 186.5L258 184H262.5L264 180Z"/>
+    <path d="M277 180L278.5 184H283L279 186.5L280.5 191L277 188L273.5 191L275 186.5L271 184H275.5L277 180Z"/>
+  </g>
+
+  <!-- Install button -->
+  <rect x="225" y="195" width="120" height="28" rx="14" fill="#10a37f"/>
+  <text x="285" y="214" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="white">Add to Chrome</text>
+
+  <!-- Time indicator -->
+  <text x="250" y="285" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#64748b">Install in Seconds</text>
+</svg>

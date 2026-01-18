@@ -1,0 +1,20 @@
+<svg width="500" height="350" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="500" height="350" rx="16" fill="#f8fafc"/>
+  <rect x="50" y="50" width="400" height="250" rx="12" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- File icon with infinity symbol -->
+  <rect x="175" y="80" width="150" height="180" rx="8" fill="#10a37f" fill-opacity="0.1" stroke="#10a37f" stroke-width="2"/>
+  <path d="M225 120L275 120" stroke="#10a37f" stroke-width="3" stroke-linecap="round"/>
+  <path d="M225 140L260 140" stroke="#10a37f" stroke-width="3" stroke-linecap="round"/>
+  <path d="M225 160L275 160" stroke="#10a37f" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Infinity symbol -->
+  <path d="M220 200C220 190 230 180 245 180C260 180 265 190 250 200C235 210 240 220 255 220C270 220 280 210 280 200" stroke="#10a37f" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+  <!-- Size indicators -->
+  <text x="250" y="270" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#10a37f">No Size Limits</text>
+
+  <!-- Upload arrow -->
+  <path d="M380 150L380 100L420 140L380 180L380 150Z" fill="#10a37f" fill-opacity="0.2"/>
+  <path d="M390 140L410 140M400 130L400 150" stroke="#10a37f" stroke-width="3" stroke-linecap="round"/>
+</svg>

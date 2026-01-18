@@ -1,0 +1,71 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#f8fafc"/>
+
+  <!-- Gradient overlay -->
+  <rect width="1200" height="630" fill="url(#gradient)" fill-opacity="0.1"/>
+
+  <!-- Main content area -->
+  <rect x="60" y="60" width="1080" height="510" rx="24" fill="white" filter="url(#shadow)"/>
+
+  <!-- Logo section -->
+  <rect x="100" y="100" width="80" height="80" rx="16" fill="#10a37f"/>
+  <path d="M140 120L120 140H132V160H148V140H160L140 120Z" fill="white"/>
+  <rect x="120" y="165" width="40" height="6" rx="3" fill="white"/>
+
+  <!-- Title -->
+  <text x="200" y="150" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="700" fill="#1e293b">FileUploadGPT</text>
+
+  <!-- Tagline -->
+  <text x="100" y="240" font-family="Inter, system-ui, sans-serif" font-size="56" font-weight="800" fill="#0f172a">Upload Large Files</text>
+  <text x="100" y="310" font-family="Inter, system-ui, sans-serif" font-size="56" font-weight="800" fill="#0f172a">to ChatGPT</text>
+
+  <!-- Subtitle -->
+  <text x="100" y="380" font-family="Inter, system-ui, sans-serif" font-size="28" fill="#64748b">Free Chrome Extension - No File Size Limits</text>
+
+  <!-- Features badges -->
+  <rect x="100" y="420" width="160" height="44" rx="22" fill="#10a37f" fill-opacity="0.1"/>
+  <text x="180" y="450" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#10a37f">100% Free</text>
+
+  <rect x="280" y="420" width="200" height="44" rx="22" fill="#10a37f" fill-opacity="0.1"/>
+  <text x="380" y="450" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#10a37f">Privacy First</text>
+
+  <rect x="500" y="420" width="180" height="44" rx="22" fill="#10a37f" fill-opacity="0.1"/>
+  <text x="590" y="450" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#10a37f">One Click</text>
+
+  <!-- Illustration on right -->
+  <rect x="780" y="180" width="320" height="280" rx="16" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- File icons -->
+  <rect x="820" y="220" width="80" height="100" rx="8" fill="#ef4444" fill-opacity="0.1" stroke="#ef4444" stroke-width="2"/>
+  <text x="860" y="280" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#ef4444">PDF</text>
+  <text x="860" y="300" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ef4444">50MB</text>
+
+  <rect x="920" y="220" width="80" height="100" rx="8" fill="#3b82f6" fill-opacity="0.1" stroke="#3b82f6" stroke-width="2"/>
+  <text x="960" y="280" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#3b82f6">DOCX</text>
+  <text x="960" y="300" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#3b82f6">25MB</text>
+
+  <rect x="1020" y="220" width="80" height="100" rx="8" fill="#8b5cf6" fill-opacity="0.1" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="1060" y="280" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#8b5cf6">CODE</text>
+  <text x="1060" y="300" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#8b5cf6">10MB</text>
+
+  <!-- Arrow -->
+  <path d="M940 340L940 380L920 360L940 380L960 360" stroke="#10a37f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ChatGPT box -->
+  <rect x="850" y="400" width="180" height="50" rx="8" fill="#10a37f"/>
+  <text x="940" y="432" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="600" fill="white">ChatGPT Ready</text>
+
+  <!-- Domain -->
+  <text x="1100" y="540" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="20" fill="#94a3b8">fileuploadgpt.com</text>
+
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="1200" y2="630">
+      <stop offset="0%" stop-color="#10a37f"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <filter id="shadow" x="-10" y="-10" width="1100" height="530">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+</svg>

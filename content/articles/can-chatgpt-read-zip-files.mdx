@@ -1,0 +1,112 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-zip-files',
+  title: 'Can ChatGPT open ZIP or RAR files?',
+  heading: 'Can ChatGPT open a ZIP or RAR archive?',
+  description:
+    'Archives are not unpacked, so uploading one gets you nowhere. What to do instead, including the trick that turns many files into one upload.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt file uploads supported file types zip',
+  related: [
+    'chatgpt-file-types-supported',
+    'upload-large-code-files-to-chatgpt',
+    'how-many-files-can-you-upload-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Will ChatGPT extract a ZIP file I upload?',
+      a: 'No. It does not unpack archives to reach what is inside, so an archive is one opaque file as far as the conversation is concerned. Extract it on your own machine and upload the files that matter.',
+    },
+    {
+      q: 'Does zipping help with the file size limit?',
+      a: 'No, and it is a common misunderstanding. Compressing does not help because the archive is not opened. If size is your problem, converting a document to plain text shrinks it far more and leaves something readable.',
+    },
+    {
+      q: 'How do I share many files at once then?',
+      a: 'Concatenate them into a single text file with a header line before each, naming the file. That keeps the structure, counts as one upload, and is genuinely readable, which an archive is not.',
+    },
+    {
+      q: 'What about RAR, 7z or tar.gz?',
+      a: 'Same answer for all of them. The issue is not the archive format, it is that archives are not opened at all.',
+    },
+  ],
+});
+
+<AnswerBox>
+No. ChatGPT does not unpack archives, so uploading a zip gets you one file it cannot see inside.
+Extract it yourself and upload what matters. If the point was sending many files at once,
+concatenating them into a single text file achieves that properly and counts as one upload.
+</AnswerBox>
+
+## Why zipping does not work
+
+An archive is a container. Opening it is a separate step that ChatGPT does not perform, so what
+arrives is a single file whose contents are inaccessible.
+
+This is different from an unsupported format. A .docx it can read; a .zip it can hold but not open.
+Either way you get nothing useful back, and the upload has still cost you a slot against your rate
+cap.
+
+<Callout variant="warn" title="Zipping does not help with size either">
+This is the version of the misunderstanding that wastes the most time. People hit a size limit, zip
+the file to make it smaller, and upload the archive. The archive is smaller and completely
+unreadable, so the problem is now worse rather than better.
+
+For size, converting a document to plain text is the compression that works: it strips out fonts,
+formatting and embedded images and leaves the words, which is what ChatGPT wanted.
+</Callout>
+
+## What to do instead
+
+### If it is a few files
+
+Extract the archive and upload the ones relevant to your question. Not all of them. Three relevant
+files reliably produce a better answer than thirty, because there is less competing for attention.
+
+### If it is many files
+
+Concatenate them into one text file with a header before each, so the structure survives:
+
+```
+for f in src/**/*.ts; do echo "=== $f ==="; cat "$f"; done > bundle.txt
+```
+
+On Windows PowerShell:
+
+```
+Get-ChildItem -Recurse -Filter *.ts | ForEach-Object {
+  "=== $($_.FullName) ==="; Get-Content $_.FullName
+} | Set-Content bundle.txt
+```
+
+Three advantages over an archive. It is readable. It counts as **one** upload against your rate cap
+rather than one per file. And the header lines tell ChatGPT where each file begins and ends, which
+it needs in order to reason about how they relate.
+
+<InlineInstall
+  heading="If the bundle ends up too long"
+  body="FileUploadGPT splits a large text bundle into pieces ChatGPT accepts and sends them in order, so a whole module gets read rather than the first few files of it."
+/>
+
+## What to leave out of the bundle
+
+Everything here makes answers worse and eats your length budget:
+
+- Dependency directories: `node_modules`, `vendor`, `target`
+- Lock files, unless the question is genuinely about dependencies
+- Build output, minified bundles, source maps
+- Binary assets, which contribute nothing readable
+
+<Callout variant="warn" title="Check for secrets before uploading">
+Archives commonly contain `.env` files, keys in config, and connection strings in fixtures.
+Concatenating a directory sweeps all of it into one file. Search the bundle before you send it,
+because uploading it sends it to OpenAI, and on consumer plans content may be used to improve models
+unless you have turned that off.
+</Callout>
+
+## Every archive format, same answer
+
+Zip, RAR, 7z, tar, tar.gz, and anything else. The issue is not which archive format you chose, it is
+that archives are not opened. Nothing changes by picking a different one.

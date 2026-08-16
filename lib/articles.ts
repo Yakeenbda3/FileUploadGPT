@@ -134,6 +134,27 @@ export function getArticlesByCategory(category: CategoryKey): ArticleMeta[] {
 export function assertArticleIntegrity(): void {
   const slugs = new Set(getAllArticleSlugs());
 
+  // ── Two articles must never chase the same search intent ────────────────────────────────────
+  // Two pages aimed at one question do not double the traffic for it. They split the internal
+  // links and the external ones between them, and Google picks one and largely ignores the other,
+  // usually not the one you would have chosen. At a hundred articles this is the failure that
+  // creeps in silently, because nobody remembers what the other ninety-nine were targeting.
+  //
+  // `targetQuery` is never rendered. It exists so this check can exist.
+  const byTarget = new Map<string, string[]>();
+  for (const slug of slugs) {
+    const key = MODULES[slug].meta.targetQuery.trim().toLowerCase();
+    byTarget.set(key, [...(byTarget.get(key) ?? []), slug]);
+  }
+  for (const [target, owners] of byTarget) {
+    if (owners.length > 1) {
+      throw new Error(
+        `[articles] ${owners.length} articles target the same query "${target}": ${owners.join(', ')}.\n` +
+          `Merge them, or give each one a genuinely different question to answer.`
+      );
+    }
+  }
+
   for (const slug of slugs) {
     const { meta } = MODULES[slug];
 

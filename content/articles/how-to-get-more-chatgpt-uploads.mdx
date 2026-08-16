@@ -1,0 +1,137 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'how-to-get-more-chatgpt-uploads',
+  title: 'How to get more file uploads on ChatGPT',
+  heading: 'How to get more file uploads out of ChatGPT',
+  description:
+    'Five ways to stretch your upload allowance without paying, including the one that sidesteps the cap completely.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to get more chatgpt uploads for free',
+  related: [
+    'chatgpt-file-upload-limit-free-plan',
+    'chatgpt-upload-limit-reset',
+    'chatgpt-file-upload-limit-workaround',
+  ],
+  faq: [
+    {
+      q: 'Is there a way to get unlimited uploads?',
+      a: 'No. The caps are enforced by OpenAI and nothing in your browser can change them. What you can change is how many uploads a given piece of work costs you, and pasting text does not count as an upload at all.',
+    },
+    {
+      q: 'Does pasting text use up an upload?',
+      a: 'No. The cap counts file uploads. Text pasted into the message box is an ordinary message, so it is completely unaffected by the upload limit. This is the most useful thing to know when you have run out.',
+    },
+    {
+      q: 'Does a second account work?',
+      a: 'Technically the caps are per account, so it would. It also likely breaches OpenAI\'s terms on multiple accounts, and an account you rely on is a bad thing to risk. The pasting approach gets the same result without that.',
+    },
+    {
+      q: 'Do failed uploads count against me?',
+      a: 'Yes. OpenAI states failed attempts can count toward the rate cap. On the Free plan, where you only get 3 a day, one file retried three times can spend the entire day for nothing.',
+    },
+  ],
+});
+
+<AnswerBox>
+You cannot raise the cap. You can make your work cost fewer uploads, and one approach avoids the cap
+entirely: pasting text is not an upload, so it is unaffected by the limit no matter how thoroughly
+you have exhausted it.
+</AnswerBox>
+
+## First, know which cap you hit
+
+The fixes are different, so this is worth thirty seconds.
+
+| Cap | Value | Fix |
+| --- | --- | --- |
+| Free plan daily | <Fact k="freeDailyUploads" /> | Wait, upgrade, or paste instead |
+| Rolling rate | <Fact k="rollingUploadRate" /> | Wait about an hour |
+| Storage | <Fact k="userStorageCap" /> | Delete old chats. Waiting never helps |
+
+Storage is the one people get stuck on, because it does not clear with time. It is cumulative across
+every chat, Project and custom GPT you have, and a file from months ago still counts. Check Settings,
+then Storage.
+
+## 1. Paste instead of uploading
+
+The one that actually gets you unstuck, and most people never think of it.
+
+**The cap counts uploads. Pasted text is a message, not an upload.** So when you are completely out
+of uploads, you can still open the document, copy the text, and paste it in. It works immediately,
+with no waiting and no payment.
+
+<Steps>
+  <Step title="Open the document on your computer">
+    Any editor or reader. For a PDF this needs real text rather than a scan, which you can test by
+    trying to select a sentence.
+  </Step>
+  <Step title="Copy the text">
+    Select all, copy.
+  </Step>
+  <Step title="Paste it in, in parts if it is long">
+    Tell ChatGPT first that a document is coming in several parts and not to answer until the last
+    one arrives.
+  </Step>
+</Steps>
+
+More manual than uploading. Also completely unblocked by the limit that is stopping you.
+
+<InlineInstall
+  heading="Without the copying and pasting"
+  body="FileUploadGPT reads the file on your computer and sends the text as messages rather than as an upload, so it goes through when your upload allowance is gone. Free, and it works on the Free ChatGPT plan."
+/>
+
+## 2. Stop retrying failed uploads
+
+OpenAI's documentation confirms failed attempts can count toward the rate cap.
+
+On Free, with <Fact k="freeDailyUploads" />, this is brutal: one file that fails three times has
+spent your entire day and uploaded nothing.
+
+If an upload fails, find out why before trying again. Too large fails identically every time. Too
+long uploads but gets truncated. A scan uploads fine and comes back empty. None of those improve
+with repetition.
+
+## 3. Bundle files before uploading
+
+The cap counts files, not bytes, so six documents concatenated into one text file is **one** upload
+rather than six.
+
+This works especially well for code. One file with a header line before each source file keeps
+everything ChatGPT needs to understand the structure, and costs a single slot:
+
+```
+for f in src/auth/*.ts; do echo "=== $f ==="; cat "$f"; done > bundle.txt
+```
+
+## 4. Send only what you need
+
+You rarely need a whole document read. You need the section your question is about.
+
+One chapter is one upload, and it usually produces a better answer than the full document, because
+there is less irrelevant material competing for attention. Two wins for the price of one slot.
+
+## 5. Clear storage if that is the wall
+
+If Settings then Storage shows you near <Fact k="userStorageCap" />, waiting will never help. Delete
+chats that hold large files, and remember the cap is shared with your Projects and custom GPT
+knowledge, so look there too.
+
+Worth doing periodically rather than only when blocked, since nothing prompts you.
+
+## What does not work
+
+**Zipping files together.** ChatGPT does not unpack archives, so a zip is one upload that yields
+nothing. Bundling into a text file achieves what people are hoping for from zipping.
+
+**Renaming extensions.** Files are inspected by content, not by name.
+
+**A second account.** The caps are per account so it would work, and it likely breaches OpenAI's
+terms. Risking an account you depend on to save a few uploads is a poor trade when pasting achieves
+the same thing.
+
+**Upgrading, if your problem is length.** Paid plans lift the daily count but not the
+<Fact k="maxTextTokens" /> cap that truncates long documents. If a single long file is your problem,
+paying changes nothing.

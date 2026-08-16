@@ -1,0 +1,108 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-mp3-audio-files',
+  title: 'Can you upload MP3 or WAV audio to ChatGPT?',
+  heading: 'Can you upload an MP3 or WAV file to ChatGPT?',
+  description:
+    'Audio is not among the file types OpenAI lists for uploads, and voice mode is a different feature. What works instead.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt file uploads supported file types audio mp3 wav',
+  related: [
+    'does-chatgpt-support-mp4-video',
+    'chatgpt-file-types-supported',
+    'chatgpt-summarize-long-documents',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT analyse an audio file I upload?',
+      a: 'Audio is not among the file types OpenAI lists for uploads. Their documentation names text files, spreadsheets, presentations and documents, and audio is not in any of those families.',
+    },
+    {
+      q: 'But ChatGPT understands my voice. Why not an MP3?',
+      a: 'Voice mode is a separate feature from file uploads. Speaking to ChatGPT live and attaching an audio file to a conversation for analysis are different operations with different capabilities.',
+    },
+    {
+      q: 'How do I get a meeting recording analysed?',
+      a: 'Transcribe it, then upload the transcript as a text file. Many meeting tools produce transcripts automatically, and standalone transcription tools handle the rest. Text is the most reliably supported format.',
+    },
+    {
+      q: 'Is a transcript as good as the audio?',
+      a: 'For content, yes, and often better, because you can search it and quote from it. What you lose is tone, pauses and who sounded uncertain. If those matter to your question, a transcript will not carry them.',
+    },
+  ],
+});
+
+<AnswerBox>
+Audio is not among the file types OpenAI lists for uploads. Their documentation describes what is
+supported as &quot;<Fact k="supportedTypesStatement" />&quot; and audio appears in none of those four
+families. Transcribe the recording and upload the transcript instead, which works well and is
+usually more useful anyway.
+</AnswerBox>
+
+## The official position
+
+OpenAI publishes no list of extensions. On supported types, the File Uploads FAQ says only:
+
+> All common file extensions for text files, spreadsheets, presentations, and documents.
+
+Audio is not one of the four. So the accurate statement is that audio is **not listed among the
+supported upload types**, which is a fact about the documentation rather than a broader claim about
+what the model can do.
+
+## Voice mode is not file upload
+
+This is where most of the confusion comes from, and it is a fair confusion.
+
+ChatGPT can hold a spoken conversation. That is voice mode, and it works in real time through your
+microphone. It is a different feature from attaching a file to a chat, and the fact that one exists
+tells you nothing about the other.
+
+If you have a recording sitting on your computer, voice mode is not the route to getting it
+analysed.
+
+## Transcribe, then upload
+
+<Steps>
+  <Step title="Get a transcript">
+    Many meeting tools produce one automatically. Otherwise any transcription tool will do it, and
+    most handle an hour of audio in a few minutes.
+  </Step>
+  <Step title="Save it as a text file">
+    Plain .txt. Nothing to go wrong, and it is a fraction of the size of the audio.
+  </Step>
+  <Step title="Upload it">
+    Now you can ask for a summary, the decisions taken, the action points, or anything else.
+  </Step>
+</Steps>
+
+<Callout variant="tip" title="Keep the speaker labels">
+If your transcription tool marks who said what, keep those labels. It turns "summarise this" into
+"what did each person commit to", which is usually the question you actually had.
+</Callout>
+
+## What a transcript loses
+
+Worth being honest about, because it is not nothing.
+
+Tone, hesitation, sarcasm, who sounded unconvinced, and how long a silence ran. If your question is
+about how something was said rather than what was said, a transcript will not answer it and neither
+would uploading the file, since that is not available either.
+
+For everything else, content and decisions and detail, the transcript is genuinely better than the
+audio: searchable, quotable, and possible to check.
+
+## Long recordings
+
+An hour of speech is roughly ten thousand words, which goes into ChatGPT without difficulty. A full
+day of interviews, or a series of calls, can push past <Fact k="maxTextTokens" /> and get truncated
+with no warning.
+
+The check is the same as for any long document. Ask what the final section says. If it cannot tell
+you, it did not read that far.
+
+<InlineInstall
+  heading="For a transcript archive that will not fit"
+  body="FileUploadGPT splits long transcripts into pieces ChatGPT accepts and sends them in order, so a week of recordings gets read in full rather than the first day of it."
+/>

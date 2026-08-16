@@ -1,0 +1,120 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-word-docx-files',
+  title: 'Can ChatGPT read Word and DOCX files?',
+  heading: 'Can ChatGPT read Word documents?',
+  description:
+    'Yes, and DOCX is one of the more reliable formats. What survives the upload, what silently does not, and when to convert instead.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt supported file types word docx',
+  related: [
+    'chatgpt-file-types-supported',
+    'can-chatgpt-read-rtf-files',
+    'chatgpt-file-is-too-large-error',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT read .doc as well as .docx?',
+      a: 'Both are documents and both generally work. DOCX is the modern format and the more reliable of the two. If an old .doc gives trouble, opening it in Word and saving as .docx takes seconds.',
+    },
+    {
+      q: 'Do images in my Word document get read?',
+      a: 'No, on every plan except Enterprise. ChatGPT extracts the digital text and discards the images. A document that is mostly screenshots produces very little, and nothing warns you that anything was dropped.',
+    },
+    {
+      q: 'Do tables survive?',
+      a: 'The content does, though the layout may flatten. If a table is central to your question, say so in your prompt, or paste the table separately so its structure is unambiguous.',
+    },
+    {
+      q: 'My Word file is huge. What do I do?',
+      a: 'Saving as plain text usually shrinks it dramatically, because most of the weight is images, fonts and revision history rather than words. If it is long rather than heavy, that will not help and you need to send less of it at a time.',
+    },
+  ],
+});
+
+<AnswerBox>
+Yes. Word documents fall squarely inside what OpenAI supports, described as
+&quot;<Fact k="supportedTypesStatement" />&quot; DOCX is one of the more reliable formats to upload.
+The thing to know is what gets dropped on the way in: every plan except Enterprise discards the
+images.
+</AnswerBox>
+
+## What survives, and what does not
+
+| Part of your document | What happens |
+| --- | --- |
+| Body text | Read in full |
+| Headings | Preserved, and useful for section-by-section work |
+| Lists | Preserved |
+| Tables | Content preserved, layout may flatten |
+| Images, charts, screenshots | **Discarded** |
+| Comments and tracked changes | Unreliable, do not depend on them |
+| Footnotes | Usually present, position may shift |
+
+The one that matters is the images row, and it is the one nobody expects.
+
+## Images are dropped, silently
+
+OpenAI's documentation is explicit. Visual retrieval for PDFs exists on ChatGPT Enterprise. On every
+other plan:
+
+> All other plans and document files only support text-based retrieval. This means that ChatGPT will
+> extract digital text from the file and discard any images.
+
+So a chart in your report is not there. A screenshot pasted into the document is not there. A
+diagram is not there.
+
+<Callout variant="warn" title="It will answer around the gap rather than mention it">
+This is what makes it dangerous. ChatGPT does not say "there appear to be images I cannot see". It
+answers using the text it has, confidently. If a key number only appears in a chart, you will get an
+answer that does not include it and no indication that anything was missing.
+
+If your document leans on visuals, describe them in text before uploading, or upload the important
+ones separately as images.
+</Callout>
+
+## When a Word file is too large
+
+Nearly always images again, since text weighs almost nothing.
+
+Saving as plain text routinely takes a document from tens of megabytes to tens of kilobytes. Given
+the images were going to be discarded regardless, you lose nothing ChatGPT would have used.
+
+File, then Save As, then Plain Text. Ten seconds.
+
+## When it is too long rather than too large
+
+A different problem with a similar feel, and converting does not help at all, because the words are
+the issue.
+
+Text and document files are capped at <Fact k="maxTextTokens" />. Past that, the file uploads and
+ChatGPT reads part of it. No error appears.
+
+Check with a question that can only be answered from the end:
+
+> What is the title of the final section?
+
+If it cannot say, the rest was never read.
+
+The fix is to send less at a time: the section you need, or the whole thing split into parts sent in
+order with an instruction to hold the answer until they have all arrived.
+
+<InlineInstall
+  heading="For a long Word document"
+  body="FileUploadGPT reads the DOCX in your browser, splits the text into pieces ChatGPT accepts, and sends them in order, so a long report gets read in full."
+/>
+
+## Getting more out of a Word upload
+
+**Use the headings.** If the document has a real heading structure, ask for a section-by-section
+summary using the document's own headings. It also makes truncation obvious, since sections that
+vanish were never read.
+
+**Ask for quotes.** Requiring the sentence behind each claim makes everything checkable and cuts
+paraphrase drift.
+
+**Clean up first if it is a mess.** A document thick with tracked changes and comments gives ChatGPT
+a confusing picture. Accepting all changes on a copy before uploading tends to produce noticeably
+better answers.

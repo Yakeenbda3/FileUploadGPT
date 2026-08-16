@@ -1,0 +1,135 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-upload-limit-reached-error',
+  title: '"Upload limit reached" but you barely uploaded',
+  heading: '"You have reached our limit of file uploads" explained',
+  description:
+    'Why ChatGPT says you hit the upload limit when you have uploaded almost nothing, and the two documented causes behind it.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: "you've reached our limit of file uploads chatgpt",
+  related: [
+    'chatgpt-upload-limit-reset',
+    'chatgpt-file-upload-troubleshooting',
+    'chatgpt-file-upload-limit-free-plan',
+  ],
+  faq: [
+    {
+      q: 'Why does it say I reached the limit when I uploaded one file?',
+      a: 'Almost always one of two things. Failed attempts count toward the rate cap, so one stubborn file retried eight times spent eight slots. Or you are against the 25 GB storage cap, which is cumulative across every chat you have ever had and does not reset with time.',
+    },
+    {
+      q: 'How do I know which limit I hit?',
+      a: 'Check Settings then Storage. If your Library usage is near 25 GB, it is storage, and only deleting files will help. If storage looks fine, it is the rolling rate cap, and only waiting will help. ChatGPT does not show the rate quota, so this is the only way to tell them apart.',
+    },
+    {
+      q: 'Does upgrading to Plus remove this?',
+      a: 'It raises some caps, and it lifts the Free plan restriction of 3 uploads per day. It does not remove the rolling rate cap or the storage cap, so the same message can appear on a paid plan.',
+    },
+    {
+      q: 'Could it be an outage rather than me?',
+      a: 'Possibly. Check status.openai.com. Uploads have their own incidents and the error shown to you does not always distinguish a platform problem from a quota problem.',
+    },
+  ],
+});
+
+<AnswerBox>
+Two documented causes, and neither is about what you did in the last few minutes. Failed upload
+attempts count toward the rate cap, so a file you retried eight times spent eight slots. And the
+<Fact k="userStorageCap" /> storage cap is cumulative across every chat you have ever had, so files
+from months ago are still occupying it. Check Settings then Storage to tell them apart.
+</AnswerBox>
+
+This message is confusing because it appears to be about right now, and it usually is not.
+
+## Cause one: failed attempts spent your allowance
+
+The general cap is <Fact k="rollingUploadRate" />. OpenAI's documentation adds a detail most people
+never see: **failed upload attempts can count toward it.**
+
+So the common sequence is this. A file fails, because it is too large or the connection drops. You
+try again. It fails again. You try six more times. Nothing ever uploaded, and you have spent eight
+of your slots.
+
+From your side it looks like you uploaded nothing. From the counter's side you made eight attempts.
+
+<Callout variant="warn" title="The habit to break">
+When an upload fails, work out why before trying again. A file over the size ceiling fails
+identically every time, and each attempt costs you. Retrying is the only response that is guaranteed
+both not to work and to make things worse.
+</Callout>
+
+## Cause two: storage, which never resets on its own
+
+Separate from the rate limit, there is a storage cap of <Fact k="userStorageCap" /> per user and
+<Fact k="orgStorageCap" /> per organisation.
+
+Two things about it catch people:
+
+**It is shared.** It covers your chats, your Projects, and your custom GPT knowledge together, not
+each of those separately.
+
+**It is cumulative.** A file you uploaded months ago still counts, and will keep counting until you
+delete the chat holding it. Time does not clear it. Nothing clears it except deleting things.
+
+So you can hit "upload limit reached" having uploaded nothing at all today, because you are simply
+full.
+
+## Telling the two apart
+
+There is one reliable way, and it takes ten seconds.
+
+<Steps>
+  <Step title="Open Settings, then Storage">
+    ChatGPT shows your Library storage usage here.
+  </Step>
+  <Step title="Read the number">
+    Near <Fact k="userStorageCap" />? It is storage. Waiting will never help. You need to delete
+    chats containing large files.
+  </Step>
+  <Step title="If storage looks fine, it is the rate cap">
+    ChatGPT does not display the rate quota at all, so there is nothing else to check. Waiting is
+    the fix, and an hour is usually enough.
+  </Step>
+</Steps>
+
+That last point is worth stating plainly because people go looking for it: OpenAI confirms ChatGPT
+shows storage usage but **not** how much of the rolling upload-rate allowance remains. There is no
+counter to find.
+
+## The other things worth checking
+
+**The right account.** Signed into a different account than you think is the boring explanation and
+it does happen, especially with work and personal accounts in the same browser.
+
+**Free plan.** Free is limited to <Fact k="freeDailyUploads" />, which is a much lower bar than the
+general cap and is reached quickly.
+
+**Peak hours.** OpenAI's documentation says limits may be lowered at busy times, so the ceiling is
+not always where it was yesterday.
+
+**An outage.** status.openai.com. Uploads have their own incidents and the message you see does not
+always distinguish one from a quota problem.
+
+## Getting work done while you wait
+
+If you are rate-limited and need to keep going, there is a way through that most people miss.
+
+**The cap counts uploads, not messages.** Pasting text into the chat is not an upload and does not
+touch the upload allowance at all. So if you are blocked from uploading a document, opening it,
+copying the text, and pasting it in still works.
+
+For anything long that means splitting it into pieces and pasting them in order, which is tedious
+but entirely unblocked by the limit that is stopping you.
+
+<InlineInstall
+  heading="Sending a document without using an upload slot"
+  body="FileUploadGPT reads your file locally and sends the text as messages rather than as a file upload, so it goes through even when your upload allowance is exhausted."
+/>
+
+## Reporting it if none of this fits
+
+If storage is low, you have not uploaded recently, and status.openai.com is clear, it is worth
+raising with OpenAI. Their guidance asks for your account email, a screenshot, the timestamp with
+your timezone, the platform and browser, and the request ID if you have one.

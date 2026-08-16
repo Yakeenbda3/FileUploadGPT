@@ -1,0 +1,135 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-upload-limit-free-plan',
+  title: 'ChatGPT free plan file upload limit',
+  heading: 'What the free ChatGPT plan allows for file uploads',
+  description:
+    'Free accounts get three file uploads a day. What still works when you run out, and what upgrading does and does not change.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt file upload limit free',
+  related: [
+    'chatgpt-upload-limit-reset',
+    'chatgpt-plus-file-upload-limit',
+    'how-to-get-more-chatgpt-uploads',
+  ],
+  faq: [
+    {
+      q: 'How many files can I upload on the free plan?',
+      a: 'Three per day. OpenAI states this directly, and adds that limits may be lowered during peak hours, so three is a ceiling rather than a guarantee.',
+    },
+    {
+      q: 'Do the other limits still apply on Free?',
+      a: 'Yes. The 512 MB per file ceiling, the 2 million token cap on text and document files, and the 25 GB storage cap all apply on every plan. The daily count is an extra restriction on top, not a replacement.',
+    },
+    {
+      q: 'What happens when I run out?',
+      a: 'Uploads are refused until the next day. Pasting text still works and is not affected at all, because pasting is not an upload. That is the practical way to keep working without paying.',
+    },
+    {
+      q: 'Is upgrading worth it just for uploads?',
+      a: 'Only if the daily count is genuinely your problem. Paid plans lift the 3 per day restriction and raise Project allowances. They do not raise the 2 million token cap that truncates long documents, so if your issue is one very long file, upgrading changes nothing.',
+    },
+  ],
+});
+
+<AnswerBox>
+Free accounts get <Fact k="freeDailyUploads" />. Every other limit applies as normal on top of that:
+<Fact k="maxFileSize" /> per file, <Fact k="maxTextTokens" /> for text and documents, and
+<Fact k="userStorageCap" /> of storage. When you run out, pasting text still works, because pasting
+is not an upload.
+</AnswerBox>
+
+## What Free actually gets
+
+Uploads work on the Free plan. They are just rationed.
+
+| Limit | Free plan |
+| --- | --- |
+| Uploads per day | <Fact k="freeDailyUploads" /> |
+| Size per file | <Fact k="maxFileSize" /> |
+| Text and document length | <Fact k="maxTextTokens" /> |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" /> |
+| Images | <Fact k="maxImageSize" /> |
+| Storage | <Fact k="userStorageCap" /> |
+
+Only the first row is a Free plan restriction. Everything below it applies on every plan including
+the paid ones.
+
+OpenAI also notes that limits may be lowered during peak hours, so three is the number to plan
+around rather than the number you are promised.
+
+## Three a day runs out faster than you expect
+
+Not because three is unreasonable, but because of what counts.
+
+**Failed attempts count.** OpenAI's documentation says failed upload attempts can count toward the
+cap. On a plan with three, a single file that fails twice before working has consumed your day.
+
+**Every file counts separately.** Three documents is three, even if they are small and related.
+
+<Callout variant="warn" title="On Free especially, do not retry a failing upload">
+With three slots, retrying a stubborn file costs your entire allowance for the day and produces
+nothing. Work out why it failed first. If it is too large or too long, it will fail identically
+every time.
+</Callout>
+
+## What still works when you have run out
+
+This is the part worth knowing, and it is not obvious.
+
+**Pasting is not uploading.** The daily cap counts file uploads. Text you paste into the message box
+is an ordinary message, and it does not touch the upload allowance at all.
+
+So when you are out of uploads, this still works:
+
+<Steps>
+  <Step title="Open the document on your computer">
+    Word, a text editor, a PDF reader, anything.
+  </Step>
+  <Step title="Copy the text">
+    Select all, copy. For a PDF, this only works if it has real text rather than being a scan.
+  </Step>
+  <Step title="Paste it into ChatGPT">
+    For anything long, in several parts, telling ChatGPT first that more are coming and to wait
+    before answering.
+  </Step>
+</Steps>
+
+It is more manual than uploading. It also completely sidesteps the limit that is stopping you, which
+is worth the inconvenience when the alternative is waiting until tomorrow.
+
+<InlineInstall
+  heading="Doing that without the copying and pasting"
+  body="FileUploadGPT reads the file on your computer and sends the text as messages rather than as an upload, so it works when your three uploads are gone. Free, and it does not need a paid ChatGPT plan."
+/>
+
+## Making three uploads go further
+
+**Bundle before uploading.** Several documents concatenated into one text file is one upload rather
+than several. For code especially, one file with a header line before each source file preserves
+everything useful and costs a single slot.
+
+**Convert to plain text first.** Smaller, faster, more reliable, and it sidesteps the size ceiling
+entirely on anything text-heavy.
+
+**Send only the section you need.** You rarely need all three hundred pages read. One chapter is one
+upload and usually produces a better answer, because there is less irrelevant material competing for
+attention.
+
+## What upgrading changes
+
+Worth being precise, because the marketing is not.
+
+**It does change:** the three-per-day restriction goes, replaced by the general cap of
+<Fact k="rollingUploadRate" />. Project allowances rise to <Fact k="projectFilesPlus" /> on Plus and
+<Fact k="projectFilesPro" /> on Pro, Team, Education and Business.
+
+**It does not change:** the <Fact k="maxTextTokens" /> cap that truncates long documents, the
+<Fact k="maxFileSize" /> ceiling, or the <Fact k="userStorageCap" /> storage cap. Nor does it change
+the rule that images in documents are discarded on every plan except Enterprise, which is why a
+scanned PDF fails identically on Free and on Pro.
+
+So: if your problem is **how many** files, paying helps. If your problem is **one file that is too
+long**, paying changes nothing at all, and that is the more common problem.

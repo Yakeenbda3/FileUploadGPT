@@ -1,0 +1,129 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-upload-limit-reset',
+  title: 'When does the ChatGPT upload limit reset?',
+  heading: 'When does the ChatGPT upload limit reset?',
+  description:
+    'The general cap rolls over three hours rather than resetting at midnight, and the Free plan cap is daily. Why waiting an hour often works.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'when does chatgpt upload limit reset',
+  related: [
+    'chatgpt-upload-limit-reached-error',
+    'chatgpt-file-upload-limit-free-plan',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'Does the upload limit reset at midnight?',
+      a: 'The Free plan cap of 3 uploads per day does. The general cap of 80 files every 3 hours does not, because it rolls: slots free up gradually as individual uploads pass the three hour mark, rather than everything clearing at one moment.',
+    },
+    {
+      q: 'Can I see how long is left?',
+      a: 'No. OpenAI confirms ChatGPT does not display how much of the rolling upload quota you have used or have remaining. Settings then Storage shows your Library storage, which is a different limit entirely.',
+    },
+    {
+      q: 'Does deleting chats free up my upload allowance?',
+      a: 'It frees storage, not rate. Deleting chats with large files recovers space against the 25 GB storage cap. It does nothing for the rolling rate cap, which is purely about how many uploads happened recently.',
+    },
+    {
+      q: 'Do failed uploads count against the limit?',
+      a: 'Yes, and this catches people constantly. OpenAI states that failed upload attempts can count toward the rate cap. Retrying a stubborn file ten times can spend ten slots and produce nothing.',
+    },
+  ],
+});
+
+<AnswerBox>
+It depends which limit you hit. The Free plan allows <Fact k="freeDailyUploads" />, and that is a
+daily reset. The general cap is <Fact k="rollingUploadRate" />, and that one rolls: slots free up
+gradually as older uploads age past three hours, rather than everything clearing at once. So waiting
+an hour usually gets you some capacity back without waiting for any particular moment.
+</AnswerBox>
+
+## Rolling is not the same as resetting
+
+This is the part that makes the limit feel unpredictable.
+
+A daily reset is simple. Everything clears at a fixed time and you start again. The Free plan works
+this way, with <Fact k="freeDailyUploads" />.
+
+The general cap of <Fact k="rollingUploadRate" /> works differently. It looks backwards over the
+last three hours and counts what happened in that window. There is no moment when the counter zeroes.
+An upload you made two hours and fifty minutes ago drops out of the window ten minutes from now, and
+that one slot comes back.
+
+Practically, that means **you rarely have to wait the full three hours.** If you hit the cap because
+of a burst of uploads twenty minutes ago, you will be waiting a while. If you have been uploading
+steadily, some capacity returns within minutes.
+
+<Callout variant="tip" title="What to actually do">
+Wait an hour and try again, rather than waiting three. Most people who hit this hit it from a burst,
+and a burst ages out of the window together.
+</Callout>
+
+## You cannot check how much is left
+
+Worth knowing before you go looking, because the place people look is the wrong one.
+
+ChatGPT shows Library storage usage under Settings, then Storage. That is your
+<Fact k="userStorageCap" /> storage cap, which is about how much you are keeping, not how fast you
+are uploading.
+
+OpenAI states plainly that ChatGPT does not show how much of the rolling upload-rate quota has been
+used or how much remains. There is no counter, no timer, and no indicator anywhere in the interface.
+
+So if storage looks fine and you are still blocked, you are being held by the rate cap, and the only
+signal you will get is that it starts working again.
+
+## Failed attempts still count
+
+The single most useful thing on this page.
+
+OpenAI's documentation says failed upload attempts can count toward the rate cap. So a file that
+keeps failing, that you keep retrying, is spending your allowance every time even though nothing
+ever uploaded.
+
+That is why people hit the limit having, from their point of view, uploaded almost nothing. They
+uploaded one file eleven times.
+
+<Callout variant="warn" title="If a file keeps failing, stop retrying it">
+Work out why it failed first. A file that is too large will be too large the twelfth time. Retrying
+is the one response guaranteed not to help, and guaranteed to cost you.
+</Callout>
+
+## The three limits people confuse
+
+| Limit | Value | How it clears |
+| --- | --- | --- |
+| Free plan daily | <Fact k="freeDailyUploads" /> | Daily |
+| Rolling rate | <Fact k="rollingUploadRate" /> | Gradually, as uploads age past 3 hours |
+| Storage | <Fact k="userStorageCap" /> per user | Only when you delete chats holding files |
+
+The third one never resets on its own. It is cumulative, shared across your chats, Projects and
+custom GPT knowledge, and a file you uploaded in March is still occupying it today. If you are
+blocked and storage is the reason, waiting will not help at any point, ever. You have to delete
+something.
+
+## Peak hours
+
+OpenAI's documentation adds that these limits may be lowered during peak hours.
+
+That means the number you hit today is not necessarily the number you will hit tomorrow, and a cap
+that felt generous last week can feel tight now without anything having changed on your side. It
+also means "I got 80 yesterday" is not a reason to expect 80 today.
+
+## If you keep hitting it
+
+Uploading fewer, larger things beats uploading many small ones, because the cap counts files rather
+than bytes. Six files concatenated into one text document is one upload instead of six, and it
+counts once.
+
+That is also the reason splitting a document by hand can work against you: forty pasted chunks are
+forty messages, not forty uploads, so pasting does not consume the upload cap at all. If you are
+rate-limited, pasting text is the way through.
+
+<InlineInstall
+  heading="One upload instead of many"
+  body="FileUploadGPT reads your document once and sends the content as messages rather than as repeated uploads, so a long file does not eat your upload allowance a chunk at a time."
+/>

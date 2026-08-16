@@ -1,0 +1,108 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-plus-file-upload-limit',
+  title: 'ChatGPT Plus file upload limits',
+  heading: 'What ChatGPT Plus actually raises, and what it does not',
+  description:
+    'The upload limits on Plus compared with Free and Pro, and the one cap that is identical on every plan and stops long documents.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt plus file upload limit',
+  related: [
+    'chatgpt-file-upload-limit-free-plan',
+    'chatgpt-upload-limit-reset',
+    'chatgpt-file-upload-limit-workaround',
+  ],
+  faq: [
+    {
+      q: 'How many files can I upload on ChatGPT Plus?',
+      a: 'The general cap of 80 files every 3 hours applies, rather than the Free plan restriction of 3 per day. Inside Projects, Plus allows 20 files per project, against 40 on Pro, Team, Education and Business.',
+    },
+    {
+      q: 'Does Plus let me upload bigger files?',
+      a: 'No. The 512 MB per file ceiling and the 2 million token cap on text and documents are the same on every plan. Plus raises how many you can send, not how large or how long each one can be.',
+    },
+    {
+      q: 'Will Plus fix my document being truncated?',
+      a: 'No, and this is the most common misunderstanding about upgrading. Truncation comes from the 2 million token cap, which is identical across plans. A document too long on Free is exactly as too long on Plus.',
+    },
+    {
+      q: 'Does Plus help with scanned PDFs?',
+      a: 'No. Visual retrieval for PDFs is an Enterprise feature. Every other plan, Plus and Pro included, extracts digital text and discards images, so a scan produces nothing regardless of what you pay.',
+    },
+  ],
+});
+
+<AnswerBox>
+Plus raises how many files you can send. It does not raise how large or how long any one of them can
+be. The <Fact k="maxTextTokens" /> cap that truncates long documents is identical on every plan, so
+if your problem is one very long file, upgrading will not fix it.
+</AnswerBox>
+
+## Plan by plan
+
+| | Free | Plus | Pro, Team, Education, Business |
+| --- | --- | --- | --- |
+| Uploads | <Fact k="freeDailyUploads" /> | <Fact k="rollingUploadRate" /> | <Fact k="rollingUploadRate" /> |
+| Files per project | not applicable | <Fact k="projectFilesPlus" /> | <Fact k="projectFilesPro" /> |
+| Size per file | <Fact k="maxFileSize" /> | <Fact k="maxFileSize" /> | <Fact k="maxFileSize" /> |
+| Text and document length | <Fact k="maxTextTokens" /> | <Fact k="maxTextTokens" /> | <Fact k="maxTextTokens" /> |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" /> | <Fact k="maxSpreadsheetSize" /> | <Fact k="maxSpreadsheetSize" /> |
+| Storage | <Fact k="userStorageCap" /> | <Fact k="userStorageCap" /> | <Fact k="userStorageCap" /> |
+| Images in documents | discarded | discarded | discarded, except Enterprise |
+
+Read down the columns rather than across the top row. **Four of the seven limits are identical on
+every plan.** The only rows that move are how many files, and how many per project.
+
+## What you are actually buying
+
+Two things, for uploads specifically.
+
+**The daily restriction goes.** Free is capped at <Fact k="freeDailyUploads" />, which on a working
+day is nothing. Plus replaces that with the general cap of <Fact k="rollingUploadRate" />, which for
+most people is effectively unlimited.
+
+**Project allowances double on Pro.** <Fact k="projectFilesPlus" /> on Plus, and
+<Fact k="projectFilesPro" /> on Pro, Team, Education and Business. If you keep a working set of
+reference documents in a Project, this is the row that decides between Plus and Pro.
+
+## What you are not buying
+
+<Callout variant="warn" title="Upgrading does not fix a truncated document">
+Long documents get cut off at <Fact k="maxTextTokens" /> and this is the same number on every plan.
+The upload succeeds, ChatGPT reads part of the file, and nothing warns you. Paying more does not
+move that line even slightly.
+
+If you upgraded specifically because a long report was being half read, you have not solved it, and
+you may not have noticed because the summary still looks complete.
+</Callout>
+
+The same goes for scanned documents. Visual retrieval for PDFs exists only on Enterprise. On Plus,
+as on Free, ChatGPT extracts the digital text and discards the images, so a scan yields nothing.
+
+And storage is <Fact k="userStorageCap" /> across the board. If you hit "upload limit reached"
+because you are full rather than because you are fast, Plus does not help with that either.
+
+## Deciding whether to upgrade for uploads
+
+**Upgrade if:** you send lots of separate files and keep running into the three-a-day wall on Free.
+That is a real restriction and Plus removes it properly.
+
+**Do not bother if:** your problem is a single long document being truncated, or a scanned PDF
+producing nothing. Those are identical on both plans and no amount of money changes them.
+
+For the truncation case, the fix is to send less at a time: convert to text, send only the section
+you need, or split the document and send the parts in order with an instruction to hold the answer
+until they have all arrived.
+
+<InlineInstall
+  heading="The fix that actually applies here"
+  body="FileUploadGPT splits documents past the length cap into pieces ChatGPT accepts and sends them in order. It works the same on Free and on Plus, because the limit it works around is the same on both."
+/>
+
+## One more thing about Plus and uploads
+
+Failed upload attempts count toward the rate cap on every plan, including paid ones. On Plus you
+have <Fact k="rollingUploadRate" /> so it rarely bites, but if you are batch-uploading and several
+fail, you can reach a cap you did not think you were anywhere near.

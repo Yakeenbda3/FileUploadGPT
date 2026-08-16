@@ -1,0 +1,102 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-rtf-files',
+  title: 'Can ChatGPT read RTF files?',
+  heading: 'Can ChatGPT read RTF files?',
+  description:
+    'Yes, RTF falls under the document types OpenAI supports. What to do in the rare case one gives you trouble, and why converting is safe.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read rtf files',
+  related: [
+    'chatgpt-file-types-supported',
+    'can-chatgpt-read-word-docx-files',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'Is RTF officially supported?',
+      a: 'OpenAI does not publish a list of extensions. It says all common file extensions for text files, spreadsheets, presentations and documents. RTF is a document format in common use, so it falls inside that, and in practice it uploads and reads fine.',
+    },
+    {
+      q: 'What if my RTF will not upload?',
+      a: 'Save it as .txt or .docx and upload that. RTF holds formatting and text, and ChatGPT discards formatting anyway, so converting loses nothing it would have used.',
+    },
+    {
+      q: 'Will I lose anything by converting to plain text?',
+      a: 'Only the formatting: fonts, bold, colours, spacing. The words all survive. Since ChatGPT works from the text and not the presentation, this costs you nothing in practice, and the file gets much smaller.',
+    },
+    {
+      q: 'Does RTF have a lower size limit than other formats?',
+      a: 'No. The same limits apply: 512 MB per file and 2 million tokens for text and documents. RTF files are usually small, so the token cap is the only one you are likely to meet, and only on a very long document.',
+    },
+  ],
+});
+
+<AnswerBox>
+Yes. RTF is a document format and falls inside what OpenAI supports, which it describes as
+&quot;<Fact k="supportedTypesStatement" />&quot; In practice RTF files upload and read without any
+trouble. If one does give you problems, saving it as .txt takes ten seconds and loses nothing
+ChatGPT would have used.
+</AnswerBox>
+
+## Why it works
+
+RTF, Rich Text Format, is text with formatting instructions wrapped around it. Underneath the fonts
+and the styling, the content is plain readable text.
+
+That is exactly what ChatGPT wants. It extracts the text from a document and works from that,
+discarding presentation. RTF gives it up easily, which is why these upload cleanly.
+
+The rule of thumb for any format: **if you can open it in a text editor and see readable words, so
+can ChatGPT.** Open an RTF in a plain text editor and you will see your content mixed with markup
+tags. The words are right there, which is the whole test.
+
+## If one does not work
+
+Rare, but the fix is quick and costs nothing.
+
+<Steps>
+  <Step title="Open the file">
+    Word, TextEdit, LibreOffice, Google Docs, anything that opens RTF.
+  </Step>
+  <Step title="Save as .txt or .docx">
+    Either works. Plain text is smaller, DOCX keeps a bit more structure.
+  </Step>
+  <Step title="Upload the new file">
+    It behaves like any other document from here.
+  </Step>
+</Steps>
+
+You lose the formatting. You lose nothing else, and formatting was being discarded anyway.
+
+## The limits that do apply
+
+Nothing RTF-specific, just the usual ones:
+
+| Limit | Value |
+| --- | --- |
+| File size | <Fact k="maxFileSize" /> |
+| Length | <Fact k="maxTextTokens" /> |
+
+RTF files are almost always small, so size is not a realistic concern. The length cap is the only
+one you might meet, and only with a genuinely long document.
+
+<Callout variant="warn" title="Long documents get truncated quietly">
+Past the length cap, a document is not rejected. It uploads, ChatGPT reads part of it, and nothing
+tells you. Ask what the final section is called. If it cannot say, it did not read that far.
+</Callout>
+
+## When RTF is the wrong container
+
+One case worth naming. If your RTF is mostly images pasted into a document, ChatGPT will not see
+them. Every plan except Enterprise extracts the digital text and discards the images.
+
+So an RTF containing screenshots of text produces almost nothing, and it will not say so. If that is
+your file, you need the text itself, which means OCR on the images before there is anything to read.
+
+<InlineInstall
+  heading="For an RTF that is too long to go through in one piece"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into parts it accepts and sends them in order, so the whole file gets read instead of the beginning of it."
+/>

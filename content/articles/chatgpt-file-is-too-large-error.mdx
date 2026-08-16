@@ -1,0 +1,130 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-is-too-large-error',
+  title: '"The file is too large" in ChatGPT',
+  heading: 'ChatGPT says your file is too large. Which limit did you hit?',
+  description:
+    'Four different ceilings produce this message, and the fixes are different. How to tell which one stopped you in under a minute.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt file is too large',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'upload-large-pdfs-to-chatgpt',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'What is ChatGPT\'s maximum file size?',
+      a: '512 MB for any single file, 50 MB or so for CSV and spreadsheets, and 20 MB per image. But most files rejected as too large are nowhere near those numbers, because length is a separate limit that produces similar wording.',
+    },
+    {
+      q: 'My file is only 3 MB. Why is it too large?',
+      a: 'Because it is long, not big. Text and document files are capped at 2 million tokens, and a text-heavy document reaches that at a few megabytes. Compressing it will not help. Sending less of it will.',
+    },
+    {
+      q: 'Does compressing the file help?',
+      a: 'Only if you genuinely hit the size ceiling, which usually means images inside the document. Since every plan except Enterprise discards images anyway, compressing costs you nothing ChatGPT would have read.',
+    },
+    {
+      q: 'Will a paid plan let me upload it?',
+      a: 'No. Both the 512 MB ceiling and the 2 million token cap are identical on every plan. Paid plans raise how many files you can send, not how large or long each one can be.',
+    },
+  ],
+});
+
+<AnswerBox>
+Check the file size first. Under about 10 MB and you did not hit a size limit, you hit a length
+limit, and the fixes are completely different. Compressing a long document does nothing, because the
+problem is the number of words rather than the number of megabytes.
+</AnswerBox>
+
+## The four ceilings
+
+| Limit | Value | Applies to |
+| --- | --- | --- |
+| File size | <Fact k="maxFileSize" /> | Any single file |
+| Spreadsheet size | <Fact k="maxSpreadsheetSize" /> | CSV and spreadsheets |
+| Image size | <Fact k="maxImageSize" /> | Each image |
+| **Document length** | <Fact k="maxTextTokens" /> | Text and documents, **spreadsheets exempt** |
+
+The bottom row is the one that catches almost everyone, and it is not a size limit at all.
+
+## Working out which one you hit
+
+<Steps>
+  <Step title="Check the actual file size">
+    Right-click, then Get Info or Properties. Write the number down.
+  </Step>
+  <Step title="Is it over 512 MB?">
+    Almost certainly not. If it is, you hit the size ceiling and compressing will fix it.
+  </Step>
+  <Step title="Is it a spreadsheet over 50 MB?">
+    Different ceiling, lower. Exporting to CSV usually drops it sharply, since XLSX carries
+    formatting that CSV does not.
+  </Step>
+  <Step title="Under 10 MB and it still refused?">
+    Then it is length. There is no amount of compression that helps, because the words are the
+    problem.
+  </Step>
+</Steps>
+
+## If it is genuinely a size problem
+
+Nearly always images inside a document.
+
+Here is the useful part: **every ChatGPT plan except Enterprise discards images from documents
+anyway.** It extracts the digital text and throws the pictures away. So compressing the images, or
+stripping them entirely, costs you nothing that ChatGPT was ever going to read.
+
+- **PDF**: use any compress or reduce-size option, or export to plain text.
+- **Word**: Save As, then reduce image size, or export to plain text.
+- **Spreadsheet**: save as CSV. Formatting and formulas go, data stays.
+
+## If it is a length problem
+
+The common case, and compression is not the answer to any part of it.
+
+A three-hundred-page report can be a couple of megabytes and be far past <Fact k="maxTextTokens" />.
+The only fix is to send less at a time.
+
+**Send the section you need.** You rarely need three hundred pages read. Pull out the chapter your
+question concerns.
+
+**Split it and send the parts in order.** Cut it into pieces small enough to go through, then send
+them one after another with an instruction first:
+
+> I am sending a long document in several parts. Do not answer until I tell you the last one has
+> arrived. Reply "received" after each.
+
+Without that instruction ChatGPT answers part one as though it were the whole thing.
+
+<InlineInstall
+  heading="Splitting done for you"
+  body="FileUploadGPT reads the file in your browser, cuts it into pieces ChatGPT accepts, sends the hold-your-answer instruction first, then feeds the parts in order."
+/>
+
+## The version of this problem with no error at all
+
+Worth knowing, because it is more dangerous than the message you got.
+
+Sometimes a long document is not rejected. It uploads, and ChatGPT reads as much as fits and works
+from that, silently. You get a confident summary of the first portion with nothing to suggest
+anything is missing.
+
+At least "the file is too large" tells you something went wrong. Check for the silent version by
+asking something only answerable from the end:
+
+> What is the final section called?
+
+If it cannot say, it never read that far.
+
+## What does not work
+
+| Attempt | Why not |
+| --- | --- |
+| Zipping it | ChatGPT does not unpack archives. One opaque file in, nothing out. |
+| Renaming the extension | Files are inspected by content, not by name. |
+| Upgrading the plan | Both ceilings are identical on every plan. |
+| Uploading again | It will fail the same way, and failed attempts count against your rate cap. |

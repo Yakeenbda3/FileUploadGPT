@@ -1,0 +1,109 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'does-chatgpt-support-mp4-video',
+  title: 'Can you upload MP4 video to ChatGPT?',
+  heading: 'Can you upload an MP4 or other video to ChatGPT?',
+  description:
+    'Video is not among the file types OpenAI lists for uploads. What that means in practice, and the approach that does work.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt supported file types video mp4',
+  related: [
+    'chatgpt-file-types-supported',
+    'can-chatgpt-read-mp3-audio-files',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT support MP4 uploads?',
+      a: 'Video is not among the file types OpenAI lists. Their documentation names text files, spreadsheets, presentations and documents, and video does not appear in any of those four families.',
+    },
+    {
+      q: 'What about MOV, AVI, or MKV?',
+      a: 'Same answer. The question is not the container format, it is that video as a category is not in the supported list. No video extension is treated differently from another.',
+    },
+    {
+      q: 'How do I get ChatGPT to work with video content?',
+      a: 'Transcribe it first, then upload the transcript as a text file. Text is the most reliably supported thing there is. If the visuals matter rather than the speech, take screenshots of the important frames and upload those as images.',
+    },
+    {
+      q: 'ChatGPT handles my voice, so why not audio or video files?',
+      a: 'Voice mode is a separate feature. Speaking to ChatGPT live is not the same as attaching a media file to a conversation for analysis, and the two have different capabilities.',
+    },
+  ],
+});
+
+<AnswerBox>
+Video is not among the file types OpenAI lists for uploads. Their documentation describes what is
+supported as &quot;<Fact k="supportedTypesStatement" />&quot; and video is not in any of those four
+families. The working approach is to transcribe the video and upload the transcript, which is plain
+text and goes through without any trouble.
+</AnswerBox>
+
+## What OpenAI actually says
+
+Worth quoting precisely, because a lot of pages on this subject state things OpenAI never wrote.
+
+Asked what types are supported, the File Uploads FAQ answers in one sentence:
+
+> All common file extensions for text files, spreadsheets, presentations, and documents.
+
+Four families. Video is not one of them, and neither is audio. There is no published list of
+extensions to check, so that sentence is the whole official answer.
+
+Which is why the honest framing is **not listed among the supported types**, rather than a
+categorical claim about what ChatGPT can and cannot process. The documentation tells you what is
+supported for upload. Making a broader claim from its silence would be inventing an answer, which is
+what most articles on this question have done.
+
+<Callout variant="info" title="Voice mode is a different thing">
+ChatGPT clearly handles speech, which makes this confusing. Talking to it live is voice mode, a
+separate feature. Attaching an mp4 or an mp3 to a conversation for analysis is a different
+operation, and the supported-types list is about the second one.
+</Callout>
+
+## What to do instead
+
+The reliable path, and it works well.
+
+<Steps>
+  <Step title="Get a transcript">
+    Any transcription tool produces one. If the video is on YouTube, it very likely already has
+    captions you can download.
+  </Step>
+  <Step title="Save it as a text file">
+    Plain .txt. This is the most reliably supported format there is, with nothing to go wrong.
+  </Step>
+  <Step title="Upload the transcript">
+    Now ChatGPT can summarise it, pull quotes from it, answer questions about it, or reshape it into
+    something else.
+  </Step>
+</Steps>
+
+For a long video, the transcript may itself be past <Fact k="maxTextTokens" />. An hour of speech
+runs to roughly ten thousand words, so most single videos are fine, and a series or a full day of
+recordings may need splitting.
+
+<InlineInstall
+  heading="For transcripts too long to go in at once"
+  body="FileUploadGPT splits a long transcript into pieces ChatGPT accepts and sends them in order, so a whole day of recordings gets read rather than the first hour of it."
+/>
+
+## If the visuals are the point
+
+Transcription only captures what was said. If your question is about what was shown, take
+screenshots of the frames that matter and upload those as images.
+
+Images are supported and capped at <Fact k="maxImageSize" /> each. There is also a ceiling of around
+100 images per conversation, so pick the frames that carry the answer rather than sampling every few
+seconds.
+
+## Why the file will not simply upload
+
+If you try, you will get either a rejection or a file ChatGPT cannot do anything useful with. Video
+is also large: a few minutes of high quality footage can approach the <Fact k="maxFileSize" />
+ceiling on its own, so even a supported path would run into size before it ran into anything else.
+
+Transcribing first solves the format question and the size question at the same time. An hour of
+video is hundreds of megabytes. Its transcript is a few dozen kilobytes.

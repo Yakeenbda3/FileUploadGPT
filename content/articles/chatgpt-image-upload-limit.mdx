@@ -1,0 +1,112 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-image-upload-limit',
+  title: 'ChatGPT image upload limits explained',
+  heading: 'ChatGPT image upload limits, and the 100 page rule',
+  description:
+    'The size cap per image, why PDF pages count as images, and what to do when ChatGPT says you have added too many.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'how to bypass chatgpt image upload limit',
+  related: [
+    'chatgpt-upload-limit-reset',
+    'chatgpt-file-types-supported',
+    'upload-large-pdfs-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'What is the maximum image size for ChatGPT?',
+      a: '20 MB per image. That is generous for a photograph or a screenshot, so most image problems are about how many rather than how large.',
+    },
+    {
+      q: 'Why does it say I can add at most 100 images including PDF pages?',
+      a: 'Because PDF pages are counted as images when the PDF is processed visually. A 120 page PDF can therefore trip an image cap even though you uploaded one file. Splitting it or converting it to text avoids the count entirely.',
+    },
+    {
+      q: 'Can I get around the image limit?',
+      a: 'Not raise it, no. You can reduce what you send: crop to the part that matters, combine several screenshots into one image, or start a new chat, since the 100 image ceiling applies per conversation.',
+    },
+    {
+      q: 'Does ChatGPT read images inside my Word or PDF document?',
+      a: 'Only on Enterprise. Every other plan extracts the digital text and discards the images, so a chart embedded in a report is invisible to it, and it will not tell you that.',
+    },
+  ],
+});
+
+<AnswerBox>
+Each image is capped at <Fact k="maxImageSize" />, which is rarely the problem. The limit people
+actually hit is a ceiling of around 100 images per conversation, and PDF pages count toward it. So a
+long PDF can trip an image limit even though you only uploaded one file.
+</AnswerBox>
+
+## The size limit is not usually your problem
+
+<Fact k="maxImageSize" /> per image. A phone photo is a few megabytes and a screenshot is far less,
+so unless you are uploading something from a professional camera, size is not what stopped you.
+
+If you did hit it, resizing solves it instantly and costs you nothing that matters. ChatGPT does not
+need a 40 megapixel original to read a document or describe a scene.
+
+## The limit people actually hit is a count
+
+The message reads roughly: you can add at most 100 images, including PDF pages, to a chat.
+
+Two things in that sentence are worth pulling apart.
+
+**It is per conversation.** Not per message, and not per day. Starting a new chat gives you a fresh
+allowance immediately, which is the simplest fix by a distance.
+
+**PDF pages count as images.** This is the part that surprises people. Upload one PDF of 120 pages
+and you can trip an image ceiling having uploaded a single file. From your side you sent one
+document. From the counter's side you sent 120 images.
+
+<Callout variant="info" title="The quickest fix">
+Start a new conversation. The ceiling is per chat, so a new one resets it. If you need the earlier
+context, paste a summary of it rather than re-uploading the images.
+</Callout>
+
+## Reducing what you send
+
+**Crop before uploading.** If your question is about one panel of a screenshot, send that panel. It
+counts the same as the full screen and gets a better answer, because there is less to interpret.
+
+**Combine screenshots.** Several screenshots stitched into one image counts as one. Any image editor
+does this, and for a sequence of steps it often reads better anyway.
+
+**Convert PDFs to text.** If the document has real text in it, exporting to text removes the page
+count from the equation entirely, because text is not images. This is the right answer for a long
+document you want read rather than looked at.
+
+**Send fewer pages.** Extract the pages your question concerns into their own PDF.
+
+## Images inside documents are a separate thing
+
+Worth understanding because it explains a different failure that looks similar.
+
+Except on Enterprise, ChatGPT extracts the digital text from an uploaded document and **discards the
+images**. So a chart in a report, a diagram in a slide deck, or a screenshot embedded in a Word file
+is simply not there as far as the conversation is concerned.
+
+It will not mention this. It answers around the gap, which is worse than an error, because the
+answer looks complete.
+
+<Callout variant="warn" title="This is also why scanned PDFs fail">
+A scan is a photograph of a page with no digital text in it. Extract the text and discard the
+images, and nothing remains. Run the file through OCR first and it behaves like an ordinary
+document.
+</Callout>
+
+## If it is a document rather than pictures
+
+Most people who arrive at an image limit are actually trying to get a document read, and images were
+just how it happened to be stored.
+
+If that is you, the image path is the hard way round. Getting real text out of the document, through
+OCR if it is a scan, and sending that instead sidesteps every image limit on this page, produces
+better answers, and is not capped at 100 anything.
+
+<InlineInstall
+  heading="For long documents once they have text in them"
+  body="FileUploadGPT splits text documents past ChatGPT's length cap into pieces it accepts and sends them in order, so a long file gets read in full rather than in part."
+/>

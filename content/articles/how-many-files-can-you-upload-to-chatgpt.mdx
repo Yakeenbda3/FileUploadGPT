@@ -1,0 +1,110 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'how-many-files-can-you-upload-to-chatgpt',
+  title: 'How many files can you upload to ChatGPT?',
+  heading: 'How many files can you upload to ChatGPT?',
+  description:
+    'Every count limit in one place: per message, per day, per three hours, per Project and per custom GPT, with what each one means.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'how many files can i upload to chatgpt',
+  related: [
+    'chatgpt-file-upload-limit-free-plan',
+    'chatgpt-plus-file-upload-limit',
+    'chatgpt-upload-limit-reset',
+  ],
+  faq: [
+    {
+      q: 'How many files per message?',
+      a: 'The interface limits how many attach to a single message, and if you exceed it you get a message saying you may only upload a certain number at a time. Send them across several messages instead. This is separate from every other cap on this page.',
+    },
+    {
+      q: 'How many per day?',
+      a: 'Free accounts get 3 per day. Paid accounts fall under the general cap of 80 files every 3 hours, which rolls rather than resetting daily.',
+    },
+    {
+      q: 'How many files can a custom GPT hold?',
+      a: '10, and that is for the lifetime of the GPT rather than per conversation. Once you have used them you are replacing files, not adding more.',
+    },
+    {
+      q: 'Why does the count seem lower than it should be?',
+      a: 'Failed upload attempts count. OpenAI states this explicitly. A file you retried five times spent five slots regardless of whether any of them worked.',
+    },
+  ],
+});
+
+<AnswerBox>
+Five different count limits exist and people mix them up constantly. Per day: <Fact k="freeDailyUploads" />
+on Free. Overall: <Fact k="rollingUploadRate" />. Per Project: <Fact k="projectFilesPlus" /> on Plus,
+<Fact k="projectFilesPro" /> on Pro and Team. Per custom GPT: <Fact k="filesPerGpt" />, for its whole
+lifetime. Plus a separate limit on how many attach to one message.
+</AnswerBox>
+
+## All of them, in one table
+
+| Limit | Value | Scope |
+| --- | --- | --- |
+| Per message | a small number | The interface says so if you exceed it |
+| Per day, Free plan | <Fact k="freeDailyUploads" /> | Resets daily |
+| Rolling rate | <Fact k="rollingUploadRate" /> | Rolls over 3 hours |
+| Per Project, Plus | <Fact k="projectFilesPlus" /> | Per project |
+| Per Project, Pro and Team | <Fact k="projectFilesPro" /> | Per project |
+| Per custom GPT | <Fact k="filesPerGpt" /> | **Lifetime of the GPT** |
+| Storage | <Fact k="userStorageCap" /> | All chats, Projects and GPTs together |
+
+They stack. Being inside the per-message limit does not exempt you from the daily one, and having
+daily allowance left does not help if you are out of storage.
+
+## The one that surprises people: custom GPTs
+
+<Fact k="filesPerGpt" />, **for the lifetime of that GPT.**
+
+Not per conversation, not per month. Ten files total, ever, for that GPT's knowledge. After that you
+are swapping files out rather than adding more.
+
+Worth planning around before you build one. If your GPT needs to know about twenty documents,
+combine them into fewer, larger files before uploading rather than discovering the ceiling at
+document eleven.
+
+## The one that never resets: storage
+
+<Fact k="userStorageCap" /> per user, <Fact k="orgStorageCap" /> per organisation.
+
+Shared across chats, Projects and custom GPT knowledge, and cumulative. A file uploaded months ago
+still occupies it and will keep doing so until you delete the chat holding it.
+
+This is the cap behind most "upload limit reached" messages that appear when someone has barely
+uploaded anything. Check Settings, then Storage.
+
+<Callout variant="warn" title="Failed attempts still count">
+OpenAI's documentation says failed uploads can count toward the rate cap. On Free, with only
+<Fact k="freeDailyUploads" />, one stubborn file retried three times can spend your entire day and
+upload nothing at all.
+</Callout>
+
+## Making your files go further
+
+**Bundle before uploading.** The caps count files, not bytes. Six documents concatenated into one
+text file is one upload rather than six, and for code it also preserves the structure ChatGPT needs.
+
+**Paste instead of uploading.** Pasted text is a message, not an upload, so it does not touch any of
+these limits. When you are out of uploads, this still works immediately.
+
+**Send only the relevant part.** One chapter is one file and usually gets a better answer than the
+whole book.
+
+<InlineInstall
+  heading="A long document without spending upload slots"
+  body="FileUploadGPT reads your file locally and sends the content as messages rather than repeated uploads, so a long document costs you nothing against these caps."
+/>
+
+## Which one you are hitting
+
+The message usually tells you, if you read it carefully.
+
+- Mentions how many **at a time** → per-message limit. Send them across several messages.
+- Mentions a **limit reached** → daily or rolling cap. Check Settings then Storage to rule out
+  storage, then wait about an hour.
+- Happens inside a **Project** → the Project file cap, which is separate from everything else.
+- Happens while **editing a GPT** → the ten-file lifetime cap for that GPT.

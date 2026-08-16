@@ -1,0 +1,114 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-enterprise-pdf-visual-retrieval',
+  title: 'Which ChatGPT plan reads images inside PDFs?',
+  heading: 'Only one ChatGPT plan reads the images inside your documents',
+  description:
+    'Visual retrieval for PDFs is an Enterprise feature. Every other plan discards images, which explains charts being ignored and scans returning nothing.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt visual retrieval pdf enterprise',
+  related: [
+    'chatgpt-scanned-pdf-not-working',
+    'chatgpt-file-types-supported',
+    'chatgpt-plus-file-upload-limit',
+  ],
+  faq: [
+    {
+      q: 'Which plans can read images inside a PDF?',
+      a: 'ChatGPT Enterprise supports visual retrieval for PDF files. OpenAI states that all other plans and document types support text-based retrieval only, meaning digital text is extracted and images are discarded.',
+    },
+    {
+      q: 'Does Plus or Pro read charts in my documents?',
+      a: 'No. Both behave exactly like Free here. This is one of the few capabilities that is genuinely Enterprise only, and it is not something paying for Plus or Pro changes.',
+    },
+    {
+      q: 'Is that why my scanned PDF returns nothing?',
+      a: 'Yes, exactly. A scan is entirely images. Extract the digital text, of which there is none, and discard the images, which is all of it, and nothing remains. It is documented behaviour rather than a bug.',
+    },
+    {
+      q: 'What can I do without Enterprise?',
+      a: 'Run scans through OCR so they contain real text, and for charts, screenshot the page and upload it as an image alongside the document. Images uploaded directly are read; images inside documents are not.',
+    },
+  ],
+});
+
+<AnswerBox>
+ChatGPT Enterprise supports visual retrieval for PDFs. On every other plan, Free, Plus, Pro and Team
+alike, ChatGPT extracts the digital text from a document and discards the images. That single rule
+explains ignored charts, empty scans, and a lot of otherwise baffling answers.
+</AnswerBox>
+
+## The rule, in OpenAI's words
+
+From the File Uploads FAQ, on handling images embedded in documents:
+
+> ChatGPT Enterprise supports Visual Retrieval for PDF files.
+>
+> All other plans and document files only support text-based retrieval. This means that ChatGPT will
+> extract digital text from the file and discard any images.
+
+Two halves worth reading separately. Enterprise gets visual retrieval, **for PDFs**. Everything else
+gets text extraction with images discarded.
+
+| Plan | Images inside documents |
+| --- | --- |
+| Free | Discarded |
+| Plus | Discarded |
+| Pro | Discarded |
+| Team | Discarded |
+| **Enterprise** | **Visual retrieval, for PDFs** |
+
+## What this explains
+
+Once you know the rule, a set of separate mysteries turn out to be one thing.
+
+**The scanned PDF that returns nothing.** A scan is images of pages. Extract the text, of which
+there is none, discard the images, which is all of it. Nothing remains, and the upload succeeded, so
+nothing looks wrong.
+
+**The chart that gets ignored.** Your report's key figure lives in a graph. The graph is an image.
+It is not there.
+
+**The slide deck that summarises thinly.** A good deck puts the argument in visuals and keeps text
+sparse. Extract only the text and very little is left.
+
+**The Word document full of screenshots.** Same thing. The screenshots go.
+
+<Callout variant="warn" title="Nothing tells you it happened">
+This is what makes it expensive. ChatGPT does not say "there appear to be images I cannot see". It
+answers from the text it has, confidently. A report summary missing everything that was in the
+charts reads exactly like a report summary.
+</Callout>
+
+## Working around it without Enterprise
+
+**Run scans through OCR.** Converts the picture of the words back into words. Preview on a Mac and
+Adobe Acrobat both do it. Test afterwards by trying to select a sentence.
+
+**Screenshot the figures and upload them as images.** This is the key asymmetry: images uploaded
+**directly** are read. Images **inside a document** are not. So a chart you screenshot and upload
+alongside the document is available, while the same chart inside the document is not.
+
+**Paste the underlying numbers as text.** If a chart is plotting data you have, send the data. It
+produces better answers than a picture of a graph anyway, because nothing has to be interpreted.
+
+**Describe the visuals in your prompt.** Fine for one or two figures, impractical for a report full
+of them.
+
+## Deciding whether it matters to you
+
+**It matters if** your documents are scans, or if the substance genuinely lives in charts and
+diagrams. Contracts marked up on paper, financial packs, technical drawings, printed archives.
+
+**It does not matter if** your documents are text with occasional illustration. Which is most
+documents. The text is what you wanted read, and it comes through.
+
+Worth knowing that Enterprise is a business plan with its own procurement, so for most individuals
+OCR and screenshots are the practical route rather than a plan change.
+
+<InlineInstall
+  heading="Once the document has real text in it"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order. Useful after OCR, since an OCR'd book usually goes straight from one problem to the next."
+/>

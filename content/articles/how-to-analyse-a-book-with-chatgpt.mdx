@@ -1,0 +1,135 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'how-to-analyse-a-book-with-chatgpt',
+  title: 'How to work through a whole book with ChatGPT',
+  heading: 'How to get ChatGPT through an entire book',
+  description:
+    'Book length is past what fits in one go. The approach that works, and the point where a different tool beats any amount of splitting.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to analyze a whole book with chatgpt',
+  related: [
+    'how-to-split-a-document-for-chatgpt',
+    'did-chatgpt-read-my-whole-document',
+    'chatgpt-vs-claude-document-analysis',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT read a whole book at once?',
+      a: 'Rarely. Text files are capped at 2 million tokens, which a long book can approach, and quality degrades well before any hard limit. Chapter by chapter, with a running set of notes, works far better than trying to send everything.',
+    },
+    {
+      q: 'Why does it forget the early chapters?',
+      a: 'The context window holds a finite amount of the conversation. In a long chat, the earliest material falls out of view. That is why a running summary you re-paste is more reliable than assuming it remembers chapter two.',
+    },
+    {
+      q: 'Is it better to upload the whole book or go chapter by chapter?',
+      a: 'Chapter by chapter, for anything you actually care about getting right. One upload gives you a summary weighted heavily toward the beginning. Chapter by chapter gives you an accurate read of every part.',
+    },
+    {
+      q: 'What about a scanned book?',
+      a: 'It needs OCR before anything else, because every plan except Enterprise discards images and a scan is entirely images. Expect the OCR to introduce errors on older print, and skim the output before relying on it.',
+    },
+  ],
+});
+
+<AnswerBox>
+Do not try to send it all at once. Work chapter by chapter, keeping a running set of notes you
+re-paste as you go, so the later chapters are read in the light of the earlier ones. At genuine book
+length, a tool built for long documents will beat any chunking strategy, and that is worth knowing
+before you spend an evening on this.
+</AnswerBox>
+
+## Why one upload does not work
+
+Two limits, and the second is the one people underestimate.
+
+**The token cap.** Text and document files are capped at <Fact k="maxTextTokens" />. A long book can
+approach this, and past it the file is truncated with no warning at all.
+
+**Attention.** Well before any hard limit, quality falls. Ask a question about chapter nine having
+sent the whole book, and the answer draws heavily on whatever was most prominent, which is usually
+the beginning and the end.
+
+So even when a book technically fits, sending it whole gets you a worse read than working through it.
+
+## The approach that works
+
+<Steps>
+  <Step title="Convert to plain text and split by chapter">
+    Chapters are natural boundaries and they match how you will ask questions. Markdown is ideal,
+    since the headings survive.
+  </Step>
+  <Step title="Set the frame once, at the start">
+    "I am working through a book chapter by chapter. After each chapter, give me: the main argument
+    in three sentences, any claim that needs evidence, and how it connects to earlier chapters. Do
+    not summarise the whole book."
+  </Step>
+  <Step title="Send one chapter, get the notes, keep them">
+    Copy the output into your own document. This becomes your running record, and it is what makes
+    the rest work.
+  </Step>
+  <Step title="Re-paste the accumulated notes every few chapters">
+    "Here are my notes on chapters 1 to 6. Chapter 7 follows."
+
+    This is the step that matters. It puts the earlier material back in view rather than trusting the
+    conversation to have kept it.
+  </Step>
+  <Step title="Ask whole-book questions at the end, against the notes">
+    Not against the book, which is no longer in view, but against the notes you have built. They are
+    a condensed version of it and they fit comfortably.
+  </Step>
+</Steps>
+
+<Callout variant="tip" title="The notes are the actual product">
+People treat the running notes as scaffolding. They are the useful output. By the end you have a
+chapter by chapter analysis you can search, quote and check, which the conversation itself will not
+give you.
+</Callout>
+
+## Checking each chapter landed
+
+Long chapters get truncated on their own. Ask something only answerable from the end of the chapter:
+
+> What does the final paragraph of this chapter say?
+
+Ten seconds, and it catches the failure that otherwise poisons everything downstream.
+
+<InlineInstall
+  heading="Sending chapters without cutting them by hand"
+  body="FileUploadGPT splits a long text into pieces ChatGPT accepts and sends them in order with the instruction that stops it answering early. Useful when a single chapter is itself past the limit."
+/>
+
+## Questions that work well on a book
+
+**Per chapter:** what is the argument, what evidence supports it, what is asserted without support.
+
+**Across chapters:** where does the author contradict something said earlier, and which claims does
+the book depend on but never establish.
+
+**At the end, against your notes:** what would a well informed sceptic say, what has been left out,
+and what would you have to believe for the conclusion to hold.
+
+That last set is where this becomes worth the effort. Anyone can get a summary. Finding the argument
+that does not hold together across three hundred pages is genuinely hard, and it is a question the
+notes can answer.
+
+## When to use something else
+
+Being straight about it. If you are doing this often, chunking a book is the wrong tool.
+
+Assistants with much larger context windows can hold a book in one piece, which removes the whole
+problem. Retrieval tools that search a document and surface the relevant passages are built for
+exactly this and will beat any chunking strategy on questions like "where does the author discuss X".
+
+One evening on one book, the approach above is fine. A shelf of books every month, and it is worth
+changing tools.
+
+## Scanned books
+
+OCR first, without exception. Every plan except Enterprise discards images, and a scan is entirely
+images, so there is nothing to read until you create text.
+
+Expect errors on older print, and skim the OCR output before working from it. Mangled words produce
+confidently wrong answers rather than obviously broken ones, which is the harder failure to notice.

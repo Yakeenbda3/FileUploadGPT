@@ -1,0 +1,122 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-message-length-limit',
+  title: 'Is there a message length limit in ChatGPT?',
+  heading: 'How long can a single ChatGPT message be?',
+  description:
+    'OpenAI publishes no character count for messages. What actually constrains you is different, and knowing which explains a lot of odd behaviour.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt message length limit official documentation',
+  related: [
+    'paste-vs-upload-chatgpt',
+    'did-chatgpt-read-my-whole-document',
+    'how-to-split-a-document-for-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'What is the official character limit for a ChatGPT message?',
+      a: 'OpenAI does not publish one. Its documented file limits are specific, 512 MB per file and 2 million tokens per text or document file, but there is no equivalent published figure for a typed or pasted message.',
+    },
+    {
+      q: 'So why did my long paste get cut off?',
+      a: 'Usually the browser rather than ChatGPT. Very large pastes into a web input can be truncated by the page itself, silently. Pasting in several smaller parts avoids it and lets you see each one arrive.',
+    },
+    {
+      q: 'Does a long message use up my file upload allowance?',
+      a: 'No. Upload caps count files. A pasted message is a message, so the daily cap, the rolling cap and the storage cap do not apply to it at all.',
+    },
+    {
+      q: 'What actually limits a long conversation then?',
+      a: 'The context window, which is how much of the conversation the model holds at once. Past it, earlier messages fall out of view. That is why a long chat starts forgetting what you said at the beginning.',
+    },
+  ],
+});
+
+<AnswerBox>
+OpenAI publishes no message character limit. Its file limits are specific and documented, but there
+is no equivalent number for a typed or pasted message. What constrains you in practice is the
+context window, how much of the conversation is held at once, and on very large pastes, your
+browser.
+</AnswerBox>
+
+## The honest answer is that there is no published number
+
+Worth stating plainly, because plenty of pages confidently quote one.
+
+OpenAI documents its file limits precisely: <Fact k="maxFileSize" /> per file,
+<Fact k="maxTextTokens" /> per text or document file, <Fact k="maxSpreadsheetSize" /> for
+spreadsheets, <Fact k="maxImageSize" /> per image.
+
+There is no equivalent published figure for message length. Any specific character count you find is
+somebody's observation presented as documentation, and observations of this kind go stale quickly.
+
+<Callout variant="info" title="Why the file numbers are documented and this one is not">
+File limits are enforcement rules applied at upload. Message length is governed by the model's
+context window, which differs between models and changes as models are updated. There is no single
+number to publish.
+</Callout>
+
+## What actually constrains you
+
+Three different things, and they behave differently.
+
+**The context window.** How much of the conversation the model holds at once. Exceed it over a long
+chat and earlier messages fall out of view, which is why a long conversation starts forgetting what
+you established at the start. It is not a per-message limit, it is a running total.
+
+**Your browser.** Pasting an enormous block of text into a web input can be truncated by the page
+itself before ChatGPT sees any of it. This is the most common cause of "my long paste got cut off",
+and it happens silently.
+
+**The file token cap**, if you upload rather than paste. <Fact k="maxTextTokens" /> per file, which
+is a documented limit and a genuinely hard one.
+
+## Pasting long content sensibly
+
+<Steps>
+  <Step title="Break it into parts of a few thousand words">
+    Small enough to paste reliably, large enough that you are not sending thirty messages.
+  </Step>
+  <Step title="Say what is coming, before any content">
+    "I am pasting a long document in several parts. Do not answer until I say the last has arrived.
+    Reply only 'received' after each."
+  </Step>
+  <Step title="Label each part">
+    "Part 3 of 7." It keeps the order clear and makes a missing part obvious.
+  </Step>
+  <Step title="Check it all arrived">
+    Ask what the final part said. If it cannot answer, something was truncated or skipped.
+  </Step>
+</Steps>
+
+That last step matters more with pasting than with uploading, because browser truncation gives you no
+error at all. The paste looks like it worked.
+
+<InlineInstall
+  heading="Sending long content without pasting it by hand"
+  body="FileUploadGPT reads the file on your computer, splits it into pieces, sends the wait-for-all-parts instruction, and feeds them in order as messages. It also avoids the browser truncation problem, since nothing is being pasted."
+/>
+
+## The useful consequence
+
+Since messages are not uploads, **a long paste does not consume any upload allowance.**
+
+Not the Free plan's <Fact k="freeDailyUploads" />, not the rolling
+<Fact k="rollingUploadRate" />, and not the <Fact k="userStorageCap" /> storage cap. None of them
+count messages.
+
+That makes pasting the reliable route when you are capped on uploads and need to keep working, which
+is a more practically useful fact than any character count would have been.
+
+## When to upload instead
+
+**Structure matters.** Headings and tables survive an upload more cleanly than a paste.
+
+**It is a spreadsheet.** Spreadsheets are analysed as data and are exempt from the token cap.
+
+**It is genuinely long.** Uploading handles a long document in one action, up to the point where it
+gets truncated. Pasting the same content means managing the parts yourself.
+
+**It is a scan.** Neither route works. You need OCR before there is any text to send at all.

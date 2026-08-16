@@ -1,0 +1,118 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-pdf-page-limit',
+  title: 'Is there a page limit for PDFs in ChatGPT?',
+  heading: 'How many pages of a PDF will ChatGPT actually read?',
+  description:
+    'There is no published page limit, but three other ceilings decide how much of a PDF gets read. How to find out what yours managed.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt pdf page limit',
+  related: [
+    'upload-large-pdfs-to-chatgpt',
+    'chatgpt-scanned-pdf-not-working',
+    'chatgpt-file-is-too-large-error',
+  ],
+  faq: [
+    {
+      q: 'What is the maximum number of pages in a PDF?',
+      a: 'OpenAI publishes no page limit. What exists is a 512 MB size ceiling and a 2 million token length cap, and pages are only a rough proxy for either. A 500 page text document and a 50 page image-heavy one can behave completely differently.',
+    },
+    {
+      q: 'Why does it stop reading part way through?',
+      a: 'Because the document passed the token cap. Past that point the file still uploads and ChatGPT works from what fitted, with no error. Ask what the last section is called to find out how far it got.',
+    },
+    {
+      q: 'Is there a 100 page limit?',
+      a: 'There is a ceiling of about 100 images per conversation, and PDF pages count toward it when a PDF is processed visually. That is where the number people have seen comes from, and it is an image count rather than a page limit on reading.',
+    },
+    {
+      q: 'How do I get a 400 page document read properly?',
+      a: 'Send the section you need, or split it and send the parts in order with an instruction to hold the answer until they have all arrived. At genuinely book length, a tool built for long documents will beat any amount of splitting.',
+    },
+  ],
+});
+
+<AnswerBox>
+There is no published page limit. Three other ceilings decide it: <Fact k="maxFileSize" /> of size,
+<Fact k="maxTextTokens" /> of length, and a separate limit of about 100 images per conversation that
+PDF pages count toward. Length is what usually stops you, and it stops you without saying so.
+</AnswerBox>
+
+## Why pages are the wrong unit
+
+A page is not a fixed amount of anything. A page of a legal contract holds several times the text of
+a page in a report with a chart on it. So "how many pages" has no stable answer, and OpenAI does not
+publish one.
+
+What exist are three real ceilings.
+
+| Ceiling | Value | What it counts |
+| --- | --- | --- |
+| Size | <Fact k="maxFileSize" /> | Megabytes |
+| Length | <Fact k="maxTextTokens" /> | Tokens, roughly words |
+| Images per conversation | about 100 | Images, and PDF pages count |
+
+## Length is the one that gets you
+
+Almost every "it stopped reading my PDF" is this.
+
+Text and document files are capped at <Fact k="maxTextTokens" />. As a rough feel, that is a very
+large amount of pure text, but a dense document reaches it far sooner than people expect, and it is
+reached long before the size ceiling on anything text-heavy.
+
+What makes it awkward is the failure mode. **The document is not rejected.** It uploads, ChatGPT
+reads what fitted, and answers confidently from that. There is no warning, no marker, and no hint in
+the response that anything was left out.
+
+<Callout variant="warn" title="Find out how far it actually got">
+Ask something only answerable from the end:
+
+> What is the title of the final section, and what does the last paragraph say?
+
+If it cannot answer, everything it has told you about the document is based on part of it.
+</Callout>
+
+## Where the number 100 comes from
+
+People search for a page limit partly because of a message about adding at most 100 images,
+including PDF pages, to a chat.
+
+That is an **image** ceiling rather than a reading limit, and it applies per conversation. PDF pages
+count toward it when a PDF is handled visually, which is why one long document can trip it.
+
+Two things follow. Starting a new chat resets it, since it is per conversation. And converting the
+PDF to text removes it from the equation completely, because text is not images.
+
+## Getting a long PDF read in full
+
+In order of effort.
+
+**Send the section you need.** Extract those pages into their own PDF. Usually a better answer too,
+since there is less irrelevant material competing for attention.
+
+**Convert to text.** Strips page geometry and embedded images, leaving the words. This helps a lot
+with size and nothing at all with length, so it depends which ceiling you hit.
+
+**Split it and send the parts in order.** Tell ChatGPT up front that several parts are coming and
+not to answer until the last one arrives. Skip that and it summarises part one as though it were the
+whole document.
+
+<InlineInstall
+  heading="Splitting a long PDF automatically"
+  body="FileUploadGPT reads the PDF in your browser, cuts the text into pieces ChatGPT accepts, sends the hold-your-answer instruction first, then feeds the parts in order."
+/>
+
+**Use a different tool at book length.** Past a certain size, even parts sent in order fall out of
+memory before the last one lands. A retrieval tool that searches the document and surfaces relevant
+passages will beat chunking every time.
+
+## If pages come back empty rather than partial
+
+Different problem entirely. If ChatGPT reports finding nothing at all, your PDF is a scan: images of
+pages with no digital text in them. Every plan except Enterprise discards images, so there is
+nothing to extract.
+
+Test it by trying to select a sentence in the PDF. If your cursor draws a box instead of highlighting
+words, it is a scan, and it needs OCR before any of this page applies.

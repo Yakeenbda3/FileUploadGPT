@@ -1,0 +1,115 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-attachment-limit',
+  title: 'ChatGPT attachment limits, all of them',
+  heading: 'Every ChatGPT attachment limit, and which one you hit',
+  description:
+    'Per message, per day, per three hours, per project and per GPT. A short diagnosis for working out which one is actually blocking you.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt attachment limit',
+  related: [
+    'how-many-files-can-you-upload-to-chatgpt',
+    'chatgpt-upload-limit-reached-error',
+    'chatgpt-storage-limit',
+  ],
+  faq: [
+    {
+      q: 'How many attachments can I add to one message?',
+      a: 'The interface caps it, and tells you when you exceed it with a message about only uploading a certain number at a time. Send them across several messages instead. This limit is separate from every other one.',
+    },
+    {
+      q: 'Why can I not attach anything at all right now?',
+      a: 'Either you are out of daily uploads on Free, which allows 3 a day, or you are against the rolling cap of 80 every 3 hours, or your 25 GB storage is full. Settings then Storage tells you whether it is the last one.',
+    },
+    {
+      q: 'Do attachments in old chats still count against me?',
+      a: 'Against storage, yes. The 25 GB cap is cumulative and shared across chats, Projects and custom GPTs, so a file attached months ago is still occupying space until you delete the chat.',
+    },
+    {
+      q: 'Is there a way to attach something without using an upload?',
+      a: 'Paste the text instead. Pasted content is an ordinary message rather than an upload, so it does not touch any attachment limit. It is the reliable way through when you are capped.',
+    },
+  ],
+});
+
+<AnswerBox>
+Five separate attachment limits exist and they stack. Per message, <Fact k="freeDailyUploads" /> per
+day on Free, <Fact k="rollingUploadRate" /> overall, per project, and per custom GPT. Work out which
+one you hit before trying to fix it, because the answers are completely different and only one of
+them is "wait".
+</AnswerBox>
+
+## The five, and how each one clears
+
+| Limit | Value | Clears by |
+| --- | --- | --- |
+| Per message | a small number | Sending across several messages |
+| Free daily | <Fact k="freeDailyUploads" /> | Waiting a day |
+| Rolling rate | <Fact k="rollingUploadRate" /> | Waiting about an hour |
+| Per project | <Fact k="projectFilesPlus" /> on Plus, <Fact k="projectFilesPro" /> on Pro and Team | Removing a file |
+| Per custom GPT | <Fact k="filesPerGpt" /> | Nothing. It is for the GPT's lifetime |
+| Storage | <Fact k="userStorageCap" /> | Deleting chats. Waiting never helps |
+
+## Diagnosing it in thirty seconds
+
+<Steps>
+  <Step title="Read the message properly">
+    Wording about how many "at a time" is the per-message limit. Wording about a limit being reached
+    is one of the account-level caps.
+  </Step>
+  <Step title="Check Settings, then Storage">
+    Near <Fact k="userStorageCap" />? It is storage, and only deleting helps. Comfortably under? Rule
+    it out and move on.
+  </Step>
+  <Step title="Consider what you did recently">
+    A burst of uploads in the last hour points at the rolling cap. Nothing at all for days points at
+    storage, or at a Free plan daily cap you forgot about.
+  </Step>
+  <Step title="Note where you are">
+    Inside a Project, or editing a custom GPT, brings its own separate ceiling into play.
+  </Step>
+</Steps>
+
+<Callout variant="warn" title="Failed attempts count too">
+OpenAI states failed upload attempts can count toward the rate cap. So a file that keeps failing,
+retried six times, has spent six slots and delivered nothing. On the Free plan, with
+<Fact k="freeDailyUploads" />, two retries is your whole day.
+</Callout>
+
+## The way through when you are capped
+
+The most useful thing on this page, and it is not obvious.
+
+**Attachment limits count uploads. Pasted text is a message, not an upload.** So when you cannot
+attach anything at all, you can still open the document, copy the text, and paste it in. It works
+immediately.
+
+For a long document that means pasting in parts, and telling ChatGPT first that more are coming and
+not to answer until the last one arrives. Tedious, and completely unaffected by every limit in the
+table above.
+
+<InlineInstall
+  heading="The same thing without the copying and pasting"
+  body="FileUploadGPT reads the file on your computer and sends the text as messages rather than as an attachment, so it goes through even when your attachment allowance is exhausted."
+/>
+
+## Attaching fewer things in the first place
+
+**Bundle before uploading.** Six documents concatenated into one text file is one attachment rather
+than six. For code, put a header line with the path before each file so the structure survives.
+
+**Send only the relevant part.** One chapter is one attachment and usually produces a better answer
+than the whole book, because there is less irrelevant material competing for attention.
+
+**Convert to text.** Smaller, and it strips images that get discarded anyway on every plan except
+Enterprise.
+
+## One that is not an attachment limit at all
+
+If your document attaches successfully but ChatGPT clearly only read part of it, that is not an
+attachment limit. That is the <Fact k="maxTextTokens" /> length cap, which truncates silently.
+
+Ask what the final section is called. If it cannot say, it never got there, and nothing about your
+attachment allowance was the problem.

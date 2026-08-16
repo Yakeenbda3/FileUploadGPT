@@ -1,0 +1,114 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'custom-gpt-knowledge-file-limit',
+  title: 'How many files can a custom GPT hold?',
+  heading: 'How many knowledge files can a custom GPT hold?',
+  description:
+    'Ten, and it is for the lifetime of that GPT rather than per conversation. How to plan around it before you hit file eleven.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'how many files per gpt knowledge',
+  related: [
+    'chatgpt-storage-limit',
+    'how-many-files-can-you-upload-to-chatgpt',
+    'chatgpt-projects-file-limit',
+  ],
+  faq: [
+    {
+      q: 'How many files can I add to a custom GPT?',
+      a: 'Up to 10 files per GPT, and OpenAI specifies this is for the lifetime of that GPT. It is not a per conversation allowance that refreshes.',
+    },
+    {
+      q: 'Can I delete a file and add a different one?',
+      a: 'You can manage the knowledge files on a GPT you built. The important planning point is that ten is the working ceiling, so past that you are swapping rather than accumulating.',
+    },
+    {
+      q: 'Do GPT knowledge files count against my storage?',
+      a: 'Yes. The 25 GB per user storage cap is shared across chats, Projects and custom GPT knowledge. Files sitting in a GPT you built months ago are still occupying it.',
+    },
+    {
+      q: 'What if my GPT needs to know about more than ten documents?',
+      a: 'Combine them before uploading. Ten large, well organised files carry far more than ten arbitrary ones, and concatenating related documents with clear headers is usually better than ten separate uploads anyway.',
+    },
+  ],
+});
+
+<AnswerBox>
+<Fact k="filesPerGpt" />, and the important word is lifetime. This is not an allowance that refreshes
+per conversation or per month. Ten is the working ceiling for that GPT's knowledge, so it is worth
+planning the ten before you build rather than discovering the limit at document eleven.
+</AnswerBox>
+
+## Lifetime, not per session
+
+OpenAI's wording is specific: up to 10 files per GPT for the lifetime of that GPT.
+
+That catches people because most other limits here are rates. The daily cap refreshes daily, the
+rolling cap refreshes over three hours. This one does not refresh at all.
+
+<Callout variant="warn" title="Plan the ten before you build">
+The natural way to build a custom GPT is to add documents as you think of them. Do that and you
+reach ten with a set nobody chose, some of it half relevant.
+
+Work out what the GPT actually needs to know first, then decide how to fit that into ten files. It
+is a very different exercise from uploading things one at a time.
+</Callout>
+
+## Making ten files carry twenty documents
+
+The ceiling counts files, not content. So the answer to needing more is almost always to combine.
+
+**Group by subject.** All your pricing documents in one file, all your policies in another. Ten
+subject areas is a lot of coverage, and it maps better to how the GPT will be asked questions.
+
+**Use clear headers.** When concatenating, put an obvious marker before each original document:
+
+```
+=== 2026 pricing, updated March ===
+...
+
+=== Refund policy ===
+...
+```
+
+Without those the GPT cannot tell where one document ends and the next begins, and it will blur
+them together.
+
+**Convert to plain text first.** Smaller, cleaner, and it strips the images that would have been
+discarded anyway. It also lets far more content fit under the size limits.
+
+**Leave out what will never be asked about.** A tighter knowledge base produces better answers than
+a comprehensive one, because there is less irrelevant material to sift.
+
+## The other limits that still apply
+
+Ten files is the count. Each of them is still subject to everything else:
+
+| Limit | Value |
+| --- | --- |
+| Size per file | <Fact k="maxFileSize" /> |
+| Text and document length | <Fact k="maxTextTokens" /> |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" /> |
+| Storage, shared | <Fact k="userStorageCap" /> |
+
+That last row deserves attention. GPT knowledge files count against the same
+<Fact k="userStorageCap" /> pool as your chats and Projects. A few GPTs each holding large reference
+documents adds up quietly, and it is a common reason for hitting "upload limit reached" while
+feeling like you have uploaded nothing.
+
+## Images in knowledge files
+
+The same rule as everywhere else. Except on Enterprise, ChatGPT extracts digital text and discards
+images.
+
+So a knowledge file that is a scanned handbook contributes nothing at all. A product sheet whose
+specifications live in an image contributes nothing. The GPT will answer around those gaps rather
+than saying they exist.
+
+If a document matters and is visual, transcribe the important parts into text before uploading it.
+
+<InlineInstall
+  heading="For reference documents past the length cap"
+  body="FileUploadGPT splits long documents into pieces ChatGPT accepts, which is useful when preparing knowledge files that need to fit inside the per-file limits."
+/>

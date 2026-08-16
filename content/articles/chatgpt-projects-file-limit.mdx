@@ -1,0 +1,123 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-projects-file-limit',
+  title: 'How many files fit in a ChatGPT Project?',
+  heading: 'How many files can you put in a ChatGPT Project?',
+  description:
+    'Twenty on Plus and forty on Pro, Team, Education and Business. What counts, what shares your storage, and how to make them go further.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt project file limit',
+  related: [
+    'custom-gpt-knowledge-file-limit',
+    'chatgpt-storage-limit',
+    'chatgpt-plus-file-upload-limit',
+  ],
+  faq: [
+    {
+      q: 'How many files can a Project hold?',
+      a: 'Twenty per project on Plus, and forty per project on Pro, Team, Education and Business. OpenAI updated these limits by subscription plan specifically for Projects.',
+    },
+    {
+      q: 'Is that per project or across all my projects?',
+      a: 'Per project. Several projects each get their own allowance. What is shared across all of them is the 25 GB storage cap, which also covers your ordinary chats and any custom GPTs.',
+    },
+    {
+      q: 'Do Project files count against my daily upload limit?',
+      a: 'Uploading is uploading, so it counts toward the rolling cap of 80 files every 3 hours like anything else. The Project limit is an additional ceiling on what a single project can hold, not a replacement.',
+    },
+    {
+      q: 'What happens when a project is full?',
+      a: 'You remove something to add something. The practical answer is to combine related documents into fewer, larger files before uploading, which carries far more content under the same count.',
+    },
+  ],
+});
+
+<AnswerBox>
+<Fact k="projectFilesPlus" /> on Plus, and <Fact k="projectFilesPro" /> on Pro, Team, Education and
+Business. That is per project, so several projects each get their own allowance. What they all share
+is the <Fact k="userStorageCap" /> storage cap, which also covers your ordinary chats and any custom
+GPTs you built.
+</AnswerBox>
+
+## The numbers
+
+| Plan | Files per project |
+| --- | --- |
+| Plus | <Fact k="projectFilesPlus" /> |
+| Pro | <Fact k="projectFilesPro" /> |
+| Team | <Fact k="projectFilesPro" /> |
+| Education | <Fact k="projectFilesPro" /> |
+| Business | <Fact k="projectFilesPro" /> |
+
+This is one of the few places where the plan you are on genuinely changes an upload limit. Most of
+the others, the size ceiling and the length cap, are identical everywhere.
+
+## Three different limits are in play
+
+Worth separating, because hitting one feels much like hitting another.
+
+**The project count.** <Fact k="projectFilesPlus" /> or <Fact k="projectFilesPro" />, per project.
+Hit it and you cannot add another file to that project until you remove one.
+
+**The rolling upload rate.** <Fact k="rollingUploadRate" />. Uploading into a project is still
+uploading, so a bulk import of thirty files spends thirty slots.
+
+**Storage.** <Fact k="userStorageCap" /> per user, shared across every project, every chat and every
+custom GPT. Cumulative, and it never clears with time.
+
+<Callout variant="info" title="Which one stopped you">
+If the message is about the project being full, it is the count. If it is about the upload limit,
+check Settings then Storage: near the cap means storage, comfortably under means the rate limit and
+waiting an hour will fix it.
+</Callout>
+
+## Making the allowance go further
+
+The ceiling counts files, not content, so combining is almost always the answer.
+
+**Group related documents into one file.** Ten well organised files carry far more usable knowledge
+than twenty arbitrary ones, and the project stays easier to reason about.
+
+**Put a clear header before each original document** when concatenating, so the boundaries survive:
+
+```
+=== Supplier agreement, 2026 ===
+...
+
+=== Amendment 1, March 2026 ===
+...
+```
+
+**Convert to plain text.** Smaller, cleaner, and it strips images that were going to be discarded
+anyway on every plan except Enterprise.
+
+**Take out what nobody will ask about.** A tighter project produces better answers, because there is
+less irrelevant material competing for attention on every question.
+
+## Files in projects are visual too, and that matters
+
+The same rule applies inside a project as anywhere else: except on Enterprise, ChatGPT extracts
+digital text from a document and discards the images.
+
+So a project full of scanned reference material contributes nothing, and nothing will tell you. The
+project looks well stocked and answers vaguely.
+
+If a document matters and its content is in images, OCR it before adding it, or the slot is wasted.
+
+<InlineInstall
+  heading="For project documents past the length cap"
+  body="FileUploadGPT splits long documents into pieces ChatGPT accepts, which is useful when a single reference document is longer than one file is allowed to be."
+/>
+
+## Projects against custom GPTs
+
+Both hold reference files, and people mix up their limits.
+
+| | Projects | Custom GPTs |
+| --- | --- | --- |
+| Files | <Fact k="projectFilesPlus" /> on Plus, <Fact k="projectFilesPro" /> on Pro and Team | <Fact k="filesPerGpt" /> |
+| Scope of the limit | Per project | **Lifetime of the GPT** |
+
+The custom GPT limit is the stricter of the two in practice, because it does not refresh at all.

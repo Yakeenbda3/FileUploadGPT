@@ -1,0 +1,125 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-storage-limit',
+  title: 'ChatGPT storage limit and how to clear it',
+  heading: 'The ChatGPT storage limit nobody mentions until you hit it',
+  description:
+    'A cumulative 25 GB cap shared across chats, Projects and custom GPTs. Why waiting never clears it, and where to find what is using it.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt storage limit',
+  related: [
+    'chatgpt-upload-limit-reached-error',
+    'chatgpt-upload-limit-reset',
+    'how-many-files-can-you-upload-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'How much storage does a ChatGPT account get?',
+      a: '25 GB per user and 100 GB per organisation. It is shared across your chats, your Projects and your custom GPT knowledge rather than allocated separately to each.',
+    },
+    {
+      q: 'Does storage clear over time?',
+      a: 'No. Unlike the rate limits, this one is cumulative and permanent. A file uploaded a year ago still counts and will keep counting until you delete the chat holding it. Waiting achieves nothing at all.',
+    },
+    {
+      q: 'Where do I see how much I have used?',
+      a: 'Settings, then Storage, which shows your Library usage. This is the only upload-related quota ChatGPT displays. It does not show your rolling upload rate.',
+    },
+    {
+      q: 'Does deleting a chat actually free the space?',
+      a: 'Yes. Files live as long as the chat that holds them, so deleting the chat removes the file. OpenAI states files are then deleted from their systems within 30 days.',
+    },
+  ],
+});
+
+<AnswerBox>
+<Fact k="userStorageCap" /> per user, <Fact k="orgStorageCap" /> per organisation, shared across
+chats, Projects and custom GPT knowledge. It is cumulative and it never clears on its own. If this
+is what is blocking you, waiting will not help at any point, ever. You have to delete something.
+</AnswerBox>
+
+## The limit that behaves differently from the others
+
+Most ChatGPT upload limits are about speed. Too many files too quickly, wait a while, carry on.
+
+Storage is not like that. It measures how much you are **keeping**, and it only goes down when you
+delete things.
+
+| Limit | Clears by |
+| --- | --- |
+| Free daily cap, <Fact k="freeDailyUploads" /> | Waiting a day |
+| Rolling rate, <Fact k="rollingUploadRate" /> | Waiting about an hour |
+| **Storage, <Fact k="userStorageCap" />** | **Deleting files. Nothing else** |
+
+Which is why "I have not uploaded anything today and it says I hit my limit" is such a common and
+such a confusing experience. Today is not what is being measured.
+
+## It is shared, which is where it hides
+
+The cap covers three places at once:
+
+- Files in your ordinary **chats**
+- Files in your **Projects**
+- Files uploaded as knowledge to **custom GPTs** you built
+
+People check their recent chats, see nothing large, and conclude it cannot be storage. Meanwhile a
+custom GPT built months ago is holding <Fact k="filesPerGpt" /> worth of reference documents that
+never went anywhere.
+
+## Finding out where you stand
+
+<Steps>
+  <Step title="Open Settings, then Storage">
+    ChatGPT shows your Library usage here. This is the only upload quota it displays anywhere.
+  </Step>
+  <Step title="Compare against 25 GB">
+    Close to it, and storage is your problem. Comfortably under, and something else is blocking you,
+    almost certainly the rolling rate cap.
+  </Step>
+  <Step title="If it is storage, go hunting">
+    Chats with large attachments first, then Projects, then any custom GPTs you built. The biggest
+    single win is usually a chat where you uploaded a large file and never went back.
+  </Step>
+</Steps>
+
+<Callout variant="info" title="What it does not show">
+OpenAI confirms ChatGPT does not display how much of the rolling upload-rate quota you have used or
+have left. So if storage looks healthy and you are still blocked, there is nothing further to check.
+You are rate limited, and waiting is the fix.
+</Callout>
+
+## What happens when you delete
+
+Files live as long as the chat holding them. Delete the chat and the file goes with it.
+
+OpenAI states that once you delete a chat, your account, or a custom GPT, the associated file is
+removed from their systems within 30 days, unless it has already been de-identified or must be kept
+for security or legal reasons.
+
+The quota frees up for your purposes when you delete. The 30 days is about their systems, not about
+when you can upload again.
+
+## Keeping it from filling up
+
+**Delete large chats when you finish with them.** The single largest contributor is usually a
+handful of chats where you uploaded something big once.
+
+**Prefer text over rich documents.** A Word file full of images is enormous. Its text is tiny. Since
+images get discarded on every plan except Enterprise, uploading text costs you a fraction of the
+space and loses nothing that was going to be read.
+
+**Watch Projects and custom GPTs.** Files there persist by design, which is the point of them, and
+means they quietly accumulate against your cap.
+
+<InlineInstall
+  heading="Sending a document without storing it"
+  body="FileUploadGPT reads the file on your computer and sends the text as messages rather than as a stored upload, so working with a long document does not consume your storage quota."
+/>
+
+## If none of it adds up
+
+If storage is well under the cap, you have not uploaded recently, and you are still being refused,
+check status.openai.com before assuming it is your account. Uploads have their own incidents and the
+message shown does not always distinguish one from a quota problem.

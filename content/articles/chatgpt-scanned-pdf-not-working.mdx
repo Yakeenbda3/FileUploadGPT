@@ -1,0 +1,121 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-scanned-pdf-not-working',
+  title: 'ChatGPT cannot read your scanned PDF',
+  heading: 'Why ChatGPT reads nothing from your scanned PDF',
+  description:
+    'The documented reason scans come back empty, a two second test to confirm it, and how to fix the file so it works.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt cannot read scanned pdf',
+  related: [
+    'upload-large-pdfs-to-chatgpt',
+    'chatgpt-pdf-page-limit',
+    'chatgpt-file-types-supported',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT say my PDF has no readable text?',
+      a: 'Because it does not. Every plan except Enterprise extracts digital text from a document and discards the images. A scanned page is a photograph, so there is no digital text to extract and nothing comes back.',
+    },
+    {
+      q: 'Will a paid plan fix it?',
+      a: 'Only Enterprise, which supports visual retrieval for PDFs. Plus and Pro behave exactly like Free here, so upgrading for this specific reason will not help.',
+    },
+    {
+      q: 'How do I know if my PDF is scanned?',
+      a: 'Try to select a sentence with your cursor. If it highlights words, there is real text. If it draws a rectangle over the page, it is an image and needs OCR.',
+    },
+    {
+      q: 'What is OCR and do I have to pay for it?',
+      a: 'Optical character recognition converts a picture of words back into words. Preview on a Mac and Adobe Acrobat both do it, and free web tools exist. Do not use a web tool for anything confidential, since you are uploading the document to a stranger.',
+    },
+  ],
+});
+
+<AnswerBox>
+Your PDF has no text in it. It is a photograph of pages. Every ChatGPT plan except Enterprise
+extracts digital text and discards images, so a scan leaves nothing behind. Run the file through OCR
+to create a real text layer and it behaves like any other document.
+</AnswerBox>
+
+## This is documented behaviour, not a bug
+
+OpenAI's File Uploads FAQ addresses images inside documents directly. Visual retrieval for PDFs is a
+ChatGPT Enterprise feature. For everything else:
+
+> All other plans and document files only support text-based retrieval. This means that ChatGPT will
+> extract digital text from the file and discard any images.
+
+Apply that to a scan. A scanned page contains one thing: an image. Extract the digital text, of
+which there is none, and discard the images, which is all of it. Nothing remains.
+
+The upload succeeds. That is what makes it feel broken rather than expected.
+
+## The two second test
+
+<Steps>
+  <Step title="Open the PDF">
+    Any reader.
+  </Step>
+  <Step title="Try to select a sentence">
+    Click and drag across some words.
+  </Step>
+  <Step title="Read the result">
+    Words highlight, one at a time, following your cursor? Real text, and your problem is something
+    else. A rectangle draws over the page instead? It is an image, and this page is for you.
+  </Step>
+</Steps>
+
+## Fixing it
+
+OCR converts the picture of the words back into words. A few options depending on what you have.
+
+**Mac, no extra software.** Open in Preview and export as PDF. Recent macOS versions add a text
+layer automatically. Test it afterwards with the selection check above.
+
+**Adobe Acrobat.** Scan and OCR, then Recognise Text. The most reliable option and it handles poor
+scans better than most.
+
+**Microsoft OneNote or Word.** Insert the image or PDF and use the text recognition, then copy the
+result out.
+
+**Free web tools.** Plenty exist and most work fine.
+
+<Callout variant="warn" title="Not for anything confidential">
+A free OCR site means uploading your document to a company you know nothing about. For contracts,
+medical records, anything under an NDA, or anything with personal data in it, use software on your
+own machine. The two minutes saved is not worth it.
+</Callout>
+
+## Check the OCR worked before uploading
+
+Run the selection test again on the new file. If words highlight, you have text. If you still get a
+rectangle, the OCR did not take and uploading will fail the same way.
+
+Also skim the result. OCR on a poor scan produces errors, and a document full of mangled words gets
+you confidently wrong answers rather than obviously broken ones. Faded print, handwriting, and
+skewed pages are where it struggles most.
+
+## Once it has text
+
+It becomes an ordinary document, with the ordinary limits: <Fact k="maxFileSize" /> of size and
+<Fact k="maxTextTokens" /> of length. A long scanned book will be past the length cap after OCR, so
+you may go straight from one problem to the next.
+
+<InlineInstall
+  heading="For a long document once it has real text"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order, so a whole OCR'd book gets read rather than the first chapters."
+/>
+
+## If OCR is not an option
+
+Two fallbacks.
+
+**Screenshot the pages that matter and upload them as images.** Images are supported, capped at
+<Fact k="maxImageSize" /> each, with a ceiling of about 100 per conversation. Fine for a few pages,
+impractical for a few hundred.
+
+**Type out the part you need.** Faster than it sounds when it is one clause of a contract, and it
+gives you a clean text you can be certain about.

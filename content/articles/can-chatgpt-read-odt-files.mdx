@@ -1,0 +1,118 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-odt-files',
+  title: 'Does ChatGPT support ODT, HWP and other formats?',
+  heading: 'ODT, HWP, PSD and other formats nobody documents',
+  description:
+    'OpenAI publishes no extension list, so here is how to work out whether an unusual format will upload, and what to do when it will not.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'does chatgpt support odt file upload',
+  related: [
+    'chatgpt-file-types-supported',
+    'best-file-format-for-chatgpt',
+    'can-chatgpt-read-rtf-files',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT support ODT files?',
+      a: 'ODT is the OpenDocument text format, a document in common use, so it falls inside the document family OpenAI lists as supported. In practice it generally uploads fine. If it does not, exporting to DOCX or plain text takes seconds.',
+    },
+    {
+      q: 'What about HWP, the Korean word processor format?',
+      a: 'HWP is a document format but not one in common international use, so it sits outside what OpenAI describes. Treat it as unlikely and export to PDF or DOCX first rather than testing and hoping.',
+    },
+    {
+      q: 'Can ChatGPT open PSD or DWG files?',
+      a: 'These are design and CAD formats rather than documents, so they fall outside all four supported families. Export what you need: a PSD as a flattened image, a DWG as a PDF or an image of the drawing.',
+    },
+    {
+      q: 'How do I check whether an unusual format will work?',
+      a: 'Open it in a plain text editor. If you can see readable words among the markup, ChatGPT can extract them. If it is binary noise, convert first. This test takes ten seconds and is more reliable than any list.',
+    },
+  ],
+});
+
+<AnswerBox>
+OpenAI publishes no list of extensions. Its whole answer is
+&quot;<Fact k="supportedTypesStatement" />&quot; So for anything unusual the question is whether your
+format is a common document, spreadsheet or presentation. ODT is. HWP, PSD and DWG are not, and
+exporting is faster than testing.
+</AnswerBox>
+
+## There is no list, and that is the real answer
+
+Articles that hand you a definitive table of forty supported extensions have invented it. OpenAI has
+published four families and no extensions, so anything more specific is somebody's testing presented
+as documentation.
+
+Which means the useful skill is working it out yourself, and there is a reliable test.
+
+## The ten second test
+
+Open the file in a plain text editor. Notepad, TextEdit in plain mode, VS Code, anything.
+
+**You see readable words**, possibly surrounded by markup and tags. The text is extractable, and
+ChatGPT will very likely handle it. RTF, HTML, XML, CSV and every code format look like this.
+
+**You see binary noise**, rows of unreadable characters. There is no plain text to extract, and it
+needs converting first. PSD, DWG, most images and every archive look like this.
+
+<Callout variant="info" title="Why this test works">
+ChatGPT extracts the digital text from a file. If a text editor can find words, so can it. If a text
+editor finds nothing but noise, there is nothing to find.
+</Callout>
+
+## Format by format
+
+**ODT and ODS**, the OpenDocument formats. Documents and spreadsheets in common use. Generally work.
+If one gives trouble, export to DOCX or plain text.
+
+**HWP**, the Korean word processor format. A document, but not in common international use. Export
+to PDF or DOCX first.
+
+**PSD**, Photoshop. A layered image, not a document. Any text in it is inside image layers, which
+are discarded on every plan except Enterprise. Export the text, or flatten to PNG and upload as an
+image.
+
+**DWG and DXF**, CAD drawings. Not documents. Export to PDF, or take an image of the drawing, though
+be aware fine detail suffers.
+
+**EPUB**, ebooks. Essentially structured HTML in a container, so it often works. Converting to plain
+text is more reliable and strips the packaging.
+
+**Pages, Numbers, Keynote**, Apple's formats. Export to their Microsoft or PDF equivalents. Apple's
+native formats are packages rather than single files.
+
+**WPD**, WordPerfect. Old enough to be worth converting without trying.
+
+## When it will not work, convert
+
+Almost always the fastest path, and rarely lossy in any way that matters.
+
+<Steps>
+  <Step title="Open it in the software that made it">
+    Or LibreOffice, which opens an unusually wide range of formats for free.
+  </Step>
+  <Step title="Export to PDF, DOCX or plain text">
+    Plain text for content. PDF when layout matters. DOCX as a middle ground.
+  </Step>
+  <Step title="Upload the converted file">
+    Now it is an ordinary document with ordinary limits.
+  </Step>
+</Steps>
+
+## What converting costs you
+
+Formatting, layout and images. Since images are discarded on every plan except Enterprise anyway,
+the real loss is presentation, and ChatGPT was working from the words regardless.
+
+If your document's meaning genuinely lives in its layout, a floor plan, a design mockup, a complex
+form, then exporting to an image and uploading that as an image is the better route. Images are
+supported and capped at <Fact k="maxImageSize" /> each.
+
+<InlineInstall
+  heading="Once it is a document and it is long"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order, whatever format they started in."
+/>

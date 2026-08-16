@@ -1,0 +1,124 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-csv-excel-file-limits',
+  title: 'CSV and Excel limits in ChatGPT',
+  heading: 'CSV and Excel limits, and the exemption that matters',
+  description:
+    'Spreadsheets are capped around 50 MB but exempt from the token limit that truncates documents. Why big datasets often work when reports do not.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt csv file size limit',
+  related: [
+    'chatgpt-file-types-supported',
+    'chatgpt-file-is-too-large-error',
+    'chatgpt-file-upload-limit-workaround',
+  ],
+  faq: [
+    {
+      q: 'What is the size limit for a CSV in ChatGPT?',
+      a: 'Around 50 MB, and OpenAI notes it depends on the size of each row rather than being a hard number. Approximate is how they state it, so treat it as approximate.',
+    },
+    {
+      q: 'Are spreadsheets subject to the 2 million token limit?',
+      a: 'No, and this is the useful part. OpenAI states explicitly that the token cap does not apply to spreadsheets. That is why a large dataset often goes through where a document of similar length would be truncated.',
+    },
+    {
+      q: 'Should I upload XLSX or CSV?',
+      a: 'CSV, usually. It is far smaller because it carries no formatting, styling or formulas, and ChatGPT works from the data rather than the presentation. If your workbook has several sheets that matter, export each to its own CSV.',
+    },
+    {
+      q: 'Why does it say my Excel file is too large when it looks small?',
+      a: 'XLSX carries a lot besides data: formatting, styles, embedded charts and images, sometimes cached pivot data. Exporting to CSV usually collapses the size dramatically without losing any of the numbers.',
+    },
+  ],
+});
+
+<AnswerBox>
+Spreadsheets get their own rules. Around <Fact k="maxSpreadsheetSize" />, depending on row size, and
+crucially they are **exempt** from the <Fact k="maxTextTokens" /> cap that truncates documents. That
+exemption is why a large dataset often works fine when a report of comparable length gets cut off.
+</AnswerBox>
+
+## The exemption is the important part
+
+OpenAI's documentation states the token cap on text and document files, then adds directly that this
+limitation does not apply to spreadsheets.
+
+That single sentence explains a lot of otherwise confusing behaviour. A 300 page report gets
+truncated silently. A CSV with 200,000 rows goes through. Both are enormous amounts of text, and
+they are governed by different rules.
+
+| | Documents | Spreadsheets |
+| --- | --- | --- |
+| Size ceiling | <Fact k="maxFileSize" /> | <Fact k="maxSpreadsheetSize" /> |
+| Token cap | <Fact k="maxTextTokens" /> | **Exempt** |
+
+So for spreadsheets, size is genuinely the limit. For documents it almost never is.
+
+## CSV beats XLSX nearly every time
+
+An XLSX file carries far more than its data: cell formatting, styles, fonts, conditional formatting
+rules, embedded charts, images, and sometimes cached pivot table data. None of that is what you want
+analysed.
+
+Exporting to CSV strips all of it and leaves the numbers. Files routinely drop by an order of
+magnitude, and nothing ChatGPT would have used is lost.
+
+<Steps>
+  <Step title="Open the workbook">
+    Excel, Numbers, LibreOffice, Google Sheets.
+  </Step>
+  <Step title="Save or export each sheet as CSV">
+    CSV holds one sheet, so a multi sheet workbook becomes several files. Only export the sheets that
+    matter.
+  </Step>
+  <Step title="Upload the CSV">
+    Smaller, faster, and no formatting to get in the way.
+  </Step>
+</Steps>
+
+<Callout variant="warn" title="Formulas do not survive, results do">
+CSV keeps the computed values, not the formulas that produced them. That is usually what you want,
+since ChatGPT is analysing outcomes. If your question is genuinely about the formula logic, paste the
+formulas in as text separately.
+</Callout>
+
+## Making the data readable
+
+Spreadsheets built for humans often confuse analysis. A few things that consistently help:
+
+**One header row, at the top.** Merged cells, multi row headers and a title row above the headers all
+make it harder to work out what a column is.
+
+**No blank rows in the middle.** They read as the end of the data.
+
+**Consistent columns.** A column with numbers in most rows and text in a few is a common source of
+wrong answers, because it is unclear what the column is.
+
+**Say what the columns mean.** Especially abbreviations. `q3_rev_gbp_net` is obvious to you and
+guessable at best to anything else.
+
+## If the file is still too large
+
+**Send fewer columns.** Most analyses need a handful. Delete the rest before uploading.
+
+**Send a sample.** For "what patterns are in this", a few thousand representative rows produce nearly
+the same answer as two hundred thousand.
+
+**Split by period or category.** Twelve monthly files often work better than one annual one, because
+each question is asked against the relevant slice.
+
+**Aggregate first.** If your question is about totals by region, upload the totals by region rather
+than every transaction.
+
+## Working with the data once it is in
+
+Ask for the analysis rather than the summary. "Summarise this spreadsheet" produces a description of
+the columns. This produces something useful:
+
+> Group by region, sum revenue, and tell me which regions grew and which shrank against the previous
+> quarter. Show the numbers you used.
+
+Requiring the numbers matters. It lets you check the arithmetic, and arithmetic over a large dataset
+is exactly where confident mistakes happen.

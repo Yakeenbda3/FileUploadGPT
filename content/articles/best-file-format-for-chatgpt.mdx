@@ -1,0 +1,126 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'best-file-format-for-chatgpt',
+  title: 'The best file format to upload to ChatGPT',
+  heading: 'Which file format does ChatGPT handle best?',
+  description:
+    'Plain text wins on almost every measure, and the reason explains most upload problems people run into with other formats.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'best file format for chatgpt',
+  related: [
+    'chatgpt-file-types-supported',
+    'can-chatgpt-read-word-docx-files',
+    'chatgpt-csv-excel-file-limits',
+  ],
+  faq: [
+    {
+      q: 'What format does ChatGPT read most reliably?',
+      a: 'Plain text. There is no parsing step to go wrong, no formatting to discard, no images to lose, and the file is a fraction of the size of the same content in any other format.',
+    },
+    {
+      q: 'Is PDF a bad format for ChatGPT?',
+      a: 'Text-based PDFs are fine. Scanned ones are useless, because every plan except Enterprise discards images and a scan is entirely images. The trouble is that both look identical until you try to select text.',
+    },
+    {
+      q: 'Should I convert my Word document before uploading?',
+      a: 'Only if it is large or long. DOCX reads reliably. Converting to text helps when the file size is a problem, because most of a Word file weight is images and formatting rather than words.',
+    },
+    {
+      q: 'Does the format affect answer quality?',
+      a: 'Indirectly and significantly. A format that loses your tables, drops your figures, or truncates half the document gets worse answers, and it does so without saying anything went missing.',
+    },
+  ],
+});
+
+<AnswerBox>
+Plain text, by a distance. Nothing to parse, nothing to discard, no images to lose, and the same
+content is a fraction of the size in any other format. Everything else is a question of whether the
+format hands its text over cleanly, which is also the reason most upload problems happen.
+</AnswerBox>
+
+## Ranked, with the reasoning
+
+| Format | Verdict |
+| --- | --- |
+| **TXT, MD** | Best. No parsing step, so nothing to go wrong. |
+| **CSV** | Best for data, and exempt from the token cap that truncates documents. |
+| **DOCX** | Reliable. Text and headings survive, images are discarded. |
+| **PDF, text-based** | Fine. Structure survives reasonably well. |
+| **PPTX** | Text comes through, and slide decks lean on visuals that do not. |
+| **XLSX** | Works, but much larger than the same data as CSV. |
+| **PDF, scanned** | Useless until OCR'd. There is no text in it. |
+| **ZIP, RAR** | Not opened at all. |
+| **Video, audio** | Not among the supported types. |
+
+## Why plain text wins
+
+Every other format has to be parsed before ChatGPT sees any words. That step is where things go
+wrong: a PDF with an unusual layout, a Word file with corrupted styles, a spreadsheet whose header
+row is merged across four cells.
+
+Plain text has no such step. The file is the words.
+
+It is also tiny. A Word document full of images can be forty megabytes; its text is a few dozen
+kilobytes. Given that images are discarded on every plan except Enterprise, converting throws away
+nothing that was going to be read.
+
+<Callout variant="tip" title="A quick rule for any format">
+Open the file in a text editor. If you can see readable words, ChatGPT can extract them. If you see
+binary noise, it needs converting first.
+</Callout>
+
+## What you lose by converting
+
+Being fair about it, because the answer is not always convert.
+
+**Layout.** Column structure and page design go. For a report or contract this rarely matters, since
+you wanted the words.
+
+**Table structure.** Tables can flatten into runs of text. If a table is central to your question,
+keep the original format, or paste the table separately so its structure is unambiguous.
+
+**Images and charts.** Discarded either way on every plan except Enterprise, so converting loses
+nothing extra here.
+
+**Headings.** Plain text keeps the heading text but not its heading status. Markdown solves this
+neatly, which is why `.md` is worth preferring over `.txt` for structured documents.
+
+## The scanned PDF trap
+
+Worth calling out because it is the most common wasted upload.
+
+A text-based PDF and a scanned PDF look identical. One works perfectly and the other returns nothing
+at all.
+
+Test it in two seconds: try to select a sentence. Words highlight, and it is real text. A rectangle
+draws over the page, and it is an image, which means OCR before ChatGPT can do anything with it.
+
+## What to do with each format
+
+**Long Word document.** Upload as-is unless it is large. If it is, save as plain text, since the
+weight is images.
+
+**Scanned PDF.** OCR first. Nothing else works.
+
+**Spreadsheet.** Export the sheets you need to CSV. Far smaller and exempt from the token cap.
+
+**Slide deck.** Upload it, and expect the text only. If your question is about a chart, screenshot
+the slide and upload it as an image alongside.
+
+**Many code files.** Concatenate into one text file with a header line naming each file, so the
+structure survives and it costs one upload rather than many.
+
+<InlineInstall
+  heading="When the format is right but the document is too long"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order, so a long file gets read in full whatever format it started in."
+/>
+
+## The limit format does not fix
+
+Converting solves size problems. It does not solve length.
+
+If your document is past <Fact k="maxTextTokens" />, plain text is exactly as long as the original,
+because the words are the same. You will still be truncated, and still without a warning. That needs
+sending less at a time rather than a different file extension.

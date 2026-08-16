@@ -1,0 +1,119 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-only-upload-one-file-at-a-time',
+  title: '"You may only upload 1 file at a time"',
+  heading: '"You may only upload 1 file at a time" in ChatGPT',
+  description:
+    'A per message limit rather than an account problem. How to send several files anyway, and the better option most people miss.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt you may only upload 1 files at a time',
+  related: [
+    'how-many-files-can-you-upload-to-chatgpt',
+    'chatgpt-attachment-limit',
+    'can-chatgpt-read-zip-files',
+  ],
+  faq: [
+    {
+      q: 'Why can I only upload one file at a time?',
+      a: 'It is a limit on how many files attach to a single message, not a problem with your account or your plan. Send them one per message and they all end up in the same conversation, which is what matters.',
+    },
+    {
+      q: 'Does this mean I have hit my upload limit?',
+      a: 'No, and the wording is what confuses people. This message is about one message. A limit reached message is a different thing entirely and refers to your daily or rolling allowance.',
+    },
+    {
+      q: 'Can I zip them together instead?',
+      a: 'No. ChatGPT does not unpack archives, so a zip arrives as one file it cannot see inside. Concatenating the files into a single text file achieves what zipping was meant to.',
+    },
+    {
+      q: 'Does sending them across messages use more of my allowance?',
+      a: 'Yes. Each upload counts separately toward the rolling cap of 80 every 3 hours, and on Free toward the 3 per day. Bundling into one text file is one upload rather than several.',
+    },
+  ],
+});
+
+<AnswerBox>
+This is a per message limit, not an account limit. Nothing is wrong with your plan or your quota.
+Send the files one per message and they all land in the same conversation. If you have many, bundling
+them into a single text file first is better: one upload instead of several, and ChatGPT can still
+tell them apart.
+</AnswerBox>
+
+## What this message means
+
+The interface limits how many files attach to any one message. Exceed it and you get this wording.
+
+It is easily confused with the other one, so worth separating clearly:
+
+| Message | What it is about |
+| --- | --- |
+| Only upload N files **at a time** | One message. Send more messages. |
+| **Limit reached** | Your daily or rolling allowance, or storage. |
+
+The first is an inconvenience. The second means you are actually blocked.
+
+## Sending them one per message
+
+The straightforward fix, and it works fine.
+
+Attach the first file and send it. Attach the second and send it. Everything stays in the same
+conversation, so ChatGPT has all of them available when you ask your question.
+
+<Callout variant="tip" title="Tell it what is coming">
+Before the first file, say something like: "I am sending four documents one at a time. Do not
+analyse anything until I say they have all arrived."
+
+Otherwise ChatGPT analyses document one on its own, then adjusts as the others appear, and its
+overall read stays anchored to whatever it saw first.
+</Callout>
+
+## The better option for more than a few
+
+Every separate upload counts against your allowance. The rolling cap is
+<Fact k="rollingUploadRate" />, and on Free it is <Fact k="freeDailyUploads" />, so six files is six
+slots. On Free that is two days.
+
+Bundling them into one text file is one upload instead of six:
+
+```
+for f in reports/*.txt; do echo "=== $f ==="; cat "$f"; done > bundle.txt
+```
+
+On Windows PowerShell:
+
+```
+Get-ChildItem reports\*.txt | ForEach-Object {
+  "=== $($_.Name) ==="; Get-Content $_.FullName
+} | Set-Content bundle.txt
+```
+
+The header lines matter. They tell ChatGPT where each document starts and stops, which it needs in
+order to answer questions about one of them rather than blending them together.
+
+<InlineInstall
+  heading="If the bundle ends up too long"
+  body="FileUploadGPT splits a large text bundle into pieces ChatGPT accepts and sends them in order, so a stack of combined documents gets read in full."
+/>
+
+## What does not work
+
+**Zipping them.** ChatGPT does not unpack archives. You spend an upload and get nothing readable.
+Bundling into text is the version of this idea that actually works.
+
+**Uploading a folder.** Not supported. Files are individual.
+
+**Retrying the multi-file attach.** The per-message limit will be the same every time, and failed
+attempts count toward your rate cap.
+
+## When files are related, order helps
+
+If the documents form a sequence, a contract and its amendments, chapters, versions of a draft, send
+them in order and say so:
+
+> These are four versions of the same document, oldest first. Once all four are here, tell me what
+> changed between each version.
+
+That gets you a genuinely different and more useful answer than uploading them in whatever order
+they happened to be in.

@@ -1,0 +1,118 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-powerpoint-pptx-support',
+  title: 'Can ChatGPT read PowerPoint presentations?',
+  heading: 'Can ChatGPT read a PowerPoint deck?',
+  description:
+    'Presentations are supported, but slide decks carry meaning in visuals that get discarded. What comes through and what quietly does not.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt file uploads supported file types pptx',
+  related: [
+    'chatgpt-file-types-supported',
+    'best-file-format-for-chatgpt',
+    'chatgpt-document-analysis-tips',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT accept PPTX files?',
+      a: 'Yes. Presentations are one of the four families OpenAI lists as supported, alongside text files, spreadsheets and documents.',
+    },
+    {
+      q: 'Will it see the charts on my slides?',
+      a: 'No, on every plan except Enterprise. ChatGPT extracts the digital text and discards images, and a chart on a slide is an image. It will answer around the gap without mentioning it.',
+    },
+    {
+      q: 'Do speaker notes come through?',
+      a: 'Speaker notes are text, so they generally do, and they often carry more actual argument than the slides. Worth remembering if your deck is sparse but your notes are detailed.',
+    },
+    {
+      q: 'How do I get feedback on the visual design?',
+      a: 'Export the slides as images and upload those. Design is entirely visual, so a text extraction has nothing to work with. Images are capped at 20 MB each with a ceiling of about 100 per conversation.',
+    },
+  ],
+});
+
+<AnswerBox>
+Yes, presentations are one of the four supported families. The catch is what a deck is made of: on
+every plan except Enterprise, ChatGPT extracts the text and discards the images, so your charts,
+diagrams and screenshots are not there. Speaker notes usually are, and often carry more than the
+slides.
+</AnswerBox>
+
+## What survives the upload
+
+| Part of the deck | What happens |
+| --- | --- |
+| Slide titles and body text | Read |
+| Bullet points | Read |
+| Speaker notes | Usually read |
+| Text inside tables | Usually read |
+| Charts and graphs | **Discarded** |
+| Diagrams and SmartArt | **Discarded** |
+| Images and screenshots | **Discarded** |
+| Design, layout, colour | Not conveyed |
+
+Decks are the format where this hurts most, because a good presentation deliberately puts the
+argument in the visuals and keeps the text sparse. Extract only the text from a well designed deck
+and you can be left with very little.
+
+<Callout variant="warn" title="A sparse deck can produce a confidently empty summary">
+Twelve slides that each carry a chart and three words will produce a summary of thirty-six words'
+worth of content, delivered as though that were the presentation. Nothing indicates that most of the
+meaning was in the pictures.
+</Callout>
+
+## Check the speaker notes first
+
+The single most useful thing about analysing decks.
+
+Speaker notes are text, so they come through, and in most real presentations they hold the actual
+argument: what the chart shows, why it matters, what the recommendation is. The slide says
+"Q3 Performance" and the notes say what happened and what to do about it.
+
+If your deck has notes, say so:
+
+> This deck has speaker notes. Use them as the primary content, and the slide text as headings.
+
+If it does not, and the slides are mostly visual, a text extraction was always going to be thin, and
+that is worth knowing before you judge the answer.
+
+## Getting the visuals looked at
+
+Two options depending on what you need.
+
+**Export slides as images and upload those.** ChatGPT can work with images directly, so a chart it
+can see is a chart it can discuss. Capped at <Fact k="maxImageSize" /> each with a ceiling of about
+100 images per conversation, so choose the slides that carry the answer.
+
+**Describe the charts in text.** Faster for a handful of figures. Paste the underlying numbers rather
+than describing the picture, and you will get a better answer than either route alone.
+
+## Things decks are genuinely good for
+
+**Tightening the writing.** Ask it to cut every slide's text to a single line, or to rewrite bullets
+in a consistent voice.
+
+**Finding the structure problem.** "Where does the argument in this deck jump, and which slide is
+doing too much work?" is a text question and it answers it well.
+
+**Turning a deck into prose.** Decks make poor documents, and converting one into a written summary
+for people who missed the meeting works well, particularly when the speaker notes are present.
+
+**Generating the questions you will be asked.** "What would a sceptical audience push back on here?"
+is useful preparation and needs no visuals.
+
+## If the deck is very long
+
+Presentations are usually well under the limits, since text is light. A very long deck, or a set of
+them concatenated, can pass <Fact k="maxTextTokens" /> and get truncated silently.
+
+The same check applies as for any document. Ask what the final slide is titled. If it cannot say, it
+did not get there.
+
+<InlineInstall
+  heading="For a long deck or a set of them"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order, so the whole set gets read rather than the opening slides."
+/>

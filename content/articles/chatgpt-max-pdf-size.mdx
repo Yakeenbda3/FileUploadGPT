@@ -1,0 +1,111 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-max-pdf-size',
+  title: 'Maximum PDF size for ChatGPT uploads',
+  heading: 'How big a PDF can you upload to ChatGPT?',
+  description:
+    'The ceiling is 512 MB, which almost nobody reaches. What actually makes a PDF too big, and why shrinking it costs you nothing.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt max pdf size',
+  related: [
+    'chatgpt-pdf-page-limit',
+    'upload-large-pdfs-to-chatgpt',
+    'chatgpt-file-is-too-large-error',
+  ],
+  faq: [
+    {
+      q: 'What is the maximum PDF file size?',
+      a: '512 MB, the same hard ceiling as any other file. In practice almost nobody reaches it, because a PDF that large is nearly always scans or high resolution images, and both of those get discarded anyway.',
+    },
+    {
+      q: 'My PDF is only 4 MB and it will not work. Why?',
+      a: 'You are not hitting the size limit. Either the document is past the 2 million token length cap, in which case it uploads and gets truncated silently, or it is a scan with no text in it. Those are the two common cases and neither is about megabytes.',
+    },
+    {
+      q: 'Does compressing a PDF lose anything ChatGPT would have used?',
+      a: 'Almost nothing. Compression mainly reduces image quality, and every plan except Enterprise discards images from documents anyway. You are shrinking the part that was going to be thrown away.',
+    },
+    {
+      q: 'Is exporting to text better than compressing?',
+      a: 'For getting it read, yes, and by a wide margin. Text is a fraction of the size and it is exactly what ChatGPT extracts anyway. Keep the PDF only if you need the layout for your own reference.',
+    },
+  ],
+});
+
+<AnswerBox>
+<Fact k="maxFileSize" />, the same ceiling as any file. You are unlikely to reach it: a PDF that
+large is almost always scans or high resolution images, which every plan except Enterprise discards
+before reading anything. If a much smaller PDF is being refused, the problem is length or scanning
+rather than size.
+</AnswerBox>
+
+## Size is rarely the real limit
+
+The number is generous. A 500 page text-based PDF is typically a few megabytes, which is three
+orders of magnitude below the ceiling.
+
+To actually reach <Fact k="maxFileSize" /> a PDF has to be carrying enormous images: a scanned book
+at high resolution, a photo book, a set of technical drawings. And that class of document has a
+different problem, because images are discarded before any reading happens.
+
+So a PDF that genuinely hits the size limit is usually one ChatGPT could not have read anyway.
+
+## What makes a PDF large
+
+| Contents | Typical size | Read by ChatGPT |
+| --- | --- | --- |
+| Pure text, hundreds of pages | a few MB | Yes |
+| Text plus a few charts | 5 to 20 MB | Text only |
+| Scanned pages | 50 MB and up | **Nothing** |
+| High resolution photographs | 100 MB and up | **Nothing** |
+
+The pattern is worth noticing. **The things that make a PDF big are the things ChatGPT throws
+away.** Text weighs almost nothing.
+
+## Shrinking one, and why it is free
+
+Since images are discarded on every plan except Enterprise, compressing costs you nothing that was
+going to be used.
+
+**Compress the PDF.** Nearly every PDF tool has a reduce-file-size option. It lowers image quality,
+which is the part being discarded.
+
+**Export to plain text.** The most effective by a distance. A 60 MB PDF often becomes a few dozen
+kilobytes as text, and text is precisely what ChatGPT extracts. Keep the original for yourself if you
+need the layout.
+
+**Extract the pages you need.** A chapter is smaller than a book and usually produces a better
+answer, because there is less irrelevant material competing for attention.
+
+<Callout variant="tip" title="A quick way to know which problem you have">
+Try to select a sentence in the PDF. If words highlight, there is real text and shrinking it will
+help. If a rectangle draws over the page, it is a scan, and no amount of compression will make it
+readable. That needs OCR.
+</Callout>
+
+## The two limits that stop people who are nowhere near 512 MB
+
+**Length.** Text and document files are capped at <Fact k="maxTextTokens" />. A long PDF can be a
+couple of megabytes and be well past this. It uploads, ChatGPT reads what fitted, and nothing warns
+you. Check by asking what the final section is called.
+
+**Scanning.** A scan has no digital text, so extraction returns nothing. Every plan except Enterprise
+behaves this way, which is why paying more does not fix it.
+
+Between them, those two account for nearly every failed PDF. Size accounts for very few.
+
+<InlineInstall
+  heading="For a PDF that is long rather than large"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order, so a long report gets read in full instead of in part."
+/>
+
+## The other PDF ceiling
+
+Separate from file size, there is a limit of about 100 images per conversation, and PDF pages count
+toward it when a PDF is handled visually.
+
+That is where the number people have seen comes from. It applies per conversation, so starting a new
+chat resets it, and converting the PDF to text removes it from the equation entirely, since text is
+not images.

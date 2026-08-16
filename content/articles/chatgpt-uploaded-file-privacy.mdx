@@ -1,0 +1,118 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-uploaded-file-privacy',
+  title: 'What happens to files you upload to ChatGPT',
+  heading: 'What happens to a file after you upload it to ChatGPT',
+  description:
+    'Whether OpenAI trains on your documents, how long files are kept, how to delete them, and which plans are excluded from training by policy.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'does openai train on uploaded files',
+  related: [
+    'chatgpt-storage-limit',
+    'chatgpt-contract-review-guide',
+    'upload-large-code-files-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Does OpenAI use my uploaded files to train models?',
+      a: 'It depends on the service. For consumer services, content including uploaded files may be used to improve model performance, and there is a setting to opt out. Business offerings such as the API and ChatGPT Enterprise are excluded by policy.',
+    },
+    {
+      q: 'How long are uploaded files kept?',
+      a: 'Files live as long as the chat holding them. Once you delete the chat, your account, or the custom GPT holding the file, it is deleted from OpenAI\'s systems within 30 days, unless already de-identified or retained for security or legal reasons.',
+    },
+    {
+      q: 'How do I delete a file I uploaded?',
+      a: 'Delete the chat that contains it. For custom GPT knowledge, remove it from the GPT or delete the GPT. This also frees space against your 25 GB storage cap, which nothing else does.',
+    },
+    {
+      q: 'Should I upload confidential documents?',
+      a: 'Check your data controls setting first, and check what your employer allows. For anything under an NDA or containing personal data, redacting names and figures before uploading is a cheap precaution that costs you almost nothing in answer quality.',
+    },
+  ],
+});
+
+<AnswerBox>
+On consumer plans, content including uploaded files may be used to improve model performance unless
+you turn that off in ChatGPT's data controls. Business offerings such as the API and ChatGPT
+Enterprise are excluded from that by policy. Files themselves live as long as the chat holding them,
+and are removed within 30 days of you deleting it.
+</AnswerBox>
+
+## Training: it depends which service
+
+OpenAI draws a clear line between consumer and business offerings.
+
+**Consumer services.** Content may be used to improve model performance, and OpenAI says explicitly
+that content may include files that are uploaded. There is a setting controlling this, in ChatGPT's
+data controls.
+
+**Business offerings.** OpenAI states it does not use content submitted to business offerings such
+as the API and ChatGPT Enterprise to improve model performance.
+
+<Callout variant="warn" title="Check the setting before, not after">
+The data controls setting is in ChatGPT, under your account settings. It takes ten seconds to
+check and it cannot be applied retroactively to something already uploaded. If you handle client
+work, contracts, or anything under an NDA on a consumer plan, this is worth doing today rather than
+the first time it matters.
+</Callout>
+
+## Retention: files follow their chat
+
+The rule is simpler than people expect. A file lives as long as the conversation holding it.
+
+| What you delete | What happens to the file |
+| --- | --- |
+| The chat containing it | Deleted from OpenAI's systems within 30 days |
+| Your account | Same |
+| A custom GPT holding it as knowledge | Same |
+
+The exceptions OpenAI names are content already de-identified and disassociated from your account,
+and content that must be retained for security or legal reasons.
+
+Files uploaded as knowledge to a custom GPT are retained until you delete that GPT, which is worth
+remembering: a GPT you built and forgot is still holding whatever you gave it.
+
+## Deleting things, and why it is worth doing anyway
+
+Beyond privacy, there is a practical reason. Your storage cap is <Fact k="userStorageCap" /> per
+user, shared across chats, Projects and custom GPT knowledge, and it is **cumulative**. It does not
+clear with time.
+
+So deleting old chats with large attachments does two useful things at once: it removes the file and
+it frees the quota. It is also the only thing that frees the quota, which is why "upload limit
+reached" so often appears to people who have not uploaded anything recently.
+
+## Reasonable precautions
+
+Not paranoia, just proportionate care.
+
+**Redact before uploading.** Names, account numbers, addresses, salaries. A contract analyses just as
+well with the parties called Company A and Company B, and you have removed the part that mattered.
+
+**Grep code for secrets.** `.env` files, API keys in config, connection strings in test fixtures.
+Bundling a directory sweeps all of it in. Check before you send, not after.
+
+**Know what your employer allows.** Many organisations have a policy on this, and a fair number of
+people find out what it was after uploading something.
+
+**Prefer excerpts.** Sending the clause you have a question about rather than the whole agreement is
+better privacy and usually a better answer, because there is less irrelevant material competing for
+attention.
+
+<InlineInstall
+  heading="Where the file goes with this extension"
+  body="FileUploadGPT reads the document inside your browser and sends the text to ChatGPT. There is no server of ours in the path, so the only place your content goes is OpenAI, exactly as if you had pasted it yourself."
+/>
+
+## What this extension does not change
+
+Worth being explicit. Using any tool to get content into ChatGPT does not alter what OpenAI does with
+it once it arrives. Your data controls setting and your plan govern that, and a browser extension has
+no influence over either.
+
+What a locally-processing extension does mean is that there is no **additional** party. The content
+goes from your machine to OpenAI, and nowhere else along the way. That is worth checking on any tool
+in this category, since not all of them work that way.

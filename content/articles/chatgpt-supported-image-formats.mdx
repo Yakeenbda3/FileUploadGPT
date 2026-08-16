@@ -1,0 +1,110 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-supported-image-formats',
+  title: 'Which image formats does ChatGPT accept?',
+  heading: 'Which image formats can you upload to ChatGPT?',
+  description:
+    'The common web formats work and are capped at 20 MB each. The more useful question is when to send an image at all rather than text.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt supported image formats',
+  related: [
+    'chatgpt-image-upload-limit',
+    'chatgpt-file-types-supported',
+    'chatgpt-scanned-pdf-not-working',
+  ],
+  faq: [
+    {
+      q: 'What image formats can I upload?',
+      a: 'The common web formats, PNG, JPEG, WEBP and GIF, are the ones to rely on. OpenAI publishes no explicit list, but images are capped at 20 MB each and the widely used formats work.',
+    },
+    {
+      q: 'Can I upload a HEIC photo from my iPhone?',
+      a: 'HEIC is Apple\'s format and less universally handled. Converting to JPEG first removes the question entirely, and most Mac and iPhone export flows will do it for you.',
+    },
+    {
+      q: 'What about PSD, AI or RAW files?',
+      a: 'Those are design and camera formats rather than web images, and they fall outside what is supported. Export a flattened PNG or JPEG of what you want looked at.',
+    },
+    {
+      q: 'Is uploading a screenshot of text a good idea?',
+      a: 'It works, but sending the text itself is better whenever you can. Text is exact, searchable and quotable, while a screenshot has to be interpreted and any misreading is silent.',
+    },
+  ],
+});
+
+<AnswerBox>
+The common web formats work: PNG, JPEG, WEBP and GIF. Each image is capped at
+<Fact k="maxImageSize" />, and there is a ceiling of about 100 images per conversation. Design and
+camera formats such as PSD, AI and RAW are not web images and need exporting first.
+</AnswerBox>
+
+## What to use
+
+| Format | Verdict |
+| --- | --- |
+| **PNG** | Best for screenshots, diagrams and anything with text in it |
+| **JPEG** | Best for photographs |
+| **WEBP** | Works, common on the web |
+| **GIF** | Works, treated as a still |
+| HEIC | Apple's format. Convert to JPEG to be safe |
+| PSD, AI, RAW | Not web images. Export a flattened PNG or JPEG |
+| SVG | A vector format, and better handled by pasting the underlying code as text |
+
+As with document formats, OpenAI publishes no explicit list. What is documented is the
+<Fact k="maxImageSize" /> per image cap. The common formats work, and anything unusual is faster to
+convert than to test.
+
+## PNG for anything with text in it
+
+Worth knowing if you upload screenshots.
+
+JPEG compression works by discarding detail, and the detail it discards most visibly is sharp edges,
+which is exactly what letterforms are made of. A JPEG screenshot of small text gets fuzzy in a way a
+PNG does not, and fuzzy text is misread rather than flagged as unreadable.
+
+PNG for screenshots, code, diagrams and documents. JPEG for photographs, where its compression is
+doing what it was designed for.
+
+## The limits
+
+**<Fact k="maxImageSize" /> per image.** Generous. A phone photo is a few megabytes and a screenshot
+far less. If you hit this, resizing solves it and loses nothing that mattered.
+
+**About 100 images per conversation**, and PDF pages count toward the same ceiling. It is per
+conversation, so a new chat resets it.
+
+## When to send text instead
+
+The more useful question than which format, and the answer is usually text.
+
+**Sending text is better when the content is text.** It is exact. Nothing has to be interpreted, so
+nothing can be misread. It is searchable and quotable, and it costs a fraction of the length.
+
+**Sending an image is better when the layout is the point.** A chart, a diagram, a form, a design, a
+screenshot of an error including its surrounding interface.
+
+<Callout variant="warn" title="A misread screenshot fails silently">
+If ChatGPT misreads a number in a blurry screenshot, you get a confident answer built on the wrong
+figure and no indication anything went wrong. Sending the number as text removes that entire class of
+error. It is worth the extra ten seconds on anything you will act on.
+</Callout>
+
+## The related rule that catches people
+
+Images uploaded **directly** are read. Images **inside a document** are not.
+
+Every plan except Enterprise extracts the digital text from an uploaded document and discards its
+images. So a chart in a Word file or a diagram in a PDF is not available, and nothing says so.
+
+If a figure inside a document matters, screenshot that page and upload it as an image alongside the
+document. That is the reliable way to get both.
+
+The same rule is why a scanned PDF returns nothing: it is entirely images, so the extraction finds
+nothing to extract.
+
+<InlineInstall
+  heading="For the document part of the job"
+  body="FileUploadGPT splits long text documents into pieces ChatGPT accepts and sends them in order. Pair it with screenshots of any figures that matter, since those need to go in as images."
+/>

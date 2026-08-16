@@ -1,0 +1,140 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-uploader-extension',
+  title: 'What a ChatGPT file uploader extension does',
+  heading: 'What a ChatGPT file uploader extension actually does',
+  description:
+    'What this category of extension can and cannot change, how to judge one before installing, and when you do not need one at all.',
+  category: 'compare',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt file uploader extension',
+  related: [
+    'best-chrome-extensions-for-chatgpt',
+    'chatgpt-file-upload-limit-workaround',
+    'how-to-split-a-document-for-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can an extension raise ChatGPT\'s upload limit?',
+      a: 'No. The limits are enforced on OpenAI\'s side and nothing running in your browser can change them. Any extension claiming to raise or remove a limit is describing something it cannot do.',
+    },
+    {
+      q: 'So what does a file uploader extension actually do?',
+      a: 'It automates the manual workaround: reading a document, splitting it into pieces ChatGPT will accept, sending the instruction that stops it answering early, and feeding the parts in order. Useful, but not magic.',
+    },
+    {
+      q: 'Is it safe to install one?',
+      a: 'Depends on the extension. Anything running on ChatGPT can read your conversations. Check the permissions on the store listing: a tool for one site has no reason to ask for access to all sites, and that mismatch is the clearest warning available.',
+    },
+    {
+      q: 'Do I need one?',
+      a: 'Only if you regularly hit the limit. If you rarely upload anything long, splitting by hand a few times a year is faster than installing something. We would rather say that than have you install a tool you remove next week.',
+    },
+  ],
+});
+
+<AnswerBox>
+It automates the manual workaround, nothing more. Read the document, split it into pieces ChatGPT
+accepts, send the instruction that stops it answering early, feed the parts in order. No extension
+can raise a limit, because the limits are enforced by OpenAI and nothing in your browser can reach
+them.
+</AnswerBox>
+
+We make one, so weigh this accordingly. It is still worth writing down what this category can and
+cannot do, because several products in it imply capabilities that do not exist.
+
+## What cannot be done, by anyone
+
+Some claims are worth recognising as impossible rather than merely doubtful.
+
+**Raising the file size limit.** <Fact k="maxFileSize" /> is enforced by OpenAI's servers. A browser
+extension has no access to that decision.
+
+**Raising the length cap.** <Fact k="maxTextTokens" /> likewise. Nothing installed locally changes
+how much text ChatGPT can hold.
+
+**Raising the daily or rolling upload caps.** <Fact k="freeDailyUploads" /> on Free,
+<Fact k="rollingUploadRate" /> generally. Server side, both.
+
+**Making ChatGPT read a scanned PDF.** Every plan except Enterprise discards images from documents.
+An extension cannot change what happens after the content arrives.
+
+If a listing suggests otherwise, that is the point to stop reading it.
+
+## What can be done
+
+The workaround is not secret, and there is no reason for a product in this space to pretend it is.
+
+You can do all of it by hand: convert the document to text, cut it into pieces, tell ChatGPT that
+several parts are coming and to hold its answer, then paste them in order.
+
+An extension does that reliably. The value is entirely in the reliability, because the manual version
+fails in ways you do not notice: a chunk pasted twice, one skipped, one silently truncated by the
+paste, or the hold-your-answer instruction forgotten so ChatGPT summarises part one.
+
+<Callout variant="info" title="There is a second thing worth knowing">
+Upload caps count files. Text sent as a message is not an upload, so it does not touch the daily
+cap, the rolling cap, or your storage quota. An extension that sends content as messages therefore
+works when you are completely out of uploads, which is a genuine capability rather than a claim
+about limits.
+</Callout>
+
+## Judging one before you install it
+
+<Steps>
+  <Step title="Read the permissions on the store listing">
+    A ChatGPT tool needs chatgpt.com and chat.openai.com. If it asks to read and change data on all
+    websites, ask why, because it has no business on your bank's site.
+  </Step>
+  <Step title="Find out where your content goes">
+    Some process everything locally. Others send it to their own servers, which may be fine and may
+    be exactly what you cannot do with work material. The privacy policy should say. If it does not,
+    that is your answer.
+  </Step>
+  <Step title="Check when it was last updated">
+    ChatGPT's interface changes often, and anything in this category breaks when it does. An
+    extension untouched for a year is probably broken.
+  </Step>
+  <Step title="Check there is a real developer behind it">
+    A website, a support address, somewhere to report a break. This category needs maintenance more
+    than most.
+  </Step>
+</Steps>
+
+## When you do not need one
+
+Genuinely worth considering before installing anything.
+
+**If you rarely hit the limit.** Splitting a document by hand three times a year is faster than
+installing, learning and maintaining a tool.
+
+**If your documents are short.** Most are. If yours upload fine today, there is no problem to solve.
+
+**If your problem is scans.** No extension helps. You need OCR, and after that you may not need
+anything else.
+
+**If your problem is video or audio.** Neither is among the supported upload types. Transcribe
+first, and a transcript is usually short enough to need nothing further.
+
+## What ours does, plainly
+
+FileUploadGPT reads the file in your browser, splits the text into pieces ChatGPT accepts, sends the
+wait-for-all-parts instruction, then feeds the parts in order.
+
+Permissions: chatgpt.com and chat.openai.com. Nothing else.
+
+Your file: read in your browser. There is no server of ours for it to reach.
+
+Cost: nothing, with no account and no paid tier.
+
+<InlineInstall
+  heading="If that matches the problem you have"
+  body="Free, and about twenty seconds to install. If you never hit the upload limit, you do not need it, and we would rather say so."
+/>
+
+## The honest summary of the category
+
+These tools remove tedium. They do not remove limits, and the ones implying otherwise are worth
+avoiding on that basis alone, because a product misdescribing what it does in its listing is unlikely
+to be more careful with your documents.

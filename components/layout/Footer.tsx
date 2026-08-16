@@ -7,6 +7,7 @@ const PRODUCT = [
   { href: '/features', label: 'Features' },
   { href: '/install', label: 'Install it' },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/use-cases', label: 'Use cases' },
   { href: '/changelog', label: 'Changelog' },
 ];
 

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { CATEGORIES, getAllArticles } from '@/lib/articles';
+import { USE_CASES } from '@/lib/use-cases';
 import { REDIRECT_SOURCES } from '@/lib/redirects';
 import { absoluteUrl } from '@/lib/site';
 
@@ -27,6 +28,7 @@ const STATIC_PAGES: Array<{ path: string; priority: number; changeFrequency: 'da
   { path: '/pricing', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/guides', priority: 0.8, changeFrequency: 'weekly' },
   { path: '/blog', priority: 0.7, changeFrequency: 'weekly' },
+  { path: '/use-cases', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/about', priority: 0.4, changeFrequency: 'monthly' },
   { path: '/contact', priority: 0.4, changeFrequency: 'monthly' },
   { path: '/changelog', priority: 0.4, changeFrequency: 'monthly' },
@@ -50,6 +52,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'weekly' as const,
       priority: 0.7,
+    })),
+
+    // Derived from the same array the route builds pages from, so a new audience page cannot be
+    // added and forgotten here. These were missed on the first deploy precisely because they were
+    // listed by hand: five pages existed, returned 200, and were declared nowhere.
+    ...USE_CASES.map((useCase) => ({
+      url: absoluteUrl(`/use-cases/${useCase.slug}`),
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
     })),
 
     // Articles carry their own `updated` date rather than today's. A sitemap that claims every page

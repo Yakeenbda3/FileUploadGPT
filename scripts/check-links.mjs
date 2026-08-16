@@ -13,6 +13,12 @@
 //   3. AN INTERNAL LINK TO A REDIRECT SOURCE. Not fatal, but it spends a hop on every crawl of
 //      every page for no reason, and it is trivially avoidable when a machine is checking.
 //
+//   4. A PAGE THAT EXISTS BUT IS DECLARED NOWHERE. Caught this one the hard way: the first deploy
+//      shipped five audience pages and their index that returned 200, were listed in no sitemap,
+//      and were linked from no navigation. One of them had been ranking at position 8.8. A page
+//      nothing points at gets crawled rarely and ranks accordingly, and nothing reports it, because
+//      from every other angle the page is fine.
+//
 // The authority for "what pages exist" is .next/prerender-manifest.json, which is the set the build
 // actually emitted. Not a list maintained by hand, and not an inference from the file tree: the
 // thing that shipped.
@@ -108,6 +114,35 @@ for (const file of walk(root)) {
       }
     }
   }
+}
+
+// ── 4. Every page built must be declared in the sitemap ──────────────────────────────────────
+// The sitemap is the one place that is supposed to list the whole site, so it is the right thing
+// to measure completeness against. Comparing it with the emitted route set is the only way to see
+// a page that exists and that nothing announces.
+try {
+  const sitemapBody = readFileSync(join(root, '.next', 'server', 'app', 'sitemap.xml.body'), 'utf8');
+  const declared = new Set(
+    [...sitemapBody.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+      (m) => m[1].replace(/^https?:\/\/[^/]+/, '') || '/'
+    )
+  );
+
+  for (const route of served) {
+    // The 404 is deliberately absent: it is noindex and has no canonical, so declaring it would be
+    // inviting Google to index a page whose whole job is to say nothing is here.
+    if (route === '/_not-found') continue;
+    if (!declared.has(route)) {
+      failures.push(
+        `PAGE DECLARED NOWHERE  ${route}\n` +
+          `    Built and reachable, but absent from the sitemap. Add it, or delete the route.`
+      );
+    }
+  }
+} catch {
+  failures.push(
+    'SITEMAP NOT FOUND  .next/server/app/sitemap.xml.body was not emitted, so completeness could not be checked.'
+  );
 }
 
 // ── Report ───────────────────────────────────────────────────────────────────────────────────

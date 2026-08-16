@@ -1,0 +1,132 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'did-chatgpt-read-my-whole-document',
+  title: 'Did ChatGPT actually read your whole document?',
+  heading: 'How to check whether ChatGPT read your whole document',
+  description:
+    'Long files get truncated with no warning at all. A thirty second test that tells you how much of yours was actually read.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how do i know chatgpt read my whole document',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'chatgpt-summarize-long-documents',
+    'chatgpt-pdf-page-limit',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT warn you when a document is truncated?',
+      a: 'No. That is the entire problem. The file uploads successfully, ChatGPT works from whatever fitted, and the answer reads exactly like an answer based on the full document.',
+    },
+    {
+      q: 'What is the quickest way to check?',
+      a: 'Ask what the final section is called, or ask it to quote the last sentence. Both can only be answered by something that reached the end. If it deflects or guesses, it did not get there.',
+    },
+    {
+      q: 'Can I just ask it whether it read everything?',
+      a: 'Asking directly is unreliable, because it has no way to know what it was not given. It will usually say yes. Ask about specific content from the end instead, which is a question it can only answer correctly if the content is there.',
+    },
+    {
+      q: 'What do I do once I know it was truncated?',
+      a: 'Send less at a time. Either just the section your question is about, or the whole document split into parts sent in order with an instruction to hold the answer until they have all arrived.',
+    },
+  ],
+});
+
+<AnswerBox>
+Ask something only answerable from the end of the document, such as what the final section is called
+or what the last paragraph says. If it cannot tell you, it never read that far, and everything else
+it has said about the document is based on part of it. Do this before you act on any summary of
+anything long.
+</AnswerBox>
+
+## Why this needs checking at all
+
+Text and document files are capped at <Fact k="maxTextTokens" />. Past that, the file is **not
+rejected**. It uploads, ChatGPT reads as much as fitted, and answers from that.
+
+There is no error, no warning, no marker in the response, and no note saying content was omitted. A
+summary of the first third of a report reads exactly like a summary of a report.
+
+<Callout variant="warn" title="This is worse than an upload failure">
+A failed upload tells you something went wrong and you go and fix it. A truncated one hands you a
+confident, well written, incomplete answer and lets you act on it. If you are making a decision from
+a document summary, this is the failure mode that costs you.
+</Callout>
+
+## The check
+
+<Steps>
+  <Step title="Ask about the end, specifically">
+    "What is the title of the final section, and what does the last paragraph say?"
+
+    Only something that reached the end can answer. It is not a question that can be guessed from
+    context.
+  </Step>
+  <Step title="Ask for a quote from late in the document">
+    "Quote the first sentence of the conclusion, exactly."
+
+    A quote either exists or it does not. Paraphrase is where invention hides.
+  </Step>
+  <Step title="Ask for the structure">
+    "List every section heading in this document, in order."
+
+    Compare against what you can see in the file. Where the list stops is roughly where the reading
+    stopped, which also tells you how much you lost.
+  </Step>
+</Steps>
+
+## What not to do
+
+**Do not simply ask whether it read the whole thing.** It has no way to know what it was not given.
+From its side the document is whatever arrived. Asking gets you a reassuring yes that means nothing.
+
+**Do not treat a plausible summary as evidence.** A summary of the first half of a report is a
+perfectly good summary of the first half of a report. Reading well is not evidence of completeness.
+
+**Do not assume a successful upload means a complete read.** The upload succeeding tells you the file
+was accepted, which is a different question.
+
+## Reading the answer
+
+**It answers correctly about the end.** It got there. Carry on.
+
+**It deflects,** saying something like the document does not appear to have a clearly labelled final
+section. Usually truncation.
+
+**It answers, but wrongly.** Compare against the actual file. A confidently wrong answer about the
+ending means it reached some end, just not yours, which most often means it is describing something
+earlier in the document.
+
+**It says the document appears to have no readable text.** Not truncation at all. That is a scanned
+PDF, and you need OCR before any of this applies.
+
+## When it was truncated
+
+Two routes, and the first is often better than people expect.
+
+**Send only what you need.** You rarely need three hundred pages read. The section your question
+concerns usually produces a better answer anyway, because there is less irrelevant material
+competing for attention.
+
+**Split it and send the parts in order**, with this first:
+
+> I am sending a long document in several parts. Do not summarise or answer until I tell you the last
+> part has arrived. Reply "received" after each one.
+
+Without that instruction, ChatGPT answers part one as though it were the whole document, and then
+keeps adjusting. What you get is weighted heavily toward the opening.
+
+<InlineInstall
+  heading="Splitting without doing it by hand"
+  body="FileUploadGPT cuts the document into pieces ChatGPT accepts, sends the hold-your-answer instruction first, then feeds the parts in order. Then run the check again and it should answer about the end."
+/>
+
+## Make it a habit
+
+The check costs thirty seconds and it is worth running every time on anything long, before you read
+the summary rather than after.
+
+Reading the summary first is how it gets skipped. A good answer does not feel like it needs
+verifying, which is precisely why this failure survives so well.

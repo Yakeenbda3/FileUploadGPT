@@ -1,0 +1,141 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'how-to-split-a-document-for-chatgpt',
+  title: 'How to split a document for ChatGPT properly',
+  heading: 'How to split a long document for ChatGPT',
+  description:
+    'Where to cut, how big each piece should be, and the instruction that decides whether splitting works or produces a summary of part one.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to split a large file for chatgpt',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'did-chatgpt-read-my-whole-document',
+    'paste-vs-upload-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'How big should each piece be?',
+      a: 'A few thousand words is comfortable. The exact number matters far less than cutting at sensible boundaries and telling ChatGPT to wait for all the parts before answering.',
+    },
+    {
+      q: 'Where should I cut the document?',
+      a: 'At section or chapter boundaries wherever possible. Cutting mid sentence works, but cutting mid argument means a section gets read across two parts and the reasoning in it is harder to follow.',
+    },
+    {
+      q: 'Why does ChatGPT answer before I have sent everything?',
+      a: 'Because you did not tell it not to. Its default is to respond to each message. One instruction at the start, saying more parts are coming and to hold its answer, fixes it.',
+    },
+    {
+      q: 'Does splitting hurt the quality of the answer?',
+      a: 'Slightly, on questions that span the whole document, because connections between distant sections are weaker than if it had read the whole thing at once. It is still far better than an answer based on the first third.',
+    },
+  ],
+});
+
+<AnswerBox>
+Cut at section boundaries, keep each piece to a few thousand words, and send an instruction first
+telling ChatGPT that several parts are coming and not to answer until the last one arrives. That
+instruction is the difference between this working and producing a confident summary of part one.
+</AnswerBox>
+
+## The instruction matters more than the cutting
+
+Most advice about splitting explains where to cut and stops there. Getting the cutting slightly wrong
+costs you a little. Skipping the instruction ruins the whole exercise.
+
+ChatGPT's default is to respond to each message. So without being told otherwise, it reads part one,
+summarises it, and by the time part six arrives it has been forming and revising an opinion for five
+messages. The result is anchored to the opening.
+
+Send this before any content:
+
+> I am going to send a long document in several parts. Do not summarise, analyse, or answer anything
+> until I tell you the last part has arrived. After each part, reply only with "received".
+
+The "reply only with received" clause earns its place. Without it you get a paragraph of commentary
+after each part, which is noise and which nudges its thinking early.
+
+## Where to cut
+
+**At section or chapter boundaries** wherever the document has them. A section read across two parts
+is harder to follow than one read whole.
+
+**At natural breaks** if there are no headings. Between topics, between arguments, between dates in
+a log.
+
+**Not mid sentence** if you can avoid it, though it matters less than people assume. Mid argument is
+the real cost.
+
+<Callout variant="tip" title="Label the parts">
+Put a line at the top of each: "Part 3 of 7, section 4.2 onward." It helps ChatGPT keep the order,
+and it helps you notice if you skip one, which is the most common manual mistake.
+</Callout>
+
+## How big each piece should be
+
+A few thousand words is comfortable. Small enough to send reliably, large enough that you are not
+sending forty parts.
+
+The number is less important than two other things: not sending so much that a single part gets
+truncated, and not sending so little that a coherent section is spread across three messages.
+
+If you are pasting rather than uploading, keep pieces smaller. Very large pastes can be silently
+truncated by the browser, which produces a gap you will not see.
+
+## Doing it by hand, step by step
+
+<Steps>
+  <Step title="Convert to plain text first">
+    Removes formatting and images, and makes the document far easier to cut. It also shrinks the file
+    dramatically if it was image heavy.
+  </Step>
+  <Step title="Find your cut points">
+    Section headings are ideal. Aim for pieces of a few thousand words each.
+  </Step>
+  <Step title="Send the instruction">
+    The wait-for-all-parts message above, before any content.
+  </Step>
+  <Step title="Send each part in order, labelled">
+    Wait for the "received" before sending the next one, so nothing arrives out of order.
+  </Step>
+  <Step title="Say when you are done, then ask">
+    "That was the final part. Now: [your question]."
+  </Step>
+  <Step title="Check it got everything">
+    Ask what the final section is called. If it cannot say, a part went missing.
+  </Step>
+</Steps>
+
+That last step is not optional. The most common failure of manual splitting is a part that was
+skipped or that silently truncated, and you will not notice from the answer.
+
+<InlineInstall
+  heading="Or have it done reliably"
+  body="FileUploadGPT reads the document, splits it into pieces ChatGPT accepts, labels each part, sends the wait-for-all-parts instruction first, and feeds them in order. The failure modes of doing it by hand are the ones it removes."
+/>
+
+## What splitting costs you
+
+Worth being honest about.
+
+Connections between distant sections are weaker than if the whole document had been read at once.
+Ask about something in chapter two and something in chapter nine together, and the answer is less
+sure than it would have been.
+
+For most questions this does not show. For questions genuinely about the shape of the whole
+document, it does, and at that point a tool with a larger capacity is the better answer than more
+careful chunking.
+
+## When not to split
+
+**When you only need one section.** Send that section. Better answer, less work.
+
+**When it is a scan.** Splitting images achieves nothing. OCR first.
+
+**When it is a spreadsheet.** Spreadsheets are exempt from the token cap, so a large one often goes
+through whole. Splitting a dataset also breaks any analysis across the whole of it.
+
+**When it is genuinely book length.** Even in order, the earliest parts fall out of memory before the
+last ones land. A retrieval tool that searches the document will beat any chunking strategy.

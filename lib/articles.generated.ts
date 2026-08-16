@@ -32,12 +32,15 @@ import * as article26 from '@/content/articles/chatgpt-upload-limit-reached-erro
 import * as article27 from '@/content/articles/chatgpt-upload-limit-reset.mdx';
 import * as article28 from '@/content/articles/chatgpt-vs-claude-document-analysis.mdx';
 import * as article29 from '@/content/articles/custom-gpt-knowledge-file-limit.mdx';
-import * as article30 from '@/content/articles/does-chatgpt-support-mp4-video.mdx';
-import * as article31 from '@/content/articles/how-many-files-can-you-upload-to-chatgpt.mdx';
-import * as article32 from '@/content/articles/how-to-get-more-chatgpt-uploads.mdx';
-import * as article33 from '@/content/articles/how-to-upload-large-files-to-chatgpt.mdx';
-import * as article34 from '@/content/articles/upload-large-code-files-to-chatgpt.mdx';
-import * as article35 from '@/content/articles/upload-large-pdfs-to-chatgpt.mdx';
+import * as article30 from '@/content/articles/did-chatgpt-read-my-whole-document.mdx';
+import * as article31 from '@/content/articles/does-chatgpt-support-mp4-video.mdx';
+import * as article32 from '@/content/articles/how-many-files-can-you-upload-to-chatgpt.mdx';
+import * as article33 from '@/content/articles/how-to-get-more-chatgpt-uploads.mdx';
+import * as article34 from '@/content/articles/how-to-split-a-document-for-chatgpt.mdx';
+import * as article35 from '@/content/articles/how-to-upload-large-files-to-chatgpt.mdx';
+import * as article36 from '@/content/articles/paste-vs-upload-chatgpt.mdx';
+import * as article37 from '@/content/articles/upload-large-code-files-to-chatgpt.mdx';
+import * as article38 from '@/content/articles/upload-large-pdfs-to-chatgpt.mdx';
 
 export const ARTICLE_MODULES = {
   'best-chrome-extensions-for-chatgpt': article0,
@@ -70,10 +73,13 @@ export const ARTICLE_MODULES = {
   'chatgpt-upload-limit-reset': article27,
   'chatgpt-vs-claude-document-analysis': article28,
   'custom-gpt-knowledge-file-limit': article29,
-  'does-chatgpt-support-mp4-video': article30,
-  'how-many-files-can-you-upload-to-chatgpt': article31,
-  'how-to-get-more-chatgpt-uploads': article32,
-  'how-to-upload-large-files-to-chatgpt': article33,
-  'upload-large-code-files-to-chatgpt': article34,
-  'upload-large-pdfs-to-chatgpt': article35,
+  'did-chatgpt-read-my-whole-document': article30,
+  'does-chatgpt-support-mp4-video': article31,
+  'how-many-files-can-you-upload-to-chatgpt': article32,
+  'how-to-get-more-chatgpt-uploads': article33,
+  'how-to-split-a-document-for-chatgpt': article34,
+  'how-to-upload-large-files-to-chatgpt': article35,
+  'paste-vs-upload-chatgpt': article36,
+  'upload-large-code-files-to-chatgpt': article37,
+  'upload-large-pdfs-to-chatgpt': article38,
 } as const;

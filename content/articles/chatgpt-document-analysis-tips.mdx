@@ -1,0 +1,142 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-document-analysis-tips',
+  title: 'Getting better answers about your documents',
+  heading: 'Getting better answers out of ChatGPT about your documents',
+  description:
+    'Twelve things that change what ChatGPT gives you back when analysing a document, starting with the check most people skip.',
+  category: 'workflows',
+  updated: '2026-08-16',
+  targetQuery: 'chatgpt document analysis tips',
+  related: [
+    'chatgpt-summarize-long-documents',
+    'chatgpt-contract-review-guide',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT keep missing things in my document?',
+      a: 'Most often because it never saw them. Files past the 2 million token cap are truncated with no warning, so the second half of a long document may simply not be there. Ask what the final section is called before you conclude it missed something.',
+    },
+    {
+      q: 'Should I upload the file or paste the text?',
+      a: 'Upload when the structure matters, since headings and tables survive better. Paste when you only need one section, because it is faster and it does not spend one of your upload slots.',
+    },
+    {
+      q: 'How do I stop it making things up about my document?',
+      a: 'Require a quote for every claim, and give it permission to say the document does not answer the question. Most invention happens when a model is asked something the text does not cover and has no sanctioned way to say so.',
+    },
+    {
+      q: 'Can it compare two documents properly?',
+      a: 'Yes, if you tell it what dimensions to compare on. Left open ended it lists surface differences. Name the three or four things you actually care about and ask for a table, and it becomes genuinely useful.',
+    },
+  ],
+});
+
+<AnswerBox>
+The biggest gain is not a clever prompt. It is confirming ChatGPT actually received the whole
+document, because long files get truncated silently. After that, the things that matter most are
+requiring quotes for every claim, saying what the analysis is for, and giving it permission to say
+the answer is not in the document.
+</AnswerBox>
+
+## 1. Check what it actually received
+
+Do this first, every time, on anything long.
+
+Files past <Fact k="maxTextTokens" /> are truncated without a warning. Ask:
+
+> What is the title of the final section, and what does the last paragraph say?
+
+If it cannot answer, half your document is missing and nothing else on this page will save you.
+
+## 2. Give it permission to say no
+
+Models invent when they are asked something the text does not cover and have no sanctioned way out.
+Provide one:
+
+> If the document does not answer a question, say "not covered in the document" rather than
+> inferring an answer.
+
+One sentence, and a large share of confident nonsense disappears.
+
+## 3. Demand quotes
+
+> For every claim you make, quote the sentence it came from.
+
+Now you can verify without rereading, and paraphrase drift mostly stops, because a quote either
+exists in the text or it does not.
+
+## 4. Say what the analysis is for
+
+"Analyse this contract" produces a general overview. "I am deciding whether to sign this, flag
+anything that limits our ability to exit or exposes us to costs we cannot cap" produces something
+you can act on.
+
+## 5. Ask for structure
+
+Prose answers are hard to scan and hard to compare. Ask for a table with named columns, and specify
+them.
+
+> Table with columns: clause, what it means in plain language, risk to us, page.
+
+## 6. Use the document's own headings
+
+For anything long, section-by-section beats a single blended summary, and it makes truncation
+obvious: sections that vanish were never read.
+
+## 7. Ask what is missing
+
+Underrated and often the most valuable question in the whole conversation.
+
+> What would you expect a document of this type to cover that this one does not?
+
+The absent clause is usually the expensive one.
+
+## 8. Ask where it contradicts itself
+
+> Where does this document contradict itself, or make a claim the rest of it does not support?
+
+Long documents written by several people are full of these, and skimming will not find them.
+
+## 9. One question at a time
+
+Bundled questions get uneven answers, with the last two treated as afterthoughts. Ask separately.
+The document stays in context and each answer gets full attention.
+
+## 10. Give it the vocabulary
+
+If your field uses terms in a specific way, say so up front. Otherwise it applies the general
+meaning, and the analysis quietly drifts off.
+
+## 11. Compare documents in two passes
+
+Summarise each one separately, then paste the summaries back and ask the comparative question.
+Uploading five documents and asking for one comparison blends the sources and destroys attribution.
+
+<InlineInstall
+  heading="When the document will not go in whole"
+  body="FileUploadGPT splits documents past the length limit into pieces ChatGPT accepts and sends them in order, so the analysis covers all of it instead of the first part."
+/>
+
+## 12. Verify the numbers
+
+Every figure that matters, ask for the sentence it came from and check two or three against the
+document. Numbers are where summarising goes wrong most often, and a wrong number in a confident
+paragraph is worse than no answer.
+
+## A prompt worth keeping
+
+Combining the useful parts into something reusable:
+
+> You are analysing the attached document. Rules: quote the sentence behind every claim, including
+> its section. If something is not covered, say "not covered in the document" rather than inferring.
+> Do not summarise anything I have not asked about.
+>
+> First, confirm what the final section is called so I know you have the whole file.
+>
+> Then: [your actual question]
+
+The first instruction gets you verifiability, the second cuts invention, the third stops padding,
+and the fourth catches truncation before it wastes your time.

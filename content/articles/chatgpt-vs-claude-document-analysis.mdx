@@ -1,0 +1,128 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-vs-claude-document-analysis',
+  title: 'ChatGPT or Claude for long documents?',
+  heading: 'ChatGPT or Claude for working with long documents?',
+  description:
+    'An honest comparison for document work, including the cases where ChatGPT is the wrong tool and no workaround changes that.',
+  category: 'compare',
+  updated: '2026-08-16',
+  targetQuery: 'chatgpt vs claude document analysis',
+  related: [
+    'chatgpt-summarize-long-documents',
+    'chatgpt-file-upload-limit-workaround',
+    'chatgpt-document-analysis-tips',
+  ],
+  faq: [
+    {
+      q: 'Which one handles longer documents?',
+      a: 'Claude, generally, and by a wide margin at the top end. Its context window has been substantially larger than ChatGPT per-file document handling for some time. Both change often, so check current figures before making a decision that depends on the exact numbers.',
+    },
+    {
+      q: 'Does that mean I should stop using ChatGPT for documents?',
+      a: 'No. For a normal-length document, plan availability, existing habits and the surrounding tooling matter more than raw capacity. Length only decides it when your document is genuinely long.',
+    },
+    {
+      q: 'Can either of them read scanned PDFs?',
+      a: 'ChatGPT discards images from documents on every plan except Enterprise, so a scan yields nothing. Either way, running OCR first is the reliable answer rather than hoping a particular model handles it.',
+    },
+    {
+      q: 'Is it worth paying for both?',
+      a: 'For most people, no. Pick based on your longest routine document. If you regularly work with material that will not fit in one, that is the deciding factor. Otherwise pick the one you already have and use the time saved on better prompts.',
+    },
+  ],
+});
+
+<AnswerBox>
+For long documents, Claude generally handles more at once, and that difference is real. For
+everything else the gap is smaller than comparison articles suggest, and habit, plan, and
+surrounding tooling matter more. If your documents routinely do not fit, that single fact should
+decide it.
+</AnswerBox>
+
+We make an extension for ChatGPT, so read this knowing where it comes from. It is still worth being
+straight: there are cases where ChatGPT is the wrong tool for a document and no workaround changes
+that.
+
+## The one difference that actually decides it
+
+How much text can be held at once.
+
+Claude's context window has been considerably larger than what ChatGPT accepts per document file for
+some time. If your work involves long material routinely, a full report with appendices, a book, a
+big transcript archive, that gap does more for you than any difference in output quality.
+
+Both vendors change these numbers regularly, so check the current figures rather than trusting any
+article, this one included, on the specifics. The structural point is stable: at the top end Claude
+holds more.
+
+<Callout variant="info" title="What ChatGPT's limit actually is">
+Text and document files are capped at <Fact k="maxTextTokens" /> each, with spreadsheets exempt. The
+<Fact k="maxFileSize" /> size ceiling is almost never what stops you. Knowing which limit you are
+hitting matters, because the fixes are different.
+</Callout>
+
+## Where the difference does not matter
+
+For most documents, it does not.
+
+A twenty-page report, a contract, a paper, a set of meeting notes: both handle these without
+difficulty, and what you get back depends far more on how you asked than on which one you asked. A
+vague prompt produces a mediocre answer from either.
+
+If your documents comfortably fit, choose on other grounds. Which subscription you already have,
+which interface you prefer, what else it connects to.
+
+## Where ChatGPT has the advantage
+
+**Data analysis.** Upload a spreadsheet and ask for analysis and charts, and it will write and run
+code to produce them. Spreadsheets are also exempt from the token cap, capped instead around
+<Fact k="maxSpreadsheetSize" />, so large datasets go in where an equally long document would not.
+
+**Ecosystem.** Custom GPTs, a large extension market, wide third-party integration. More ways to
+build a repeatable workflow around it.
+
+**Availability.** File uploads work on <Fact k="availability" />, though the Free plan is capped at
+<Fact k="freeDailyUploads" />.
+
+## Where Claude has the advantage
+
+**Length**, as above, and it is the main one.
+
+**Holding a long document together.** With a large document in one piece, cross-references between
+distant sections tend to survive better than when the same document has been chunked. That is a
+consequence of the length difference rather than a separate property.
+
+**Not needing workarounds.** If the document simply fits, you skip splitting, ordering, and the
+instructions that go with them.
+
+## The honest recommendation
+
+Ask one question: **how long is the longest document you work with regularly?**
+
+If it fits in ChatGPT comfortably, use ChatGPT. Plan, habits, and tooling should decide, and you
+will not notice the difference.
+
+If your documents routinely do not fit, and you are splitting them every week, that is the answer.
+Splitting works and we build a tool that does it for you, but a document that fits in one piece is
+better than the same document in eleven, and no amount of tooling changes that.
+
+If it is occasional, keep using ChatGPT and split when you need to.
+
+<InlineInstall
+  heading="If you are staying with ChatGPT"
+  body="FileUploadGPT splits documents past the length limit into pieces it accepts and sends them in order, with the instruction to hold its answer until they have all arrived. Free, and nothing leaves your browser."
+/>
+
+## What does not vary between them
+
+Worth saying, because comparisons tend to imply one tool solves these and the other does not.
+
+**Scanned documents** need OCR either way. There is no digital text to read until you create some.
+
+**Verification is still yours.** Both produce confident, well-written, occasionally wrong summaries.
+Asking for a quote behind every claim is the habit that catches it, on either.
+
+**A vague prompt gets a vague answer.** The single largest quality lever is still how you ask, and
+it is free on both.

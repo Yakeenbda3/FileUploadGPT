@@ -1,0 +1,21 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# local snapshot of the pre-rebuild static site, kept for reference while porting content.
+# Not committed: every one of these files is already in git history at commit 5ff64bd.
+/.legacy
+
+# misc
+.DS_Store
+*.pem
+.vercel
+.env*.local
+
+# debug
+npm-debug.log*
+yarn-error.log*

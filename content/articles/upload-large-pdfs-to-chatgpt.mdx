@@ -1,0 +1,161 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'upload-large-pdfs-to-chatgpt',
+  title: 'How to upload a large PDF to ChatGPT',
+  heading: 'How to upload a large PDF to ChatGPT',
+  description:
+    'Why big PDFs fail, how to tell a rejection from a silent truncation, and four ways to get a long document read properly.',
+  category: 'bypass',
+  updated: '2026-08-16',
+  targetQuery: 'how to upload large pdf to chatgpt',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'chatgpt-file-types-supported',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'What is the largest PDF ChatGPT will take?',
+      a: 'The hard ceiling is 512 MB per file, but you will almost never reach it. Text documents are also capped at 2 million tokens, and a long PDF hits that first at a tiny fraction of the size limit. Length is what stops you, not megabytes.',
+    },
+    {
+      q: 'Why does ChatGPT only summarise the first part of my PDF?',
+      a: 'Because it only read the first part. When a document is past the length cap it is truncated rather than rejected, and no error appears. Ask a question that can only be answered from the final pages. If it cannot answer, it did not get that far.',
+    },
+    {
+      q: 'My scanned PDF uploads but ChatGPT says it is empty. Why?',
+      a: 'A scan contains images, not text. Every plan except Enterprise extracts digital text and discards images, so a scanned page leaves nothing behind. Run the file through OCR first so it contains real text, then upload it again.',
+    },
+    {
+      q: 'Does splitting a PDF into several files help?',
+      a: 'Yes, and it is the most reliable fix. Send the parts in order and tell ChatGPT up front that more are coming and not to answer until the last one arrives. Without that instruction it summarises part one before the rest shows up.',
+    },
+  ],
+});
+
+<AnswerBox>
+Large PDFs fail for one of three reasons, and they look different. Too many megabytes gives you a
+clear error. Too long gives you no error at all, just a summary based on the first chunk. A scan
+gives you an empty answer, because there is no text in it to read. Work out which one you have
+before trying to fix it.
+</AnswerBox>
+
+PDFs are the format people most often need ChatGPT to read, and the one that fails in the most
+confusing ways. A rejected upload at least tells you something went wrong. The other two failure
+modes look like success.
+
+## First, work out which failure you have
+
+Three minutes here saves you from fixing the wrong problem.
+
+<Steps>
+  <Step title="Did the upload finish?">
+    If it refused outright with a size error, you have a size problem. That is the rare one and the
+    easy one.
+  </Step>
+  <Step title="Ask about the last page">
+    Upload succeeded? Ask something that can only be answered from the final few pages. "What is the
+    last section called?" works. If it cannot tell you, the document was truncated.
+  </Step>
+  <Step title="Ask it to quote a sentence">
+    Ask for a direct quote from page two. If it returns nothing at all, or says the document appears
+    to have no readable text, you have a scan.
+  </Step>
+</Steps>
+
+## If it is a scan
+
+This is the most common cause of "ChatGPT says my PDF is empty", and it is not a bug.
+
+Except on Enterprise, ChatGPT extracts the digital text from a file and discards the images. A
+scanned PDF is a photograph of a page. There is no digital text in it, so the extraction returns
+nothing.
+
+The fix is OCR, which converts the picture of the words back into words:
+
+- **Mac**: open in Preview, export as PDF, and recent versions handle the text layer automatically.
+- **Adobe Acrobat**: Scan and OCR, then Recognise Text.
+- **Free web tools**: plenty exist. Do not use one for anything confidential.
+
+Test it worked before uploading again: open the PDF and try to select a sentence with your cursor.
+If you can highlight the words, there is real text in there now.
+
+<Callout variant="info" title="A quick way to tell a scan from a real PDF">
+Try to select text in the document. If your cursor draws a selection box over the page instead of
+highlighting words, it is an image. This takes two seconds and settles it.
+</Callout>
+
+## If it is too long
+
+This is the most common failure on real, text-based PDFs, and the one with no error message.
+
+The relevant ceiling is <Fact k="maxTextTokens" /> per file, not the <Fact k="maxFileSize" /> size
+limit. A three-hundred-page report can be a few megabytes and still be well past what fits. When
+that happens the file uploads normally and ChatGPT works from as much as it could hold.
+
+Four ways out, roughly in order of how much effort they cost.
+
+### Send only the part you need
+
+The one people skip, and often the best answer. You rarely need all three hundred pages read. You
+need the section your question is about.
+
+Extract those pages into their own PDF, or copy that text into the chat directly. You will usually
+get a better answer than from the full document, because there is less competing for attention.
+
+### Convert it to text first
+
+If the PDF is text-heavy, exporting to plain text strips out fonts, page geometry, and embedded
+images, and what is left is often a fraction of the size. It does nothing for the token count if the
+words themselves are the bulk, but it frequently helps more than expected.
+
+### Split it and send the parts in order
+
+The reliable one. Cut the document into pieces and send them one after another.
+
+The instruction matters more than the splitting. Send this first:
+
+> I am going to send a long document in several parts. Do not summarise or answer anything until I
+> tell you the last part has arrived. Just reply "received" after each one.
+
+Without it, ChatGPT answers part one as though it were the whole document and then keeps revising as
+more arrives. The result is weighted heavily toward the opening, which is worse than useless because
+it looks complete.
+
+<InlineInstall
+  heading="The same thing without the manual labour"
+  body="FileUploadGPT reads the PDF in your browser, cuts it into pieces ChatGPT will accept, sends the hold-your-answer instruction first, then feeds the parts in order. No splitting by hand, no losing your place."
+/>
+
+### Use something built for very long documents
+
+Past a certain size, chunking stops being sensible. Even sent in order, the earliest parts fall out
+of memory before the last ones land. For a book or a full archive, a retrieval tool that searches
+the document and pulls out relevant passages will beat any amount of splitting.
+
+Knowing when to stop fighting the tool is worth more than another workaround.
+
+## If it is genuinely too large
+
+Rare, but real. The ceiling is <Fact k="maxFileSize" /> per file, and a PDF gets there by containing
+high-resolution images.
+
+Compressing the PDF usually solves it outright, and since images get discarded anyway on every plan
+below Enterprise, you lose nothing ChatGPT was going to read. Most PDF tools have a compress or
+reduce-file-size option. Export to text works too, for the same reason.
+
+## What does not work
+
+- **Zipping it.** ChatGPT does not open archives. You have added a wrapper, not solved anything.
+- **Renaming the extension.** Files are read by their contents, not their name.
+- **Upgrading to Plus.** Some caps move. The length limit that truncates long documents does not.
+- **Uploading it again.** If it failed for size or length, it fails the same way every time.
+
+## The short version
+
+Scan? Run OCR, then upload.
+
+Too long? Send the section you need, or split it and tell ChatGPT to wait for all the parts.
+
+Actually too large? Compress it. You are only losing images it was going to discard anyway.

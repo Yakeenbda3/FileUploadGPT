@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Height of the mobile sticky install bar. Declared once here and consumed both by the bar
+       itself and by the body padding below, so the bar can never grow and start covering the last
+       paragraph of an article without the padding growing with it. */
+    --sticky-cta-height: 4.5rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Anyone who has asked their OS to stop animating things means it. Smooth scroll on a long
+     article is a genuine nausea trigger for people with vestibular disorders. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+    /* The mobile install bar is `position: fixed`, so it sits outside the document flow and would
+       otherwise hide whatever is at the bottom of the page. On desktop the bar is not rendered and
+       the padding is removed. */
+    padding-bottom: var(--sticky-cta-height);
+  }
+
+  @media (min-width: 1024px) {
+    body {
+      padding-bottom: 0;
+    }
+  }
+
+  /* Headings sit clear of the sticky header when reached by an anchor link, rather than being
+     scrolled underneath it. */
+  :target,
+  h2[id],
+  h3[id],
+  h4[id] {
+    scroll-margin-top: 6rem;
+  }
+
+  ::selection {
+    @apply bg-brand-100 text-brand-900;
+  }
+
+  /* A visible focus ring on keyboard navigation only. Removing it entirely is the single most
+     common accessibility regression on marketing sites. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+  }
+}
+
+@layer components {
+  /* ─────────────────────────────────────────────────────────────────────────────────────────
+     ARTICLE BODY
+     Long-form reading styles. The reference project rendered articles as raw migrated WordPress
+     HTML with a blue h2 and little else. This is built for the job instead: a comfortable measure,
+     a real typographic scale, and callouts that survive being read on a phone.
+     ───────────────────────────────────────────────────────────────────────────────────────── */
+  .article {
+    @apply text-[1.0625rem] leading-[1.75] text-ink-soft;
+  }
+
+  .article > * + * {
+    @apply mt-5;
+  }
+
+  .article h2 {
+    @apply mt-12 scroll-mt-24 text-[1.625rem] font-bold leading-tight tracking-[-0.01em] text-ink;
+  }
+
+  .article h3 {
+    @apply mt-9 scroll-mt-24 text-[1.25rem] font-semibold leading-snug text-ink;
+  }
+
+  .article h4 {
+    @apply mt-7 scroll-mt-24 text-[1.0625rem] font-semibold text-ink;
+  }
+
+  .article p {
+    @apply text-ink-soft;
+  }
+
+  .article a {
+    @apply font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 transition-colors hover:text-brand-800 hover:decoration-brand-600;
+  }
+
+  .article strong {
+    @apply font-semibold text-ink;
+  }
+
+  .article ul,
+  .article ol {
+    @apply space-y-2 pl-6 text-ink-soft;
+  }
+
+  .article ul {
+    @apply list-disc marker:text-brand-400;
+  }
+
+  .article ol {
+    @apply list-decimal marker:font-medium marker:text-brand-500;
+  }
+
+  .article li > ul,
+  .article li > ol {
+    @apply mt-2;
+  }
+
+  .article code {
+    @apply rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[0.875em] text-brand-800;
+  }
+
+  .article pre {
+    @apply overflow-x-auto rounded-xl border border-slate-800 bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
+  }
+
+  .article pre code {
+    @apply border-0 bg-transparent p-0 text-slate-100;
+  }
+
+  .article blockquote {
+    @apply border-l-4 border-brand-300 bg-brand-50/60 py-3 pl-5 pr-4 italic text-ink-soft;
+  }
+
+  .article hr {
+    @apply my-10 border-slate-200;
+  }
+
+  .article img {
+    @apply rounded-xl border border-slate-200;
+  }
+
+  /* Wide tables scroll inside their own box. Without this a five-column comparison table forces
+     the whole page to scroll sideways on a phone, which breaks every other element on it. */
+  .table-scroll {
+    @apply -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0;
+  }
+
+  .article table {
+    @apply w-full min-w-[34rem] border-collapse text-left text-[0.9375rem];
+  }
+
+  .article thead th {
+    @apply border-b-2 border-brand-200 bg-brand-50 px-4 py-3 font-semibold text-brand-900;
+  }
+
+  .article tbody td {
+    @apply border-b border-slate-200 px-4 py-3 align-top text-ink-soft;
+  }
+
+  .article tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  /* ── Callouts ───────────────────────────────────────────────────────────────────────────── */
+  .callout {
+    @apply rounded-xl border border-l-4 p-4 sm:p-5;
+  }
+
+  .callout-title {
+    @apply mb-1 flex items-center gap-2 font-semibold;
+  }
+
+  .callout-info {
+    @apply border-brand-200 border-l-brand-500 bg-brand-50/70;
+  }
+  .callout-info .callout-title {
+    @apply text-brand-800;
+  }
+
+  .callout-warn {
+    @apply border-accent-200 border-l-accent-500 bg-accent-50;
+  }
+  .callout-warn .callout-title {
+    @apply text-accent-700;
+  }
+
+  .callout-tip {
+    @apply border-emerald-200 border-l-emerald-500 bg-emerald-50;
+  }
+  .callout-tip .callout-title {
+    @apply text-emerald-800;
+  }
+
+  /* ── Buttons ────────────────────────────────────────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-[0.9375rem] font-semibold leading-none transition-all duration-150;
+  }
+
+  /* The install button. Dark text on amber, because white on amber fails contrast (about 2:1). */
+  .btn-install {
+    @apply bg-accent-500 text-ink shadow-card hover:-translate-y-px hover:bg-accent-400 hover:shadow-lift active:translate-y-0;
+  }
+
+  .btn-brand {
+    @apply bg-brand-700 text-white shadow-card hover:bg-brand-800 hover:shadow-lift;
+  }
+
+  .btn-ghost {
+    @apply border border-slate-300 bg-white text-ink-soft hover:border-brand-400 hover:text-brand-700;
+  }
+}

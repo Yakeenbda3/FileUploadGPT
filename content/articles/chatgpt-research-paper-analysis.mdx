@@ -1,0 +1,149 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-research-paper-analysis',
+  title: 'Reading research papers with ChatGPT',
+  heading: 'Reading research papers with ChatGPT',
+  description:
+    'Prompts for getting through a paper faster, how to make it critique methodology rather than praise it, and where it should not be trusted.',
+  category: 'workflows',
+  updated: '2026-08-16',
+  targetQuery: 'how to analyze research papers with chatgpt',
+  related: [
+    'chatgpt-summarize-long-documents',
+    'chatgpt-document-analysis-tips',
+    'upload-large-pdfs-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Will it understand the statistics in a paper?',
+      a: 'It can explain what a test is and what a result would mean, which is genuinely useful when you are outside your field. It cannot check whether the test was appropriate for that data, and it will not usually volunteer that it was not. Ask directly what assumptions the test requires and whether the paper shows they were met.',
+    },
+    {
+      q: 'Why does it always say the paper is well designed?',
+      a: 'Because you asked a question with an agreeable answer available. Ask it to argue the paper is wrong, or to write the reviewer comments that would come back from a hostile referee. Framing decides how critical you get.',
+    },
+    {
+      q: 'Can I upload a paper with figures and have it read them?',
+      a: 'Not on most plans. Except on Enterprise, ChatGPT extracts digital text and discards images, so figures and their data are dropped. Anything only shown in a chart will not be available to it, and it may not say so.',
+    },
+    {
+      q: 'Can it help with a literature review across many papers?',
+      a: 'Yes, if you work in two passes. Summarise each paper separately against a fixed set of questions, then bring those summaries together for the comparison. Uploading twenty papers at once blends them and you lose track of which finding belongs to which study.',
+    },
+  ],
+});
+
+<AnswerBox>
+Useful for the first pass: what was done, what was found, and what the limitations are. It will not
+critique unless you ask it to, and it will not see your figures at all, because everything except
+Enterprise discards images from uploads. Treat it as a fast way to triage papers, not as a reviewer.
+</AnswerBox>
+
+## What it cannot see
+
+Worth knowing before you draw conclusions from anything it says.
+
+Every plan except Enterprise does text-only retrieval: ChatGPT extracts the digital text from a
+file and discards the images. In a research paper that means every figure, every plot, and anything
+whose data only appears in a chart.
+
+So if a result lives in Figure 3 and is not restated in the text, it does not exist as far as the
+conversation is concerned. It will not tell you this. It will answer around the gap.
+
+<Callout variant="warn" title="Also check it read the whole paper">
+Papers past <Fact k="maxTextTokens" /> are truncated silently, and supplementary material pushes
+plenty of them over. Ask what the final section heading is. If it cannot say, the limitations and
+the references are missing, which are exactly the parts you wanted.
+</Callout>
+
+## The first pass
+
+> Summarise this paper in plain language: the research question, the method, the sample, the main
+> finding, and the limitations the authors themselves state. Quote the sentence behind each point.
+
+The last clause matters. Requiring quotes for the stated limitations stops it inventing generic ones
+and shows you what the authors actually conceded, which is often more revealing than the findings.
+
+## Making it critical
+
+Left alone it is agreeable. It has to be pushed, and the framing does the work.
+
+> Write the review comments a hostile but fair peer reviewer would return on this paper. Be
+> specific, cite sections, and do not soften anything.
+
+Or, more directly:
+
+> Argue that this paper's central conclusion is not supported by its own data. Make the strongest
+> case you can.
+
+Then, importantly, ask the other side:
+
+> Now argue the opposite, that the conclusion is well supported.
+
+Reading both is more useful than either alone, and it exposes where the real disagreement sits.
+
+## Methodology questions worth asking
+
+These consistently produce something, because they are text-pattern questions rather than judgement
+calls:
+
+> What would need to be true for this conclusion to hold, that the paper does not demonstrate?
+
+> Is the sample adequate for the claim being made? What is the sample size, how was it selected, and
+> what population is it generalised to?
+
+> What assumptions does the statistical test used here require, and does the paper show they were
+> met?
+
+> Are the authors claiming causation from a design that only supports correlation?
+
+That last one catches a surprising number of papers, and it is a language pattern rather than a
+statistical judgement, which is exactly the sort of thing it is good at.
+
+<InlineInstall
+  heading="For papers with heavy supplementary material"
+  body="FileUploadGPT splits long PDFs into pieces ChatGPT accepts and sends them in order, so the limitations section at the end gets read rather than dropped."
+/>
+
+## Working across many papers
+
+The mistake is uploading a stack and asking for a synthesis. What comes back reads well and cannot
+be traced back to anything.
+
+Do it in two passes. First, run every paper through the same fixed set of questions:
+
+> For this paper give me: research question, design, sample size, main finding with effect size if
+> reported, stated limitations, and funding source. Answer in that order, one line each.
+
+The identical structure is the point. It makes the outputs comparable.
+
+Then bring those structured summaries together:
+
+> Here are structured summaries of twelve papers on the same question. Where do they agree, where do
+> they conflict, and do the conflicts track any difference in design, sample, or funding?
+
+Slower, and it keeps attribution intact, which is not optional in a literature review.
+
+## Where not to trust it
+
+**Citations.** It can produce references that look correct and do not exist. Check every one against
+a real database before it goes anywhere near a document with your name on it.
+
+**Numbers from figures.** Not available to it, as above. Any figure it quotes from a chart came from
+somewhere else.
+
+**Whether a method was appropriate.** It can tell you what a method is. Whether it was the right
+choice for this data is a judgement it will make confidently and not reliably.
+
+**Novelty.** It cannot tell you whether a finding is new, because it does not know the current state
+of your field.
+
+## Where it genuinely saves time
+
+Triage. Given ten papers you might read, it will tell you in a few minutes which three are actually
+about your question, which is the bulk of the wasted time in a literature search.
+
+And explaining unfamiliar territory. Reading outside your field, asking what a term means and why a
+particular design is used is quicker than tracking down a textbook, and reliable enough for
+orientation.

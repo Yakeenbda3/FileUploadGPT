@@ -1,0 +1,148 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-upload-troubleshooting',
+  title: 'ChatGPT file upload not working: every error fixed',
+  heading: 'ChatGPT file upload not working? Find your error here',
+  description:
+    'Every ChatGPT upload error, what actually causes it, and how to clear it. Including why you hit the limit having uploaded almost nothing.',
+  category: 'errors',
+  updated: '2026-08-16',
+  targetQuery: 'chatgpt file upload not working',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'chatgpt-file-types-supported',
+    'upload-large-pdfs-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Why does it say I reached my upload limit when I have barely uploaded anything?',
+      a: 'Two reasons, and both are documented. Failed upload attempts count toward the rolling cap of 80 files per 3 hours, so a file you retried five times spent five slots. Separately there is a 25 GB storage cap per user, shared across chats, Projects and custom GPT knowledge, and old files still count against it until you delete the chats holding them.',
+    },
+    {
+      q: 'How do I see how much of my upload quota is left?',
+      a: 'You cannot see the rolling upload quota. ChatGPT shows Library storage usage under Settings then Storage, but it does not show how much of the 80-files-per-3-hours allowance you have used or have remaining. That is confirmed in OpenAI\'s own FAQ.',
+    },
+    {
+      q: 'How long until my upload limit resets?',
+      a: 'The general cap is rolling over 3 hours rather than resetting at a fixed time, so slots free up gradually as older uploads age out. The Free plan cap of 3 uploads per day is daily. OpenAI also warns limits may be lowered during peak hours.',
+    },
+    {
+      q: 'The file uploaded but ChatGPT ignored most of it. Is that an error?',
+      a: 'No, and that is what makes it dangerous. Documents past the 2 million token cap are truncated silently, with no warning. Ask a question only answerable from the last few pages. If it cannot answer, it never read them.',
+    },
+  ],
+});
+
+<AnswerBox>
+Find your exact message below. The short version: "too large" is about size or length, "upload
+limit reached" is usually the rolling cap or your storage quota rather than anything you did today,
+and an empty answer from a PDF almost always means it was a scan. A file that uploads fine and gets
+half read is the one to watch, because nothing warns you.
+</AnswerBox>
+
+## "You've reached our limit of file uploads"
+
+The most confusing message, because it commonly appears when you have uploaded almost nothing.
+
+Three separate limits can produce it:
+
+| Limit | Value | Resets |
+| --- | --- | --- |
+| Rolling upload rate | <Fact k="rollingUploadRate" /> | Gradually, as older uploads age out |
+| Free plan daily cap | <Fact k="freeDailyUploads" /> | Daily |
+| Storage per user | <Fact k="userStorageCap" /> | Only when you delete files |
+
+Two details from OpenAI's FAQ explain nearly every confused case:
+
+**Failed attempts count.** A file you retried six times because it kept failing spent six of your
+slots. This is the usual explanation for hitting a cap while feeling like you barely uploaded.
+
+**Storage is shared and cumulative.** The <Fact k="userStorageCap" /> ceiling covers your chats,
+your Projects and your custom GPT knowledge together, and files stay counted until you delete the
+chats holding them. Something you uploaded months ago is still using the quota.
+
+<Callout variant="info" title="Where to look">
+Settings, then Storage, shows your Library usage. Note what it does not show: how much of the
+rolling upload rate you have left. OpenAI's FAQ says outright that ChatGPT does not display that.
+If storage looks fine, you are being held by the rate cap, and waiting is the only fix.
+</Callout>
+
+What to do, in order: check you are signed into the right account and plan, delete old chats holding
+large files, wait an hour if it is the rate cap, and check status.openai.com in case it is not you at
+all.
+
+## "The file is too large"
+
+Two different ceilings produce similar wording.
+
+**Actual size.** The hard limit is <Fact k="maxFileSize" /> per file, <Fact k="maxSpreadsheetSize" />
+for CSV and spreadsheets, and <Fact k="maxImageSize" /> per image. If you tripped the spreadsheet
+limit, exporting to CSV usually drops the size sharply.
+
+**Length.** More commonly the real problem. Text and document files are capped at
+<Fact k="maxTextTokens" /> per file, and spreadsheets are exempt. A long report can be a couple of
+megabytes and still be well past what fits.
+
+For a size error, compress the file or export it to plain text. For a length problem, see
+[how to get past the upload limit](/blog/chatgpt-file-upload-limit-workaround).
+
+## The upload works but ChatGPT only read part of it
+
+No error, no warning, and the most damaging failure on this page.
+
+When a document is past the length cap it is truncated rather than rejected. ChatGPT summarises what
+it received and sounds entirely confident about it.
+
+**How to catch it:** ask something only answerable from the end of the document. "What is the final
+section called?" If it cannot say, it never got there.
+
+**How to fix it:** split the document and send the parts in order, with an instruction up front not
+to answer until the last one arrives.
+
+<InlineInstall
+  heading="Or have the splitting done for you"
+  body="FileUploadGPT cuts the document into pieces ChatGPT accepts, sends the hold-your-answer instruction first, then feeds the parts in order so the whole thing gets read."
+/>
+
+## The PDF uploads but comes back empty
+
+Your PDF is a scan.
+
+Every plan except Enterprise does text-only retrieval: ChatGPT extracts the digital text and
+discards the images. A scanned page is a photograph, so there is no text to extract and nothing
+comes back.
+
+Check it in two seconds by trying to select text in the PDF. If your cursor draws a box over the
+page rather than highlighting words, it is an image. Run it through OCR and upload again.
+
+## "You may only upload 1 file at a time"
+
+A cap on how many files go in one message, not a problem with your file. Send them one per message.
+
+If you are working inside a Project, separate caps apply: <Fact k="projectFilesPlus" /> on Plus, and
+<Fact k="projectFilesPro" /> on Pro, Team, Education and Business. Custom GPTs allow
+<Fact k="filesPerGpt" />, and that is for the lifetime of the GPT rather than per conversation,
+which surprises people.
+
+## The upload bar fills and then nothing happens
+
+Usually the connection or the tab rather than the file.
+
+Refresh the page and try once. Then try a different browser. Then disable extensions, since an
+aggressive ad blocker or privacy extension can interfere with the upload request. If a small text
+file also fails, the problem is not your document.
+
+Remember that each failed attempt spends a slot from your rolling cap, so retrying twenty times
+makes the next problem worse.
+
+## Nothing here matches
+
+Two things worth checking before you conclude it is broken.
+
+Check status.openai.com. Uploads have their own incidents and it is not always obvious from inside
+the app.
+
+Then test with a tiny plain text file containing one sentence. If that uploads, the platform is fine
+and the problem is your specific file, which puts you back at the top of this page. If even that
+fails, it is not you, and waiting is the answer.

@@ -1,0 +1,145 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'upload-large-code-files-to-chatgpt',
+  title: 'How to get a large codebase into ChatGPT',
+  heading: 'How to get a large codebase into ChatGPT',
+  description:
+    'Getting a big code file or a whole repository in front of ChatGPT, and why sending less of it usually produces a better review.',
+  category: 'bypass',
+  updated: '2026-08-16',
+  targetQuery: 'how to upload large code files to chatgpt',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'how-to-upload-large-files-to-chatgpt',
+    'chatgpt-file-types-supported',
+  ],
+  faq: [
+    {
+      q: 'Can I upload a whole GitHub repository?',
+      a: 'Not directly, and zipping it does not work because ChatGPT does not unpack archives. Flatten the files you care about into one text file, or upload the handful that matter individually. A focused subset gets better answers than a full dump anyway.',
+    },
+    {
+      q: 'Do source files need a special extension?',
+      a: 'No. Code is read as plain text, so the extension rarely matters. A .py, .rs, .sql, .tf or something obscure all go through the same way. If a file is genuinely refused, renaming a copy to .txt is a reliable workaround.',
+    },
+    {
+      q: 'How much code fits in one conversation?',
+      a: 'Text files are capped at 2 million tokens each, which is a lot of code, but the practical limit is lower. Quality drops well before the hard cap because there is too much competing for attention. A few thousand lines of focused code beats a hundred thousand of everything.',
+    },
+    {
+      q: 'What is the best way to share code that spans many files?',
+      a: 'Concatenate them into one text file with a clear header line before each, such as the file path. That preserves the structure ChatGPT needs to reason about imports and call sites, and it turns many uploads into one.',
+    },
+  ],
+});
+
+<AnswerBox>
+Concatenate the files that matter into one text file with a path header before each, and upload
+that. Do not zip the repository, because archives are not unpacked. And resist sending everything:
+past a few thousand lines the answers get worse, not better, because the signal you care about is
+buried.
+</AnswerBox>
+
+Code is the easiest content to get into ChatGPT and the easiest to get wrong. Easy because source
+files are plain text and go through without fuss. Wrong because the instinct is to send the whole
+repository, and that reliably produces a worse review than sending a tenth of it.
+
+## Why the whole repository is the wrong move
+
+There are two limits, and only one of them is technical.
+
+The technical one is generous: <Fact k="maxTextTokens" /> per text file, which is a great deal of
+code.
+
+The practical one bites much earlier. Attention is finite. Give ChatGPT a hundred thousand lines and
+ask why a function returns undefined, and you have buried the answer in ninety-nine thousand lines of
+irrelevant context. Give it the function, its callers, and the type it returns, and you tend to get
+a real answer.
+
+<Callout variant="tip" title="The rule that works">
+Send what you would show a colleague you were asking for help. Nobody hands over the whole repo and
+says "it's in there somewhere".
+</Callout>
+
+## Flattening files into one upload
+
+When the problem genuinely spans several files, put them in one text file with headers so the
+structure survives.
+
+<Steps>
+  <Step title="Pick the files that actually matter">
+    The one with the bug, whatever calls it, and any type or schema it depends on. Usually three to
+    six files.
+  </Step>
+  <Step title="Concatenate them with path headers">
+    On Mac or Linux, something like:
+
+    `for f in src/auth/*.ts; do echo "=== $f ==="; cat "$f"; done > bundle.txt`
+
+    The header lines matter. Without them ChatGPT cannot tell where one file ends and the next
+    begins, and it will hallucinate imports.
+  </Step>
+  <Step title="Upload the single text file">
+    One upload instead of six, and it counts as one against your rate cap.
+  </Step>
+</Steps>
+
+That last point is worth noting: uploads are capped at <Fact k="rollingUploadRate" />, and on the
+Free plan <Fact k="freeDailyUploads" />. Bundling six files into one is six times cheaper against
+that budget.
+
+## What to exclude, always
+
+Everything here makes answers worse and costs you length:
+
+- `node_modules`, `vendor`, `target`, and any dependency directory
+- Lock files, unless the question is genuinely about dependency resolution
+- Build output, minified bundles, and source maps
+- Test fixtures and sample data, unless the bug is in them
+- Anything generated
+
+<Callout variant="warn" title="Check for secrets before you upload">
+This is the one that actually hurts. `.env` files, API keys in config, connection strings, private
+keys in test fixtures. Uploading them sends them to OpenAI, and on consumer plans content may be
+used to improve models unless you have turned that off. Grep the bundle before you send it.
+</Callout>
+
+## When the bundle is still too long
+
+If your flattened file is past what fits, split it and send the parts in order, telling ChatGPT
+first that more are coming and not to answer until the last one lands. Otherwise it reviews the
+first file and stops.
+
+<InlineInstall
+  heading="Splitting a large bundle automatically"
+  body="FileUploadGPT takes the text file, cuts it into pieces ChatGPT accepts, sends the wait-for-all-parts instruction, then feeds them in order. Useful when a bundle runs to thousands of lines."
+/>
+
+There is a better option first, though: split it by concern rather than by size. Send the auth
+module and ask about auth. Then the data layer and ask about the data layer. Two focused
+conversations beat one enormous one, almost every time.
+
+## Asking better questions about code
+
+The upload is the easy half. What separates a useful review from a generic one:
+
+**Say what you expected and what happened.** "This returns null for users created before 2024,
+should return their profile" gets you somewhere. "Review this code" gets you a list of style
+opinions.
+
+**Include the error, in full.** Stack trace included. It usually names the file and line.
+
+**Say what you already ruled out.** Otherwise the first three suggestions are the things you tried
+yesterday.
+
+**Name the versions.** Language version, framework version, runtime. Advice for React 17 and React
+19 differs, and it cannot tell from the code alone.
+
+## A quick word on privacy
+
+Anything uploaded goes to OpenAI's servers. For consumer plans, content may be used to improve model
+performance unless you opt out in the data controls. Business and Enterprise plans are explicitly
+excluded from that.
+
+If you are working on anything proprietary, check your setting before uploading, not afterwards.

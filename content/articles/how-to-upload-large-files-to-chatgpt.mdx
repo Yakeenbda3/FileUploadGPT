@@ -1,0 +1,147 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'how-to-upload-large-files-to-chatgpt',
+  title: 'How to upload large files to ChatGPT',
+  heading: 'How to upload large files to ChatGPT',
+  description:
+    'A practical walkthrough for getting big documents into ChatGPT, whichever of the four limits is stopping you, with the fix for each.',
+  category: 'bypass',
+  updated: '2026-08-16',
+  targetQuery: 'how to upload large files to chatgpt',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'upload-large-pdfs-to-chatgpt',
+    'upload-large-code-files-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'What counts as a large file for ChatGPT?',
+      a: 'Less than people expect. The size ceiling is 512 MB, but text and document files are also capped at 2 million tokens, and that is what stops you first. A long report can be a couple of megabytes and still be too long, because length and size are different problems.',
+    },
+    {
+      q: 'Is there a size limit for spreadsheets specifically?',
+      a: 'Yes, and it works differently. CSV and spreadsheet files are capped around 50 MB depending on row size, but they are exempt from the 2 million token cap that applies to documents. So a very long spreadsheet often goes through where an equally long document would not.',
+    },
+    {
+      q: 'Can I upload a whole folder?',
+      a: 'No, and zipping it does not help either, because ChatGPT does not unpack archives. Upload the individual files, and only the ones relevant to your question. You will get better answers from three relevant files than from thirty.',
+    },
+    {
+      q: 'Does ChatGPT Plus let me upload bigger files?',
+      a: 'Plus raises some caps, mainly around how many files you can send and Project allowances. The 2 million token limit that truncates long documents is not one of them. A document too long on Free is still too long on Plus.',
+    },
+  ],
+});
+
+<AnswerBox>
+Work out which limit you are hitting first, because the fixes are different. Size stops the upload
+with an error. Length lets the upload through and quietly reads only part of it. Count stops you
+sending more files today. Format is when the file goes in but has no readable text. Each one has its
+own answer below.
+</AnswerBox>
+
+"Large" turns out to mean four different things in ChatGPT, and picking the wrong fix wastes an
+afternoon. Here is how to tell them apart and what to do about each.
+
+## The four limits, side by side
+
+| What you hit | The number | How it fails |
+| --- | --- | --- |
+| File size | <Fact k="maxFileSize" /> | Upload refused, clear error |
+| Document length | <Fact k="maxTextTokens" /> | Uploads fine, read partly, no warning |
+| Spreadsheet size | <Fact k="maxSpreadsheetSize" /> | Upload refused |
+| How many files | <Fact k="rollingUploadRate" /> | Refused until slots free up |
+
+Free accounts have a tighter cap still, at <Fact k="freeDailyUploads" />.
+
+The second row is the one worth internalising. It is not a size limit, it is a length limit, and
+because it fails silently it is the reason people think ChatGPT read their document when it did not.
+
+## Step 1: convert it to text
+
+Try this before anything more elaborate. It is free and it takes a minute.
+
+Most of a document's weight is not its words. A Word file carries fonts, styles, and revision
+history. A PDF carries page geometry and any embedded images. Strip that away and what is left is
+text, which is small.
+
+<Steps>
+  <Step title="Open it in whatever created it">
+    Word, Google Docs, Pages, anything.
+  </Step>
+  <Step title="Export as plain text">
+    Save As in Word. File, then Download, then Plain Text in Google Docs.
+  </Step>
+  <Step title="Compare the size">
+    A Word document full of images routinely goes from tens of megabytes to tens of kilobytes.
+  </Step>
+</Steps>
+
+Two things this does not fix. It will not help a scanned PDF, because there is no text in it to
+extract. And if the file is long rather than heavy, the word count is unchanged, so you may still be
+over the token cap.
+
+## Step 2: send only what you need
+
+Consistently underrated. You rarely need the whole document read. You need the part your question
+is about.
+
+Pull out that section and send that. Answers usually improve, because there is less irrelevant
+material competing for attention.
+
+<Callout variant="tip" title="A good default">
+Ask yourself which pages you would hand a colleague if they had ten minutes. Send those.
+</Callout>
+
+## Step 3: split it and send the parts in order
+
+When the document really does need reading in full, this is the method that works.
+
+Cut it into pieces small enough to be accepted, then send them one after another. The critical part
+is not the cutting, it is what you say first:
+
+> I am going to paste a long document in several parts. Do not summarise or answer anything until I
+> tell you the last part has arrived. Reply "received" after each one.
+
+Skip that and ChatGPT answers the first chunk as though it were the whole document, then keeps
+adjusting. What you end up with is a summary weighted toward the opening that reads as though it
+covers everything.
+
+Doing this by hand is fine for three or four parts. Past that the failure mode is a mistake you do
+not notice: a chunk pasted twice, one skipped, one silently truncated by the paste.
+
+<InlineInstall
+  heading="The automatic version"
+  body="FileUploadGPT reads the file in your browser, splits it into pieces ChatGPT will accept, sends the hold-your-answer instruction first, then feeds the parts in order. Free, and nothing is uploaded to us."
+/>
+
+## Step 4: know when to use something else
+
+For a book, a full codebase, or a year of transcripts, chunking stops making sense. Even in order,
+the earliest parts fall out of memory before the last arrive.
+
+At that size, use a tool built for it. Assistants with much larger context windows exist, and
+retrieval tools that search a document and surface the relevant passages will beat chunking every
+time.
+
+## Things that do not work
+
+| Attempt | Result |
+| --- | --- |
+| Zipping the file | Not unpacked. You wrapped the problem. |
+| Renaming the extension | Contents are inspected, not filenames. |
+| Uploading a folder | Not supported. Send individual files. |
+| Upgrading to Plus | Some caps move. The length cap does not. |
+| Retrying repeatedly | Fails identically, and failed attempts consume your rate cap. |
+
+That last one is worth remembering. OpenAI's FAQ confirms failed attempts count against the rolling
+cap, so twenty retries makes your next hour worse.
+
+## Checking it actually worked
+
+The habit that saves you from a confidently wrong answer: after uploading, ask something that can
+only be answered from the end of the document.
+
+"What is the last section called?" If it cannot tell you, it did not read that far, and everything
+it says about the document is based on part of it.

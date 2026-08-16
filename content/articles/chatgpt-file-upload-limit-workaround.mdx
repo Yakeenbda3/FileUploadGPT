@@ -1,0 +1,181 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-upload-limit-workaround',
+  title: "How to get past ChatGPT's file upload limit",
+  heading: "How to get past ChatGPT's file upload limit",
+  description:
+    'Five ways to work with a document ChatGPT refuses to accept, what each one costs you in effort, and which of them are a waste of time.',
+  category: 'bypass',
+  updated: '2026-08-16',
+  targetQuery: 'how to bypass chatgpt file upload limit',
+  related: [],
+  faq: [
+    {
+      q: 'Is there a way to remove the upload limit completely?',
+      a: 'No. The limit is enforced on OpenAI\'s side and nothing running in your browser can raise it. What you can change is how much you send at once. Splitting a document into pieces that each fit is the whole game, whether you do it by hand or with a tool.',
+    },
+    {
+      q: 'Does zipping the file help?',
+      a: 'No. ChatGPT does not unpack archives to get at what is inside, so a zip usually leaves you worse off than the original. Converting to plain text is the compression that actually works here, because it strips the formatting that made the file big in the first place.',
+    },
+    {
+      q: 'Will splitting a document confuse ChatGPT?',
+      a: 'Not if you tell it what is happening. Say up front that the document is arriving in several parts and to hold its answer until the last one. Without that instruction it tends to summarise part one before part two shows up, which is where most bad results come from.',
+    },
+    {
+      q: 'Does any of this cost money?',
+      a: 'The manual methods cost nothing but time. FileUploadGPT is free, with no account and no payment. Paying for ChatGPT Plus raises some limits but does not remove them, so a document that is genuinely too long stays too long on a paid plan.',
+    },
+  ],
+});
+
+<AnswerBox>
+You cannot raise the limit, so the fix is always to send less at a time. In practice that means
+one of three things: convert the file to plain text so it shrinks, split it into parts and send
+them in order, or use a tool that does the splitting for you. Zipping, renaming, and upgrading
+to Plus do not solve it.
+</AnswerBox>
+
+There is a particular kind of annoying where you have exactly the document you need, ChatGPT is
+right there, and it just will not take it. Maybe the upload bar fills and then stops. Maybe you get
+told the file is too large. Maybe it uploads fine and the answers you get back are clearly based on
+the first few pages and nothing else.
+
+All three are the same underlying problem, and none of them are fixed by trying again.
+
+## Why it rejects your file
+
+Two separate ceilings are at work, and they fail in different ways, which is why the advice online
+is so contradictory.
+
+The first is **file size**. This one is easy to understand. Past a certain number of megabytes the
+upload is refused outright and you get a clear error. Nothing subtle about it.
+
+The second is **length**, and this is the one that catches people. ChatGPT has a fixed amount of
+text it can hold in mind at once. A long document can be well under the size limit and still be far
+past what fits. When that happens you often do not get an error at all. The file uploads, everything
+looks fine, and ChatGPT quietly works from a fraction of it. If you have ever had it summarise a
+report and miss the entire second half, this is why.
+
+<Callout variant="warn" title="The silent failure is the dangerous one">
+A rejected upload tells you something went wrong. A truncated one does not. If you are making a
+decision based on a document ChatGPT only half read, you will not find out from ChatGPT. Ask it
+something that can only be answered from the last few pages. If it cannot answer, it did not read
+them.
+</Callout>
+
+A third thing gets blamed for this and is usually innocent: how many files you can send in one
+message, and how many you can send in a day. Those are real caps, but they produce their own
+specific messages about file counts and daily limits. If your problem is one document that will not
+go in, it is size or length, not counting.
+
+## Method 1: convert it to plain text first
+
+Start here, because it is free, takes a minute, and often ends the problem outright.
+
+Most of what makes a document heavy is not the words. A Word file carries fonts, styles, revision
+history, and embedded images. A PDF carries page geometry and, if it came from a scanner, a
+photograph of every page. Strip all of that and you are left with text, which is tiny.
+
+<Steps>
+  <Step title="Open the document in whatever made it">
+    Word, Google Docs, Pages, anything.
+  </Step>
+  <Step title="Save or export it as .txt">
+    In Word it is under Save As. In Google Docs it is File, then Download, then Plain Text.
+  </Step>
+  <Step title="Check the new size">
+    A 40 MB Word file with images in it commonly comes out somewhere in the tens of kilobytes as
+    text. That is not a typo.
+  </Step>
+</Steps>
+
+This works brilliantly on text-heavy documents and does nothing at all on scanned PDFs, because a
+scan has no text in it to extract. It is a picture. You need OCR first, which is a different job.
+
+You also lose the layout, obviously. For a contract or a report that is usually fine, because you
+wanted the words. For anything where the table structure carries meaning, check the result before
+trusting it.
+
+## Method 2: split it into parts and send them in order
+
+If the file is still too long after converting, the only remaining option is to send it in pieces.
+
+The mechanics are simple. Cut the text into chunks small enough to be accepted, then paste them one
+after another. The part people get wrong is not the cutting, it is the instructions.
+
+Send this first, before any of the content:
+
+> I am going to paste a long document in several parts. Do not summarise or respond to any part
+> until I tell you the last one has arrived. Just reply "received" after each one.
+
+Without that, ChatGPT answers the first chunk as though it were the whole thing, and then keeps
+adjusting its answer as more arrives. You end up with a summary weighted heavily toward the
+beginning, which is worse than useless because it looks complete.
+
+It works. It is also genuinely tedious on anything long, and the tedium is where mistakes creep in:
+a chunk pasted twice, a chunk skipped, a paste that silently truncated.
+
+<InlineInstall
+  heading="Or skip the pasting entirely"
+  body="FileUploadGPT does exactly the above, automatically. It reads your file in your own browser, cuts it into pieces ChatGPT will accept, sends the hold-your-answer instruction first, then feeds the parts in one after another in the right order."
+/>
+
+## Method 3: use an extension that does the splitting
+
+This is the same method as above with the manual labour removed. You pick the file, and the
+splitting, the ordering, and the instructions are handled.
+
+Worth being straight about what this does and does not change. It does not raise any limit, because
+nothing running in your browser can. What it removes is the part where you sit there cutting a
+document into forty pieces and pasting them one at a time without losing your place.
+
+It also does not help with scanned PDFs, video, or audio, for the same reason nothing else does:
+there is no text in them to send.
+
+## Method 4: send only the part that matters
+
+The most overlooked option, and often the best answer.
+
+You rarely need ChatGPT to read all 300 pages. You need it to read the section you actually have a
+question about. Find that section, send that, and you will usually get a better answer than you
+would have from the whole document, because there is less noise competing for its attention.
+
+This is worth trying before anything more elaborate. It costs nothing and it frequently just works.
+
+## Method 5: use something built for very long documents
+
+For genuinely enormous inputs, a book, a full codebase, a year of transcripts, there is a point
+where splitting stops being sensible. Even sent in order, the earliest parts fall out of memory
+before the last ones arrive.
+
+At that size the honest answer is that a different tool fits better. Some assistants hold far more
+text at once. Retrieval tools, which search a document and pull out the relevant passages rather
+than reading all of it, are built for exactly this and will beat any amount of chunking.
+
+Knowing when to stop fighting the tool is worth more than another workaround.
+
+## Things that do not work
+
+Worth naming, because all four circulate widely and all four waste your time.
+
+| What people try | What actually happens |
+| --- | --- |
+| Zipping the file | ChatGPT does not open archives to read what is inside. You have added a wrapper, not removed a problem. |
+| Renaming the extension | The file is inspected by its contents, not its name. Renaming a `.docx` to `.txt` produces gibberish. |
+| Upgrading to Plus | Some limits move. The length ceiling that truncates long documents is still there. A document too long on Free is too long on Plus. |
+| Uploading it repeatedly | If it failed for size or length, it will fail the same way every time. |
+
+## So which one should you use
+
+If it is a text-heavy document, convert it to plain text and try again. That alone fixes most cases
+and costs you a minute.
+
+If it is still too long, split it, and send the hold-your-answer instruction first. Do it by hand if
+it is a handful of parts. Use a tool if it is more than that, because the failure mode of doing it
+manually is a mistake you will not notice.
+
+If you only need one chapter, send one chapter.
+
+And if it is a book, use something built for books.

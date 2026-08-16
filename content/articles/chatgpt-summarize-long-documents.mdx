@@ -1,0 +1,148 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-summarize-long-documents',
+  title: 'How to summarise long documents with ChatGPT',
+  heading: 'How to summarise long documents with ChatGPT',
+  description:
+    'Prompts that produce a summary worth reading, plus how to check ChatGPT actually read the whole document before you trust what it says.',
+  category: 'workflows',
+  updated: '2026-08-16',
+  targetQuery: 'how to use chatgpt to summarize long documents',
+  related: [
+    'chatgpt-document-analysis-tips',
+    'chatgpt-file-upload-limit-workaround',
+    'chatgpt-research-paper-analysis',
+  ],
+  faq: [
+    {
+      q: 'How do I know ChatGPT read the whole document?',
+      a: 'Ask it something only answerable from the final pages, like what the last section is called or what the closing recommendation was. If it cannot say, it was truncated. Documents past the 2 million token cap are cut off silently, with no warning at all.',
+    },
+    {
+      q: 'Why are the summaries so generic?',
+      a: 'Usually because the request was generic. "Summarise this" has no audience, no length, and no purpose, so you get the average of all possible summaries. Say who it is for and what decision it supports and the output changes completely.',
+    },
+    {
+      q: 'What is the best length to ask for?',
+      a: 'Specify it in a unit you actually care about. "Under 200 words" or "five bullets, one line each" works far better than "brief", which it will interpret differently every time.',
+    },
+    {
+      q: 'Can I trust the numbers in a summary?',
+      a: 'Verify them. Ask it to quote the sentence each figure came from, then check those against the document. Summarising is where numbers most often get subtly rounded, mixed up, or attached to the wrong year.',
+    },
+  ],
+});
+
+<AnswerBox>
+Two things separate a useful summary from a useless one. Tell it who the summary is for and what
+decision it supports, rather than just asking it to summarise. Then check it actually read the whole
+document by asking something only answerable from the last pages, because long files get truncated
+without any warning.
+</AnswerBox>
+
+## Check it read everything first
+
+Before you judge the summary, establish what it is a summary of.
+
+Documents past <Fact k="maxTextTokens" /> get truncated, and ChatGPT does not mention it. You get a
+confident summary of the first portion that reads exactly like a summary of the whole thing.
+
+The test takes ten seconds:
+
+> Before summarising: what is the title of the final section, and what does the document's last
+> paragraph say?
+
+If it cannot answer, everything that follows is based on part of the file. Split the document and
+send it in parts, or send only the section you need. There is more on that in
+[getting past the upload limit](/blog/chatgpt-file-upload-limit-workaround).
+
+<Callout variant="warn" title="This is the failure that costs people">
+A summary built on half a document does not look damaged. It reads well and sounds complete. If you
+are making a decision on it, run the check first.
+</Callout>
+
+## Say who it is for
+
+The single biggest improvement available, and it costs one sentence.
+
+"Summarise this document" has no audience, so you get the blandest possible reading. Compare:
+
+> Summarise this for a finance director who needs to decide whether to renew the contract. Focus on
+> cost changes, termination terms, and anything that increases our liability. Under 300 words.
+
+Same document, completely different output. You have told it what matters and what to leave out,
+which is most of what summarising actually is.
+
+## Prompts that produce different shapes
+
+Pick the shape that fits what you are going to do with it.
+
+**For a decision:**
+
+> Summarise this and end with the three things I need to decide, each with the evidence from the
+> document that bears on it.
+
+**For a meeting:**
+
+> Give me five bullets I can read out in a meeting. One line each, plain language, no jargon.
+
+**For working through a long report:**
+
+> Summarise section by section, using the document's own headings. Two or three sentences per
+> section. Do not merge sections together.
+
+**For finding the disagreements:**
+
+> What does this document claim that is not supported by evidence in it, and where does it
+> contradict itself?
+
+That last one is the most underrated. Everyone asks what a document says. Asking where it is weak
+tells you something you could not have got by skimming.
+
+## Getting quotes rather than paraphrase
+
+The fastest way to make a summary verifiable:
+
+> For each point, quote the sentence it came from and give the section it appears in.
+
+Two benefits. You can check the claim without rereading, and paraphrase drift mostly disappears,
+because a quote either exists or it does not.
+
+<InlineInstall
+  heading="For documents too long to upload"
+  body="FileUploadGPT splits the file into pieces ChatGPT accepts and sends them in order, with the instruction to hold its answer until they have all arrived. That is what stops you getting a summary of chapter one."
+/>
+
+## Summarising several documents at once
+
+The mistake is uploading all of them and asking for one summary. What comes back is mush, because
+the sources have been blended and you cannot tell what came from where.
+
+Do it in two passes instead. Summarise each document separately, then paste those summaries back in
+and ask the comparative question:
+
+> Here are summaries of four vendor proposals. Where do they agree, where do they differ
+> materially, and which one has the weakest evidence for its claims?
+
+Slower, and much better. It also keeps attribution intact, which matters the moment someone asks
+where a figure came from.
+
+## Verify anything numeric
+
+Summarising is where numbers go wrong. Figures get rounded, attached to the wrong year, or blended
+between two tables.
+
+Ask for the source sentence behind each number, then spot-check two or three against the document.
+If those hold, the rest usually does. If one is wrong, check them all.
+
+## A workflow that holds up
+
+1. Confirm the whole document was read, using the last-section test.
+2. Say who the summary is for and what it supports.
+3. Ask for a specific shape and a specific length.
+4. Require a quote and a section reference for each point.
+5. Verify the numbers.
+
+The whole thing takes about two minutes longer than typing "summarise this", and the difference in
+what you get back is not subtle.

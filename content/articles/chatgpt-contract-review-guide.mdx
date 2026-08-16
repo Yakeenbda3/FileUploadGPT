@@ -1,0 +1,156 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-contract-review-guide',
+  title: 'Using ChatGPT to review a contract',
+  heading: 'Using ChatGPT to review a contract',
+  description:
+    'Prompts for reading a contract before a lawyer does, what it catches reliably, and the four things you should never rely on it for.',
+  category: 'workflows',
+  updated: '2026-08-16',
+  targetQuery: 'chatgpt contract review',
+  related: [
+    'chatgpt-document-analysis-tips',
+    'chatgpt-summarize-long-documents',
+    'upload-large-pdfs-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Is it safe to upload a contract to ChatGPT?',
+      a: 'Depends on the contract and your plan. On consumer plans, content may be used to improve models unless you turn that off in data controls. Business and Enterprise plans are excluded from that by policy. For anything under an NDA, check your setting first, or redact names and figures before uploading.',
+    },
+    {
+      q: 'Can ChatGPT replace a lawyer?',
+      a: 'No. It is good at finding what a document says and what it does not say, which is genuine preparation. It cannot tell you how a clause is treated in your jurisdiction, what is unusual for your industry, or what is worth fighting over. Use it to arrive at the lawyer better prepared.',
+    },
+    {
+      q: 'What does it catch most reliably?',
+      a: 'Missing clauses, internal contradictions, and asymmetries between the parties. Those are pattern-matching problems over text, which is what it is good at. Asking what a contract of this type usually contains that this one lacks is consistently the most valuable question.',
+    },
+    {
+      q: 'My contract is too long to upload. What now?',
+      a: 'Split it and send the parts in order, telling it up front to hold its answer until the last one arrives. Reviewing a contract from a truncated copy is worse than not reviewing it, because the clause you needed is usually in the schedules at the back.',
+    },
+  ],
+});
+
+<AnswerBox>
+It is genuinely good at three things: telling you what a contract says in plain language, spotting
+what is missing compared with a typical agreement of that kind, and finding places where the two
+sides are treated differently. It cannot tell you what is enforceable where you live. Use it to
+prepare, not to decide.
+</AnswerBox>
+
+<Callout variant="warn" title="Before you upload anything">
+On consumer ChatGPT plans, uploaded content may be used to improve model performance unless you have
+turned that off in the data controls. Business and Enterprise plans are excluded from that by
+policy. If the contract is under an NDA or contains personal data, check the setting first, or
+redact the names and figures before uploading. This is easier to do now than to explain later.
+</Callout>
+
+## Make sure it read the whole thing
+
+Contracts fail this more than most documents, because the important material tends to sit at the
+back, in schedules and annexes. Files past <Fact k="maxTextTokens" /> get truncated with no warning.
+
+> Before we start: list every numbered section and schedule in this document, in order.
+
+If the list stops short of what you can see in the PDF, it is working from a fragment, and the
+liability cap you were worried about is probably in the part it never saw.
+
+## The first pass: what does it actually say
+
+> Summarise this contract in plain language for someone who is not a lawyer. Cover: what each party
+> must do, what it costs, how long it lasts, how it ends, and what happens if either side breaks it.
+> Quote the clause number behind each point.
+
+Clause numbers make everything after this faster, because you can jump straight to anything that
+looks wrong.
+
+## The second pass: what is missing
+
+The highest-value question you can ask about a contract.
+
+> What would you expect a [service agreement / NDA / employment contract] to contain that this one
+> does not? For each gap, say what risk it leaves open.
+
+Absent clauses are invisible when you read a document front to back, because there is nothing there
+to notice. Missing liability caps, no termination for convenience, no data-protection terms, no
+governing-law clause. The gap is usually more expensive than anything actually written down.
+
+## The third pass: who does this favour
+
+> Go through this clause by clause and identify anything where the two parties are treated
+> differently. For each one, say which side it favours and why.
+
+Asymmetry is where the negotiating room is. One side can terminate on thirty days and the other on
+one hundred and eighty. One side's liability is capped and the other's is not. These are easy to
+miss and easy for a model to find.
+
+## Specific things worth asking about
+
+**Termination**
+
+> How can each party end this, with how much notice, and what survives termination?
+
+**Money**
+
+> Every payment obligation: amount, timing, what triggers it, what happens if it is late.
+
+**Liability**
+
+> Is liability capped? For whom, at what, and what is carved out of the cap?
+
+**Automatic renewal**
+
+> Does this renew automatically? When is the last date to give notice, and how must it be given?
+
+That last one catches people constantly. Auto-renewal with a ninety-day notice window is easy to
+read past and expensive to miss.
+
+**Intellectual property**
+
+> Who owns what is created under this agreement, and who owns anything either party brought into it?
+
+## Comparing a contract against your standard terms
+
+Genuinely useful, and it takes two passes rather than one.
+
+Do not upload both and ask for a comparison. Summarise each separately, then paste both summaries
+back and ask:
+
+> Here are summaries of our standard terms and the counterparty's draft. Where does theirs differ
+> materially, and which differences increase our risk?
+
+<InlineInstall
+  heading="For contracts too long to upload in one piece"
+  body="FileUploadGPT splits the document into parts ChatGPT accepts and sends them in order, so the schedules at the back get read rather than silently dropped."
+/>
+
+## What not to rely on it for
+
+Four things, and they are the four that matter most.
+
+**Enforceability.** Whether a clause holds up depends on jurisdiction and case law. It does not know
+where you are and it is not tracking your courts.
+
+**What is normal for your industry.** It has a general sense of what contracts contain. It does not
+know what is standard in your market this year.
+
+**What is worth fighting over.** Negotiating leverage is a commercial judgement, not a text problem.
+
+**The final read.** For anything that matters, a lawyer reads it. The point of all this is arriving
+with a marked-up copy and a specific list of questions instead of a blank stare, which is a real
+saving in both time and fees.
+
+## A sensible order
+
+1. Confirm it has the whole document, schedules included.
+2. Plain-language summary with clause numbers.
+3. What is missing.
+4. Where the parties are treated differently.
+5. Targeted questions on termination, money, liability, renewal, IP.
+6. Take the flagged list to someone qualified.
+
+Steps one to five take about twenty minutes. Step six goes considerably faster than it otherwise
+would have.

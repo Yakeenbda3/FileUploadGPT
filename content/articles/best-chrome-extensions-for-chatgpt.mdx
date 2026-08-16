@@ -1,0 +1,140 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'best-chrome-extensions-for-chatgpt',
+  title: 'How to pick a ChatGPT Chrome extension',
+  heading: 'How to pick a ChatGPT Chrome extension without regretting it',
+  description:
+    'What the categories of ChatGPT extension actually do, and the permission check that matters more than any feature list.',
+  category: 'compare',
+  updated: '2026-08-16',
+  targetQuery: 'best chrome extensions for chatgpt',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'chatgpt-vs-claude-document-analysis',
+    'chatgpt-document-analysis-tips',
+  ],
+  faq: [
+    {
+      q: 'Are ChatGPT extensions safe?',
+      a: 'It depends entirely on the one you install. An extension that runs on chatgpt.com can read everything in your conversations, including anything you paste. The permission list on the store page tells you what it can reach. An extension asking for access to all sites when it only needs one is the clearest warning sign there is.',
+    },
+    {
+      q: 'What permissions should a ChatGPT extension need?',
+      a: 'Access to chatgpt.com and chat.openai.com, and very little else. If it asks to read and change data on all websites, or wants your browsing history, ask why. A tool that works on one site has no reason to reach every other one.',
+    },
+    {
+      q: 'Do extensions work on mobile Chrome?',
+      a: 'No. Chrome on Android and iOS does not support extensions at all. This is a limitation of mobile Chrome rather than of any particular extension, and no extension can work around it. You need a laptop or desktop.',
+    },
+    {
+      q: 'Will an extension get my ChatGPT account banned?',
+      a: 'Extensions that automate the interface operate in a grey area. Ones that behave like a user, typing into the box and pressing send, are lower risk than ones hammering the service automatically. Read the terms and make your own call, particularly on an account you rely on.',
+    },
+  ],
+});
+
+<AnswerBox>
+Pick by what you actually keep running into, then check the permissions before the features. An
+extension for ChatGPT needs access to chatgpt.com and little else. One asking to read and change
+data on all websites, for a tool that works on one site, is telling you something.
+</AnswerBox>
+
+Straight up: we make one of these. So rather than ranking rivals we have not tested and cannot keep
+current, here is how to evaluate any of them, what the categories actually do, and what to check
+before you click add.
+
+## Check permissions before features
+
+Do this first, every time, and it takes fifteen seconds.
+
+An extension that runs on ChatGPT can read the page. That means your conversations, including
+anything you have pasted into them. That is not sinister, it is how extensions work, and it is
+exactly why the permission list matters.
+
+On any Chrome Web Store listing, look for the permissions section.
+
+| What it asks for | What to think |
+| --- | --- |
+| Read and change data on chatgpt.com | Expected. It has to touch the page to do anything. |
+| Read and change data on all sites | Ask why. A ChatGPT tool has no business on your bank's site. |
+| Read your browsing history | Almost never justified for this. |
+| Communicate with cooperating websites | Means it talks to a server. Find out whose, and what it sends. |
+
+<Callout variant="warn" title="The question worth asking">
+Does this extension send my conversation anywhere? Some process everything locally in your browser.
+Others send content to their own servers, which may be fine and may be exactly what you do not want
+for work material. The privacy policy should say. If it does not, that is your answer.
+</Callout>
+
+Two more signals worth ten seconds each. When was it last updated, and does the developer have a
+real website. ChatGPT's interface changes often, and an extension untouched for a year is probably
+broken. An anonymous developer with no site and no support address is a support problem waiting to
+happen.
+
+## The categories, and what they are for
+
+Most ChatGPT extensions do one of five things. Work out which problem you have before browsing.
+
+**Getting large content in.** For when the document is longer than ChatGPT will take. These split it
+into pieces and feed them in. Useful if you regularly hit the limit and pointless if you never do.
+This is the category ours is in.
+
+**Prompt management.** Saved prompts, templates, snippets you use constantly. Worth it if you type
+the same instructions daily, and clutter if you do not.
+
+**Exporting conversations.** Saving a chat as markdown, PDF, or a shareable page. Genuinely useful
+if you need a record and mildly annoying otherwise.
+
+**Search and organisation.** Finding an old conversation, adding folders and tags. The value scales
+with how many chats you have. At forty it is transformative, at four it is noise.
+
+**Interface changes.** Wider columns, different fonts, keyboard shortcuts. Pure preference, and the
+lowest risk of the five, since they mostly restyle rather than read.
+
+## Install one at a time
+
+The habit that saves the most trouble.
+
+Extensions that modify the same page can conflict, and when something breaks with four installed you
+have no idea which one did it. Add one, use it for a week, then add the next.
+
+It also settles the question that browsing cannot: whether you actually use it. Most extensions
+people install are unused within a fortnight.
+
+## Ours, described plainly
+
+FileUploadGPT is in the first category. It reads a file in your browser, splits it into pieces
+ChatGPT will accept, and sends them in order with the instruction that stops ChatGPT answering
+before the last one arrives.
+
+What it needs: access to chatgpt.com and chat.openai.com. Nothing else.
+
+What it does with your file: reads it in your browser. Nothing is sent to us, because there is no
+server to send it to.
+
+What it does not do: help with video, audio, or scanned PDFs, because there is no text in those to
+send. It also cannot raise any of ChatGPT's limits, since nothing running in a browser can.
+
+<InlineInstall
+  heading="If that is the problem you have"
+  body="Free, no account, no payment. If you never hit the upload limit, you do not need it, and we would rather say so than have you install something you will remove next week."
+/>
+
+## Mobile, since it comes up constantly
+
+Chrome on Android and iOS does not support extensions. Not ours, not any of them.
+
+This is a limitation of mobile Chrome and there is no way around it. If you are reading this on a
+phone and want any extension discussed here, you need a laptop or desktop. Send yourself the link
+and it will be there when you get to a computer.
+
+## A short checklist
+
+1. What is the actual problem you keep hitting?
+2. Does the permission list match that problem, or ask for far more?
+3. Does the privacy policy say where your content goes?
+4. Updated in the last few months?
+5. Install one. Give it a week. Then consider the next.
+
+Step two eliminates most of the bad ones on its own.

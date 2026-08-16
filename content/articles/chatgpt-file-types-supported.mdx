@@ -1,0 +1,169 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-types-supported',
+  title: 'What file types can ChatGPT actually read?',
+  heading: 'What file types can ChatGPT actually read?',
+  description:
+    'What OpenAI officially supports, what works in practice, and the rule about images that explains why your scanned PDF comes back empty.',
+  category: 'file-types',
+  updated: '2026-08-16',
+  targetQuery: 'chatgpt supported file types',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'chatgpt-file-upload-troubleshooting',
+    'upload-large-pdfs-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT read RTF files?',
+      a: 'Yes. RTF is a text document format and falls under the documents category OpenAI lists as supported. If you have trouble with one, saving it as .txt or .docx first removes any doubt, since nothing is lost from an RTF by doing that.',
+    },
+    {
+      q: 'Can ChatGPT read ZIP or RAR archives?',
+      a: 'Not as archives. It does not unpack them to reach what is inside, so uploading one gets you nowhere. Extract the archive on your own machine and upload the individual files you actually want it to read.',
+    },
+    {
+      q: 'Does ChatGPT support MP4 or other video files?',
+      a: 'Video is not among the file types OpenAI lists for uploads. Their supported list covers text files, spreadsheets, presentations and documents. If you need video content analysed, get a transcript first and upload that as text.',
+    },
+    {
+      q: 'Why did my scanned PDF come back empty?',
+      a: 'Because a scan is images, not text. Every plan except Enterprise does text-only retrieval, which means ChatGPT extracts the digital text from a file and discards the images. A scanned page has no digital text in it, so there is nothing to extract. Run it through OCR first.',
+    },
+    {
+      q: 'Does ChatGPT support ODT, HWP, or PSD files?',
+      a: 'OpenAI publishes no extension whitelist, only the four families. ODT is a document and generally works. HWP and PSD are neither common nor plain text, so treat them as unlikely. For any format you are unsure about, exporting to PDF or plain text first is faster than testing.',
+    },
+  ],
+});
+
+<AnswerBox>
+OpenAI's own wording is "all common file extensions for text files, spreadsheets, presentations,
+and documents". There is no published list of extensions. Video and audio are not in those four
+families. And on every plan except Enterprise, ChatGPT pulls the text out of a file and throws the
+images away, which is why scanned documents come back with nothing.
+</AnswerBox>
+
+This question gets a lot of confidently wrong answers, mostly because people publish an extension
+list that OpenAI never published. What OpenAI actually says is broader and vaguer than that, and the
+useful detail is not in the list at all. It is in what happens to the parts of your file that are
+not text.
+
+## What OpenAI officially says
+
+Asked directly what types are supported, the File Uploads FAQ answers in one sentence:
+
+> All common file extensions for text files, spreadsheets, presentations, and documents.
+
+That is the whole answer. Four families, no extensions, no table.
+
+So any article handing you a definitive list of forty extensions has made it up, or inferred it from
+testing, which is worth something but is not the same thing. The families are the official line, and
+anything outside them is a guess until you try it.
+
+## What works in practice
+
+Within those four families, this is what holds up consistently.
+
+| Family | Formats that work | Notes |
+| --- | --- | --- |
+| Documents | PDF, DOCX, DOC, RTF, ODT | Text-based PDFs only. See the images rule below. |
+| Plain text | TXT, MD, CSV, JSON, XML, LOG | The most reliable of the lot. Nothing to go wrong. |
+| Spreadsheets | XLSX, XLS, CSV | Exempt from the token cap that limits documents. |
+| Presentations | PPTX, PPT, KEY | Text and structure come through, images do not. |
+| Code | Almost any source file | Read as plain text, so the extension rarely matters. |
+
+Code files are worth a note. There is no special handling for them, which is good news: a `.py`, a
+`.rs`, a `.sql`, or something obscure is just text as far as the upload is concerned, and it goes
+through fine.
+
+## The images rule, which explains most failures
+
+This is the part almost nobody covers, and it accounts for more confused uploads than anything else.
+
+From the FAQ, on whether ChatGPT can handle images embedded in documents:
+
+> All other plans and document files only support text-based retrieval. This means that ChatGPT will
+> extract digital text from the file and discard any images.
+
+Visual retrieval for PDFs exists only on ChatGPT Enterprise. On Free, Plus, Pro and Team, an upload
+is stripped to its digital text and everything visual is dropped.
+
+<Callout variant="warn" title="This is why your scanned PDF came back empty">
+A scanned document is a photograph of a page. There is no digital text inside it, only pixels. So
+"extract the text and discard the images" leaves exactly nothing. The upload succeeds, no error
+appears, and ChatGPT tells you it cannot find anything, which sounds like a bug and is in fact the
+documented behaviour.
+
+The fix is OCR. Run the PDF through any OCR tool so it contains real text, then upload it. Adobe,
+Preview on a Mac, and plenty of free web tools all do this.
+</Callout>
+
+The same rule explains why a chart in a report gets ignored, why a diagram in a slide deck goes
+unmentioned, and why a Word document that is mostly screenshots produces a thin summary.
+
+## Video and audio
+
+Not in the four families. OpenAI's supported list names text files, spreadsheets, presentations and
+documents, and neither video nor audio appears in it.
+
+This trips people up because ChatGPT clearly does handle voice. That is voice mode, a separate
+feature, and it is not the same thing as attaching an mp3 to a conversation for analysis.
+
+If you have video or audio you need worked on, get a transcript first. Any transcription tool will
+produce a text file, and a text file is the most reliably supported thing there is.
+
+## Archives
+
+Zip and RAR do not work, and the reason is simple: ChatGPT does not unpack them to see what is
+inside. You have handed it a container it treats as one opaque file.
+
+Extract it yourself and upload the files that matter. This also tends to produce better answers,
+because you have removed everything irrelevant rather than burying the useful file among ninety
+others.
+
+## The size limits, which are separate
+
+Being a supported type is not the same as being an acceptable size. Four different ceilings apply.
+
+| Limit | Value |
+| --- | --- |
+| Any single file | <Fact k="maxFileSize" /> |
+| Text and document files | <Fact k="maxTextTokens" />, spreadsheets exempt |
+| CSV and spreadsheets | <Fact k="maxSpreadsheetSize" /> |
+| Images | <Fact k="maxImageSize" /> |
+
+The token cap is the one that catches people. A long document can be a few megabytes, nowhere near
+the size ceiling, and still be past what fits. When that happens you usually get no error at all.
+The file uploads, and ChatGPT works from part of it.
+
+<InlineInstall
+  heading="When the format is fine but the document is too long"
+  body="FileUploadGPT splits documents that are past the length limit into pieces ChatGPT accepts and sends them in order, so you get the whole thing read instead of the first part of it."
+/>
+
+## How many files, and how often
+
+Separate from types and sizes again, there are caps on how much you can send.
+
+- Free accounts: <Fact k="freeDailyUploads" />.
+- Generally: <Fact k="rollingUploadRate" />. Rolling, so it does not reset at midnight.
+- Custom GPTs: <Fact k="filesPerGpt" />, for the lifetime of that GPT rather than per chat.
+- Projects: <Fact k="projectFilesPlus" /> on Plus, <Fact k="projectFilesPro" /> on Pro, Team,
+  Education and Business.
+
+There are also storage caps of <Fact k="userStorageCap" /> per user and <Fact k="orgStorageCap" />
+per organisation, shared across your chats, Projects and custom GPT knowledge. Those are the reason
+people hit "upload limit reached" having uploaded almost nothing recently.
+
+## Working out whether your format will work
+
+A rule of thumb that has not let me down: **if you can open it in a text editor and read words, so
+can ChatGPT.**
+
+Try that. If the file shows recognisable text, upload it as-is. If it shows binary noise, it needs
+converting first, and the target is almost always PDF or plain text.
+
+For anything genuinely unusual, converting is faster than testing. Exporting to `.txt` takes a few
+seconds and removes the question entirely.

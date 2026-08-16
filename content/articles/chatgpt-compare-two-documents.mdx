@@ -1,0 +1,130 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-compare-two-documents',
+  title: 'How to compare two documents with ChatGPT',
+  heading: 'How to compare two documents with ChatGPT properly',
+  description:
+    'Uploading both and asking for a comparison produces mush. The two pass method that keeps attribution intact and finds real differences.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to compare two documents with chatgpt',
+  related: [
+    'chatgpt-document-analysis-tips',
+    'chatgpt-contract-review-guide',
+    'chatgpt-summarize-long-documents',
+  ],
+  faq: [
+    {
+      q: 'Why are the comparisons so vague?',
+      a: 'Usually because the request had no dimensions. Asked to compare two documents in general, it lists surface differences. Name the three or four things you care about and ask for a table, and it becomes specific.',
+    },
+    {
+      q: 'Should I upload both documents at once?',
+      a: 'Not for anything important. Summarise each separately against the same fixed questions, then compare the summaries. Uploading both blends them and you lose track of which claim came from which document.',
+    },
+    {
+      q: 'Can it do a proper redline of two contract versions?',
+      a: 'Not reliably at the character level, which is what a redline is. Use a document comparison tool for exact wording changes, then bring the changed clauses to ChatGPT for what they mean and who they favour.',
+    },
+    {
+      q: 'How many documents can I compare at once?',
+      a: 'Two works well. Beyond that, summarise each into the same structure first and compare the summaries, otherwise attribution breaks down and you cannot check any of it.',
+    },
+  ],
+});
+
+<AnswerBox>
+Do it in two passes. Summarise each document separately against the same fixed set of questions, then
+paste those summaries back and ask the comparative question. Uploading both at once blends the
+sources, and the result is confident, readable, and impossible to check.
+</AnswerBox>
+
+## Why one upload of both goes wrong
+
+It reads well, which is the problem.
+
+With both documents in view at once, the output merges them. You get statements that are true of one,
+or of neither, presented as though they applied to both, and no way to trace a claim back to its
+source without rereading everything.
+
+There is also a length issue. Two long documents together are twice as likely to exceed
+<Fact k="maxTextTokens" />, and past that the file is truncated silently. A comparison built on all
+of document one and half of document two looks exactly like a complete comparison.
+
+## The two pass method
+
+<Steps>
+  <Step title="Decide your dimensions first">
+    Three to five things you actually care about. For contracts: termination, liability, payment,
+    renewal. For proposals: price, timeline, scope, assumptions. This is the step that decides
+    whether the output is useful.
+  </Step>
+  <Step title="Summarise document one against exactly those dimensions">
+    "For this document, give me: [dimension 1], [dimension 2], [dimension 3]. One short paragraph
+    each, with the section number each came from. Say 'not covered' where it is absent."
+  </Step>
+  <Step title="Do the same for document two, in a fresh chat">
+    A fresh chat matters. In the same conversation, the second summary is influenced by the first,
+    and you lose the independence that makes the comparison worth anything.
+  </Step>
+  <Step title="Paste both summaries into a third chat and compare">
+    "Here are structured summaries of two vendor proposals. Where do they differ materially, which
+    difference carries the most risk for us, and where does either fail to address a dimension?"
+  </Step>
+</Steps>
+
+<Callout variant="tip" title="The identical structure is what does the work">
+Because both summaries answer the same questions in the same order, differences line up. A dimension
+one document covers and the other does not becomes visible immediately, and gaps are usually more
+important than differences.
+</Callout>
+
+## Ask for a table, with columns you name
+
+Prose comparisons are hard to scan and easy to hide vagueness in.
+
+> Table with columns: dimension, document A, document B, which is better for us and why.
+
+Naming the columns forces a position on every row. A comparison that will not commit to a column is
+telling you the documents are the same on that dimension, which is itself worth knowing.
+
+## The questions worth asking
+
+Beyond simply listing differences.
+
+**What is missing from both?** Two contracts can share the same gap, and a comparison focused on
+differences will never surface it.
+
+**Which differences actually matter?** Most differences are wording. Ask which ones change an
+obligation, a cost, or a risk.
+
+**Where do they contradict each other on the same fact?** Two documents describing the same project
+with different figures is a finding, not a formatting issue.
+
+**What would each side argue?** For a negotiation, better preparation than a difference list.
+
+## Where it is the wrong tool
+
+**Exact wording changes.** A redline is a character level operation, and a comparison tool does it
+properly. Use one for what changed, then bring the changed clauses here for what they mean.
+
+**Numerical reconciliation.** Two spreadsheets that should agree are a job for a spreadsheet. Upload
+them and ask for the reconciliation logic if you like, but check the arithmetic yourself.
+
+**Anything where the layout carries meaning.** Images inside documents are discarded on every plan
+except Enterprise, so a comparison of two visually designed documents is comparing their text only.
+
+<InlineInstall
+  heading="When either document is too long to summarise in one go"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, so each of your two summaries covers the whole document rather than its opening."
+/>
+
+## Comparing more than two
+
+Same method, more passes. Summarise each into the identical structure, then compare the summaries
+together.
+
+This scales further than you would expect, because the summaries are short. Ten proposals, summarised
+into the same five dimensions, is a comfortable amount of text to reason over at once, where ten full
+proposals is not.

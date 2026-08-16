@@ -1,0 +1,144 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-extract-data-from-documents',
+  title: 'Extracting data from documents with ChatGPT',
+  heading: 'How to pull specific data out of a document with ChatGPT',
+  description:
+    'Extraction is what ChatGPT is best at with documents. How to ask so the output is structured, checkable, and honest about what is missing.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to extract data from a document with chatgpt',
+  related: [
+    'chatgpt-document-analysis-tips',
+    'chatgpt-compare-two-documents',
+    'did-chatgpt-read-my-whole-document',
+  ],
+  faq: [
+    {
+      q: 'How do I get the output as a table or CSV?',
+      a: 'Ask for it explicitly, and name every column. "Return a CSV with columns: date, party, amount, section" gets you something you can paste into a spreadsheet. Left unspecified, you get prose.',
+    },
+    {
+      q: 'How do I stop it inventing values that are not there?',
+      a: 'Give it a way to say nothing. Tell it to write "not stated" rather than inferring, and require the section or page each value came from. Most invention happens when there is no sanctioned way to report an absence.',
+    },
+    {
+      q: 'Can it extract from a scanned document?',
+      a: 'Not until you OCR it. Every plan except Enterprise extracts digital text and discards images, so a scan has nothing to extract from. Run OCR first, then skim it, because OCR errors become extraction errors.',
+    },
+    {
+      q: 'Is extraction reliable enough to skip checking?',
+      a: 'No. It is the most reliable of the document tasks and still needs spot checking. Requiring a source reference for every value makes checking fast, which is the point of asking for it.',
+    },
+  ],
+});
+
+<AnswerBox>
+Extraction is what ChatGPT does best with documents, and it improves enormously with three things:
+name every field you want, name the output format, and require a source reference for each value.
+Then give it explicit permission to write "not stated" so it does not fill gaps with plausible
+inventions.
+</AnswerBox>
+
+## Name the fields, the format, and the source
+
+Compare a typical request with a specification.
+
+**Typical:**
+
+> Pull out the key details from this contract.
+
+**Specified:**
+
+> Extract the following from this contract. Return a markdown table with one row per item and these
+> columns: field, value, section reference.
+>
+> Fields: parties, effective date, term length, notice period for termination, total contract value,
+> payment schedule, liability cap, governing law, auto renewal (yes or no).
+>
+> If a field is not present in the document, write "not stated" in the value column. Do not infer
+> anything.
+
+The second gets you something you can use and check. The first gets you a paragraph.
+
+<Callout variant="tip" title="The 'not stated' instruction earns its place">
+Most invention happens when a model is asked for something the document does not contain and has no
+sanctioned way to report the absence. Providing one removes a large share of confident nonsense, and
+the absences are often what you needed: a contract with no liability cap is a finding.
+</Callout>
+
+## Ask for the format you actually want
+
+**A table for reading:** ask for a markdown table with named columns.
+
+**A spreadsheet:** ask for CSV with a header row, and say what to use if a value contains a comma.
+
+**Structured data:** ask for JSON and give the exact shape you want, with an example object. Naming
+the keys avoids getting a different structure on every run.
+
+**One value:** ask for the value alone with no commentary. "Return only the total contract value, as
+a number, with the section it came from."
+
+## Require the source, always
+
+> For each value, include the section number or page it came from.
+
+Two benefits and they compound. You can verify without rereading the document, and paraphrase drift
+mostly stops, because a citation either exists or it does not.
+
+It also makes the failure visible. A value with no source is either invented or genuinely unsourced,
+and both are worth knowing before you use the number.
+
+## Extraction over many documents
+
+Where this becomes genuinely valuable rather than merely convenient.
+
+Use the **identical prompt** on each document, one at a time, and collect the rows. Identical
+prompts produce comparable output, which is what turns twenty contracts into one table you can sort.
+
+<Steps>
+  <Step title="Write the extraction prompt once">
+    Fields, format, source requirement, "not stated" instruction.
+  </Step>
+  <Step title="Run it against each document separately">
+    Separately matters. Several documents at once and the values start blending between them.
+  </Step>
+  <Step title="Collect the rows into one spreadsheet">
+    Now you can sort, filter and find the outliers, which is usually the actual question.
+  </Step>
+  <Step title="Spot check the outliers against the source">
+    The unusual values are both the most interesting and the most likely to be extraction errors, so
+    check those first.
+  </Step>
+</Steps>
+
+## Where extraction goes wrong
+
+**Numbers in charts.** Images inside documents are discarded on every plan except Enterprise, so a
+figure that only appears in a graph is not available. It may be extracted from a caption instead,
+which is not the same number.
+
+**Truncated documents.** If the document was past <Fact k="maxTextTokens" />, fields that appear late
+come back as "not stated" when they are actually present. Check what the final section is called
+before trusting any absence.
+
+**Ambiguous fields.** "Total value" in a contract with fees, expenses and options has several
+defensible answers. Say which one you mean.
+
+**Scans.** Nothing to extract until OCR, and OCR errors become extraction errors that look exactly
+like real values.
+
+<InlineInstall
+  heading="Extraction across a long document"
+  body="FileUploadGPT splits documents past the length cap into pieces ChatGPT accepts and sends them in order, so fields in the schedules at the back come back as values rather than as 'not stated'."
+/>
+
+## Why this is the task to trust most
+
+Of the things people ask of documents, extraction is the most grounded. It is a search problem with a
+verifiable answer, rather than a judgement call.
+
+Summarising involves deciding what matters. Analysis involves an opinion. Extraction asks what the
+document says in a specific place, and a source reference makes the answer checkable in seconds.
+That is why it is worth structuring properly.

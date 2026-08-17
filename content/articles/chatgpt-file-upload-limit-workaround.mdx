@@ -2,14 +2,29 @@ import { defineArticle } from '@/lib/articles';
 
 export const meta = defineArticle({
   slug: 'chatgpt-file-upload-limit-workaround',
-  title: "How to get past ChatGPT's file upload limit",
-  heading: "How to get past ChatGPT's file upload limit",
+  // Wording note. This page targets "how to bypass chatgpt file upload limit" and used to be titled
+  // "how to get past". Google matches meaning either way, but people scan a results page for the
+  // words they just typed, and at position 10 the snippet has to earn the click against nine
+  // results above it. "Bypass" is also accurate in its ordinary sense of working around something:
+  // the answer box says outright that the limit cannot be raised, only that you can send less at a
+  // time, so nothing is being oversold to gain the match.
+  title: 'How to bypass the ChatGPT file upload limit',
+  heading: 'How to bypass the ChatGPT file upload limit',
   description:
-    'Five ways to work with a document ChatGPT refuses to accept, what each one costs you in effort, and which of them are a waste of time.',
+    'Five ways to bypass the upload limit and get a long document into ChatGPT, what each one costs you in effort, and which are a waste of time.',
   category: 'bypass',
-  updated: '2026-08-16',
+  updated: '2026-08-17',
   targetQuery: 'how to bypass chatgpt file upload limit',
-  related: [],
+  // This is the entry point for the whole bypass cluster, so it links out to the specific pages
+  // rather than being a dead end. Reverse edges mean each of these links back here too.
+  related: [
+    'how-to-upload-large-files-to-chatgpt',
+    'upload-large-pdfs-to-chatgpt',
+    'chatgpt-upload-limit-reached-error',
+    'how-to-split-a-document-for-chatgpt',
+    'paste-vs-upload-chatgpt',
+    'did-chatgpt-read-my-whole-document',
+  ],
   faq: [
     {
       q: 'Is there a way to remove the upload limit completely?',
@@ -69,6 +84,21 @@ A third thing gets blamed for this and is usually innocent: how many files you c
 message, and how many you can send in a day. Those are real caps, but they produce their own
 specific messages about file counts and daily limits. If your problem is one document that will not
 go in, it is size or length, not counting.
+
+### Work out which one has stopped you
+
+The fixes below are different depending on which wall you hit, so it is worth thirty seconds.
+
+| What you are seeing | Which limit | Where it is covered in detail |
+| --- | --- | --- |
+| Clear error, file refused | Size, <Fact k="maxFileSize" /> | [file is too large](/blog/chatgpt-file-is-too-large-error) |
+| Uploads fine, only part read | Length, <Fact k="maxTextTokens" /> | [did it read everything](/blog/did-chatgpt-read-my-whole-document) |
+| "Upload limit reached" | Rate or storage | [why that appears](/blog/chatgpt-upload-limit-reached-error) |
+| Nothing at all comes back | It is a scan | [scanned PDFs](/blog/chatgpt-scanned-pdf-not-working) |
+| Out of uploads for today | <Fact k="freeDailyUploads" /> on Free | [free plan limits](/blog/chatgpt-file-upload-limit-free-plan) |
+
+If you are not sure, the second row is the most common and the easiest to miss, because it produces
+no error at all.
 
 ## Method 1: convert it to plain text first
 

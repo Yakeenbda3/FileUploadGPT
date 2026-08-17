@@ -88,7 +88,9 @@ highlighting words, it is an image. This takes two seconds and settles it.
 
 ## If it is too long
 
-This is the most common failure on real, text-based PDFs, and the one with no error message.
+This is the most common failure on real, text-based PDFs, and the one with no error message. The
+four routes below are the PDF-specific version of the general methods for
+[bypassing the ChatGPT file upload limit](/blog/chatgpt-file-upload-limit-workaround).
 
 The relevant ceiling is <Fact k="maxTextTokens" /> per file, not the <Fact k="maxFileSize" /> size
 limit. A three-hundred-page report can be a few megabytes and still be well past what fits. When

@@ -35,24 +35,27 @@ import * as article29 from '@/content/articles/chatgpt-projects-file-limit.mdx';
 import * as article30 from '@/content/articles/chatgpt-research-paper-analysis.mdx';
 import * as article31 from '@/content/articles/chatgpt-scanned-pdf-not-working.mdx';
 import * as article32 from '@/content/articles/chatgpt-storage-limit.mdx';
-import * as article33 from '@/content/articles/chatgpt-summarise-youtube-video.mdx';
-import * as article34 from '@/content/articles/chatgpt-summarize-long-documents.mdx';
-import * as article35 from '@/content/articles/chatgpt-supported-image-formats.mdx';
-import * as article36 from '@/content/articles/chatgpt-upload-limit-reached-error.mdx';
-import * as article37 from '@/content/articles/chatgpt-upload-limit-reset.mdx';
-import * as article38 from '@/content/articles/chatgpt-uploaded-file-privacy.mdx';
-import * as article39 from '@/content/articles/chatgpt-vs-claude-document-analysis.mdx';
-import * as article40 from '@/content/articles/custom-gpt-knowledge-file-limit.mdx';
-import * as article41 from '@/content/articles/did-chatgpt-read-my-whole-document.mdx';
-import * as article42 from '@/content/articles/does-chatgpt-support-mp4-video.mdx';
-import * as article43 from '@/content/articles/how-many-files-can-you-upload-to-chatgpt.mdx';
-import * as article44 from '@/content/articles/how-to-analyse-a-book-with-chatgpt.mdx';
-import * as article45 from '@/content/articles/how-to-get-more-chatgpt-uploads.mdx';
-import * as article46 from '@/content/articles/how-to-split-a-document-for-chatgpt.mdx';
-import * as article47 from '@/content/articles/how-to-upload-large-files-to-chatgpt.mdx';
-import * as article48 from '@/content/articles/paste-vs-upload-chatgpt.mdx';
-import * as article49 from '@/content/articles/upload-large-code-files-to-chatgpt.mdx';
-import * as article50 from '@/content/articles/upload-large-pdfs-to-chatgpt.mdx';
+import * as article33 from '@/content/articles/chatgpt-study-from-textbook.mdx';
+import * as article34 from '@/content/articles/chatgpt-summarise-youtube-video.mdx';
+import * as article35 from '@/content/articles/chatgpt-summarize-long-documents.mdx';
+import * as article36 from '@/content/articles/chatgpt-supported-image-formats.mdx';
+import * as article37 from '@/content/articles/chatgpt-translate-long-documents.mdx';
+import * as article38 from '@/content/articles/chatgpt-upload-limit-reached-error.mdx';
+import * as article39 from '@/content/articles/chatgpt-upload-limit-reset.mdx';
+import * as article40 from '@/content/articles/chatgpt-uploaded-file-privacy.mdx';
+import * as article41 from '@/content/articles/chatgpt-vs-claude-document-analysis.mdx';
+import * as article42 from '@/content/articles/chatgpt-vs-notebooklm-documents.mdx';
+import * as article43 from '@/content/articles/custom-gpt-knowledge-file-limit.mdx';
+import * as article44 from '@/content/articles/did-chatgpt-read-my-whole-document.mdx';
+import * as article45 from '@/content/articles/does-chatgpt-support-mp4-video.mdx';
+import * as article46 from '@/content/articles/how-many-files-can-you-upload-to-chatgpt.mdx';
+import * as article47 from '@/content/articles/how-to-analyse-a-book-with-chatgpt.mdx';
+import * as article48 from '@/content/articles/how-to-get-more-chatgpt-uploads.mdx';
+import * as article49 from '@/content/articles/how-to-split-a-document-for-chatgpt.mdx';
+import * as article50 from '@/content/articles/how-to-upload-large-files-to-chatgpt.mdx';
+import * as article51 from '@/content/articles/paste-vs-upload-chatgpt.mdx';
+import * as article52 from '@/content/articles/upload-large-code-files-to-chatgpt.mdx';
+import * as article53 from '@/content/articles/upload-large-pdfs-to-chatgpt.mdx';
 
 export const ARTICLE_MODULES = {
   'best-chrome-extensions-for-chatgpt': article0,
@@ -88,22 +91,25 @@ export const ARTICLE_MODULES = {
   'chatgpt-research-paper-analysis': article30,
   'chatgpt-scanned-pdf-not-working': article31,
   'chatgpt-storage-limit': article32,
-  'chatgpt-summarise-youtube-video': article33,
-  'chatgpt-summarize-long-documents': article34,
-  'chatgpt-supported-image-formats': article35,
-  'chatgpt-upload-limit-reached-error': article36,
-  'chatgpt-upload-limit-reset': article37,
-  'chatgpt-uploaded-file-privacy': article38,
-  'chatgpt-vs-claude-document-analysis': article39,
-  'custom-gpt-knowledge-file-limit': article40,
-  'did-chatgpt-read-my-whole-document': article41,
-  'does-chatgpt-support-mp4-video': article42,
-  'how-many-files-can-you-upload-to-chatgpt': article43,
-  'how-to-analyse-a-book-with-chatgpt': article44,
-  'how-to-get-more-chatgpt-uploads': article45,
-  'how-to-split-a-document-for-chatgpt': article46,
-  'how-to-upload-large-files-to-chatgpt': article47,
-  'paste-vs-upload-chatgpt': article48,
-  'upload-large-code-files-to-chatgpt': article49,
-  'upload-large-pdfs-to-chatgpt': article50,
+  'chatgpt-study-from-textbook': article33,
+  'chatgpt-summarise-youtube-video': article34,
+  'chatgpt-summarize-long-documents': article35,
+  'chatgpt-supported-image-formats': article36,
+  'chatgpt-translate-long-documents': article37,
+  'chatgpt-upload-limit-reached-error': article38,
+  'chatgpt-upload-limit-reset': article39,
+  'chatgpt-uploaded-file-privacy': article40,
+  'chatgpt-vs-claude-document-analysis': article41,
+  'chatgpt-vs-notebooklm-documents': article42,
+  'custom-gpt-knowledge-file-limit': article43,
+  'did-chatgpt-read-my-whole-document': article44,
+  'does-chatgpt-support-mp4-video': article45,
+  'how-many-files-can-you-upload-to-chatgpt': article46,
+  'how-to-analyse-a-book-with-chatgpt': article47,
+  'how-to-get-more-chatgpt-uploads': article48,
+  'how-to-split-a-document-for-chatgpt': article49,
+  'how-to-upload-large-files-to-chatgpt': article50,
+  'paste-vs-upload-chatgpt': article51,
+  'upload-large-code-files-to-chatgpt': article52,
+  'upload-large-pdfs-to-chatgpt': article53,
 } as const;

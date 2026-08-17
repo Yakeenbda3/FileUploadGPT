@@ -1,0 +1,130 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-study-from-textbook',
+  title: 'How to revise from a textbook with ChatGPT',
+  heading: 'How to actually revise from a textbook with ChatGPT',
+  description:
+    'Asking for a summary is the least useful thing you can do with a chapter. What to ask for instead if you want to remember any of it.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to study from a textbook with chatgpt',
+  related: [
+    'how-to-analyse-a-book-with-chatgpt',
+    'chatgpt-summarize-long-documents',
+    'chatgpt-scanned-pdf-not-working',
+  ],
+  faq: [
+    {
+      q: 'Is a summary of the chapter useful for revision?',
+      a: 'Barely. Reading a summary feels productive and produces almost no retention. Getting tested on the material, then having your wrong answers explained, is what actually works, and ChatGPT is well suited to it.',
+    },
+    {
+      q: 'My textbook is a scanned PDF. Can I use it?',
+      a: 'Not until you OCR it. Every plan except Enterprise discards images, and a scan is entirely images, so nothing comes through. Photographs of pages taken on a phone have the same problem.',
+    },
+    {
+      q: 'How do I get it to use my course terminology?',
+      a: 'Give it the source. Upload your lecture notes or the syllabus first and tell it to use that vocabulary, because textbooks and courses often use different terms for the same concept and being tested on the wrong one is confusing.',
+    },
+    {
+      q: 'Can I trust its explanations?',
+      a: 'Check anything that will be marked. It explains clearly, which is not the same as explaining correctly, and a confident wrong explanation is harder to catch than a confused one. Cross-check against the chapter itself.',
+    },
+  ],
+});
+
+<AnswerBox>
+Do not ask for a summary. Ask it to test you, then explain what you got wrong. Reading a summary
+feels like studying and produces very little retention; being asked questions you cannot answer, and
+then having the gap explained, is what actually sticks.
+</AnswerBox>
+
+## The mistake almost everyone makes
+
+Upload a chapter, ask for a summary, read the summary, feel prepared.
+
+The problem is that reading something you understand is not the same as being able to recall it. A
+good summary is easy to follow, which makes it feel like learning while asking almost nothing of you.
+
+The fix is to make it ask rather than tell.
+
+## Ask to be tested
+
+> I am revising this chapter. Ask me one question at a time. Wait for my answer before asking the
+> next. After each answer, tell me whether I was right, and if not, explain what I missed using the
+> chapter's own explanation.
+>
+> Start with the basics and get harder. Do not give me the answers up front.
+
+The "one at a time, wait for my answer" part matters. Without it you get ten questions and their
+answers in one block, which is another thing to read rather than a test.
+
+<Callout variant="tip" title="Answer out loud or in writing before you look">
+The retrieval effort is the part that works. Recognising a correct answer when you see it is a much
+weaker signal than producing one, and it feels almost identical.
+</Callout>
+
+## Other things worth asking for
+
+**Explain it three ways.**
+
+> Explain [concept] three times: once in one sentence, once as you would to someone who has never
+> studied this, and once technically using the chapter's terminology.
+
+Different explanations catch different confusions, and the gap between the simple and technical
+version is often exactly where your understanding is thin.
+
+**Find what connects.**
+
+> How does this chapter connect to [previous chapter]? What does it assume I already understand?
+
+Textbooks build, and the reason chapter seven is hard is usually chapter five.
+
+**Predict the exam.**
+
+> Based on this chapter, what would an exam question look like? Give me three: one recall, one
+> application, one that requires combining two ideas from the chapter.
+
+**Attack your own answer.**
+
+> Here is my answer to [question]. Mark it strictly and tell me what a top answer would add.
+
+## Getting a textbook in
+
+The practical obstacles, in the order you will hit them.
+
+**If it is a scan or photographs of pages,** there is no text to read. OCR it first. This includes
+phone photos of a page, which are the most common version of this problem.
+
+**If it is a long chapter,** it may pass <Fact k="maxTextTokens" /> and be truncated silently. Check
+by asking what the last section of the chapter covers. If it cannot say, you are revising from the
+first half.
+
+**Work one chapter at a time** regardless. A whole textbook at once gets you shallow answers about
+everything rather than useful ones about the thing you are studying tonight.
+
+<InlineInstall
+  heading="For a chapter that will not go in whole"
+  body="FileUploadGPT splits long text into pieces ChatGPT accepts and sends them in order, so a dense chapter gets read in full before you start being tested on it."
+/>
+
+## Match your course, not just the book
+
+Textbooks and courses often use different words for the same idea, and being tested on the
+textbook's vocabulary when your exam uses the lecturer's is a genuine source of confusion.
+
+Upload your lecture notes or the syllabus alongside and say:
+
+> Use the terminology from my lecture notes, not the textbook's, and tell me where they differ.
+
+That last clause is useful on its own. Where the two disagree is often where the concept is subtle.
+
+## Check anything that will be marked
+
+It explains clearly. Clear and correct are different properties, and a fluent wrong explanation is
+harder to catch than a confused one.
+
+For anything that will be assessed, cross-check against the chapter. A quick way: ask it to quote the
+sentence from the chapter its explanation is based on. If it cannot produce one, treat the
+explanation as its own rather than the book's.

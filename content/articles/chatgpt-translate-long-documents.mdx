@@ -1,0 +1,126 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-translate-long-documents',
+  title: 'Translating a long document with ChatGPT',
+  heading: 'How to translate a long document with ChatGPT',
+  description:
+    'Translation needs the whole text, so truncation hurts more here than anywhere. How to work section by section and keep terms consistent.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to translate a long document with chatgpt',
+  related: [
+    'how-to-split-a-document-for-chatgpt',
+    'did-chatgpt-read-my-whole-document',
+    'chatgpt-summarize-long-documents',
+  ],
+  faq: [
+    {
+      q: 'Can it translate a whole document in one go?',
+      a: 'Only a short one. Translation output is roughly as long as the input, so you need room for both, and a document that fits for summarising may not fit for translating. Section by section is the reliable approach.',
+    },
+    {
+      q: 'How do I keep terminology consistent across sections?',
+      a: 'Build a glossary as you go and re-paste it with each section. Without it, the same term gets translated three different ways across a long document, which is the most common flaw in machine translated documents.',
+    },
+    {
+      q: 'Will formatting survive?',
+      a: 'Not reliably from a PDF or Word upload. Working in markdown preserves headings, lists and tables through the translation, which saves rebuilding the structure afterwards.',
+    },
+    {
+      q: 'Is it good enough for professional use?',
+      a: 'For understanding a document, usually yes. For anything published, contractual or regulated, have a qualified human review it. Translation errors in a contract are expensive and they do not look like errors.',
+    },
+  ],
+});
+
+<AnswerBox>
+Work section by section, and keep a glossary you re-paste with each one. Translation output is about
+as long as the input, so you need room for both, which means documents that fit comfortably for
+summarising do not fit for translating. Consistency of terminology is the thing that separates a good
+result from an obviously machine-made one.
+</AnswerBox>
+
+## Translation is the hardest case for length
+
+Most document tasks produce output much shorter than the input. A summary of fifty pages is one page.
+
+Translation produces output roughly as long as the input, sometimes longer depending on the language
+pair. So you need capacity for the document **and** its translation at once.
+
+This is why a document you have happily summarised may fail as a translation. It is not a different
+limit, it is twice the demand on the same one.
+
+<Callout variant="warn" title="Truncation is worse here than anywhere else">
+A truncated summary is incomplete. A truncated translation is a document that stops mid-thought, and
+if you do not read the target language well, you may not notice which part is missing. Always check
+the last section came through.
+</Callout>
+
+## The glossary is what makes it good
+
+The single biggest quality difference, and it costs almost nothing.
+
+Long documents use the same terms repeatedly. Translated section by section without a shared
+reference, the same term comes out three different ways, and the result reads as machine-made even
+when each individual sentence is fine.
+
+<Steps>
+  <Step title="Translate the first section, and ask for the terms">
+    "Translate this into French. Then list every technical or recurring term you translated, with the
+    translation you chose, as a glossary."
+  </Step>
+  <Step title="Review the glossary yourself">
+    This is where your judgement is worth most. You know which term is the company's standard usage
+    and which is a reasonable but wrong choice.
+  </Step>
+  <Step title="Re-paste the glossary with every later section">
+    "Use this glossary for consistency. Do not deviate from it." Then the next section.
+  </Step>
+  <Step title="Add to it as you go">
+    New terms appear. Keep the list growing and keep sending it.
+  </Step>
+</Steps>
+
+## Work in markdown
+
+A translation that arrives as one undifferentiated block, when the original had headings, lists and
+tables, means rebuilding the structure by hand afterwards.
+
+Converting to markdown first and asking for markdown out keeps all of that intact. Headings stay
+headings, lists stay lists, tables stay tables, and the structure survives the round trip.
+
+<InlineInstall
+  heading="For getting a long source document in"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order, so you can work through a long original section by section without cutting it up by hand."
+/>
+
+## Instructions worth giving
+
+**Set the register.** "Formal business register" or "plain language for a general reader" changes the
+output substantially, and left unsaid you get an average of everything.
+
+**Say what not to translate.** Product names, brand names, legal entity names, code. Otherwise they
+get helpfully translated and you have to find them all again.
+
+**Ask about ambiguity.** "Where the source is ambiguous, translate it and flag the ambiguity in a
+note." Genuinely useful, because it surfaces places the original was unclear, which is worth knowing
+independent of the translation.
+
+**Ask for the untranslatable.** "Note anything that does not carry across cleanly and explain why."
+Idioms, culturally specific references, legal terms without an equivalent. These are exactly where a
+silent translation goes wrong.
+
+## Where to be careful
+
+**Anything contractual or regulated.** Have a qualified translator review it. A mistranslated
+obligation is expensive and does not look like an error, it looks like a sentence.
+
+**Languages with less training data.** Quality varies considerably by language pair, and confidence
+does not.
+
+**Documents where precision is the point.** Medical, legal, safety. Understanding a document is one
+thing. Relying on the translation is another.
+
+**Scanned originals.** OCR first, and check it, because OCR errors become translation errors that
+read as perfectly fluent sentences meaning the wrong thing.

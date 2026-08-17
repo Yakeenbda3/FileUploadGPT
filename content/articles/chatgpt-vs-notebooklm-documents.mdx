@@ -1,0 +1,126 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-vs-notebooklm-documents',
+  title: 'ChatGPT or NotebookLM for your documents?',
+  heading: 'ChatGPT or NotebookLM for working with documents?',
+  description:
+    'They are built on different assumptions about what you want. Which one fits depends on whether you need answers grounded in your sources.',
+  category: 'compare',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt vs notebooklm for documents',
+  related: [
+    'chatgpt-vs-claude-document-analysis',
+    'chatgpt-file-upload-limit-workaround',
+    'how-to-analyse-a-book-with-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'What is the actual difference?',
+      a: 'NotebookLM is built to answer only from the sources you give it, with citations back to them. ChatGPT is a general assistant that will happily combine your document with everything else it knows. Which behaviour you want decides the tool.',
+    },
+    {
+      q: 'Which handles more documents at once?',
+      a: 'NotebookLM is designed around a collection of sources rather than a single upload, so it holds a working set more comfortably. ChatGPT is stronger when you want one document worked on deeply alongside general knowledge.',
+    },
+    {
+      q: 'Can I use both?',
+      a: 'Yes, and it is a reasonable pattern. NotebookLM for grounded questions over a source set, ChatGPT for drafting, rewriting and anything needing knowledge from outside your documents.',
+    },
+    {
+      q: 'Does NotebookLM avoid the truncation problem?',
+      a: 'Its retrieval approach means it searches your sources rather than holding all of them at once, so a long document is less likely to be silently half read. Verify anything important either way.',
+    },
+  ],
+});
+
+<AnswerBox>
+They answer different questions. NotebookLM is built to respond only from the sources you gave it,
+with citations pointing back. ChatGPT is a general assistant that will blend your document with
+everything else it knows. If you need to be sure an answer came from your document, that difference
+decides it.
+</AnswerBox>
+
+We make an extension for ChatGPT, so read this knowing where it comes from. There are jobs where
+ChatGPT is the wrong tool for documents, and this is one of the clearer cases.
+
+## The design difference
+
+**NotebookLM** is source-grounded. You give it a set of documents and it answers from them,
+citing which source and where. Ask it something your sources do not cover and it says so rather than
+answering from general knowledge.
+
+**ChatGPT** is a general assistant that can also read documents. Ask it about your uploaded report
+and it will draw on the report and on everything it knows, without necessarily distinguishing which
+is which.
+
+Neither is better. They are answers to different questions.
+
+## When grounding matters
+
+Sometimes the whole point is that the answer came from your document and nowhere else.
+
+Reviewing a contract, checking what a policy actually says, working through research where the
+distinction between "this paper found" and "it is generally believed" is the entire job. In those
+cases an answer blending your source with general knowledge is worse than no answer, because you
+cannot tell which parts to trust.
+
+<Callout variant="info" title="You can push ChatGPT toward this behaviour">
+It is not automatic, but it helps a lot:
+
+"Answer only from the attached document. Quote the sentence behind every claim. If the document does
+not address something, say 'not covered in the document' rather than answering from general
+knowledge."
+
+That instruction closes much of the gap. It is not the same as a tool built around the constraint,
+but it is a real improvement and worth using regardless of which tool you are in.
+</Callout>
+
+## Where ChatGPT is the better choice
+
+**Drafting and rewriting.** Turning a document into something else: a summary for a different
+audience, an email, a set of slides. Generation is not what a grounded research tool is for.
+
+**Bringing outside knowledge in.** "Is this clause unusual?" needs knowledge beyond your document.
+
+**Data analysis.** Upload a spreadsheet and ChatGPT will write and run code to analyse it and produce
+charts. Spreadsheets are also exempt from the token cap, capped instead around
+<Fact k="maxSpreadsheetSize" />.
+
+**A single document worked on hard.** One contract, one paper, one report, with follow-up questions
+and iteration.
+
+## Where NotebookLM tends to fit better
+
+**A collection rather than a document.** Twenty papers, a set of policies, a body of research. It is
+built around a source set rather than a single upload.
+
+**Citations you need to check.** When every answer must be traceable to a page.
+
+**Not wanting outside knowledge.** When "what does the literature say" must mean "what do these
+twelve papers say".
+
+## The practical pattern
+
+Using both is reasonable and common.
+
+NotebookLM for grounded questions over your source set, so you know where each answer came from.
+ChatGPT for everything downstream: drafting from those findings, rewriting for an audience,
+challenging the argument with knowledge from outside the sources.
+
+<InlineInstall
+  heading="If you are staying in ChatGPT"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order, so a long source gets read in full rather than in part."
+/>
+
+## What is true of both
+
+**Verification is still yours.** Citations make checking faster. They do not make checking optional,
+and a confidently wrong answer with a citation attached is harder to spot, not easier.
+
+**Scanned documents need OCR.** No text in them until you create some, whichever tool you use.
+
+**How you ask is still the biggest lever.** A vague question gets a vague answer from either.
+
+Both products also change frequently, so check current capabilities rather than trusting any
+comparison article, including this one, on the specifics.

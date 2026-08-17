@@ -6,6 +6,7 @@ import {
   assertArticleIntegrity,
   getAllArticleSlugs,
   getArticle,
+  getRelatedArticles,
   type ArticleMeta,
 } from '@/lib/articles';
 import { absoluteUrl, SITE_NAME } from '@/lib/site';
@@ -65,11 +66,7 @@ function formatDate(iso: string): string {
   });
 }
 
-function RelatedArticles({ slugs }: { slugs: string[] }) {
-  const related = slugs
-    .map((slug) => getArticle(slug)?.meta)
-    .filter((meta): meta is ArticleMeta => Boolean(meta));
-
+function RelatedArticles({ related }: { related: ArticleMeta[] }) {
   if (related.length === 0) return null;
 
   return (
@@ -168,7 +165,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </div>
 
             {meta.faq && <Faq items={meta.faq} />}
-            {meta.related && <RelatedArticles slugs={meta.related} />}
+            <RelatedArticles related={getRelatedArticles(meta.slug)} />
           </article>
 
           <aside className="hidden lg:block">

@@ -116,6 +116,41 @@ export function getAllArticles(): ArticleMeta[] {
   return getAllArticleSlugs().map((slug) => MODULES[slug].meta);
 }
 
+/**
+ * Related articles, in both directions.
+ *
+ * `related` in an article's frontmatter can only ever point BACKWARDS, because an article can only
+ * name articles that already existed when it was written. Left as declared, that produces a link
+ * graph where every new page links out and nothing links back to it: after 56 articles, 15 of them
+ * had zero inbound contextual links, and the number was going to grow with every batch.
+ *
+ * Resolving the reverse edges here fixes it once and permanently. If B declares A as related, then
+ * A shows B too. No article has to be revisited when a later one is added, and the graph stays
+ * connected by construction rather than by anyone remembering.
+ *
+ * Declared links come first, since those were an editorial judgement. Reverse edges follow.
+ */
+export function getRelatedArticles(slug: string, limit = 6): ArticleMeta[] {
+  const self = MODULES[slug];
+  if (!self) return [];
+
+  const declared = self.meta.related ?? [];
+  const reverse = getAllArticleSlugs().filter(
+    (other) => other !== slug && (MODULES[other].meta.related ?? []).includes(slug)
+  );
+
+  const seen = new Set<string>();
+  const ordered: ArticleMeta[] = [];
+  for (const candidate of [...declared, ...reverse]) {
+    if (candidate === slug || seen.has(candidate)) continue;
+    seen.add(candidate);
+    const meta = MODULES[candidate]?.meta;
+    if (meta) ordered.push(meta);
+    if (ordered.length >= limit) break;
+  }
+  return ordered;
+}
+
 export function getArticlesByCategory(category: CategoryKey): ArticleMeta[] {
   return getAllArticles()
     .filter((a) => a.category === category)
@@ -153,6 +188,30 @@ export function assertArticleIntegrity(): void {
           `Merge them, or give each one a genuinely different question to answer.`
       );
     }
+  }
+
+  // ── No article may end up with nothing pointing at it ───────────────────────────────────────
+  // Measured against the EFFECTIVE graph, declared links plus their reverse edges, which is what
+  // getRelatedArticles() renders. An article nothing links to gets crawled rarely and ranks
+  // accordingly, and it is invisible from every other angle: the page is fine, it is in the
+  // sitemap, it returns 200. Only the graph shows it.
+  const inbound = new Map<string, number>();
+  for (const slug of slugs) inbound.set(slug, 0);
+  for (const slug of slugs) {
+    for (const target of MODULES[slug].meta.related ?? []) {
+      if (target === slug) continue;
+      // A declares B gives B an inbound link on A's page, and A an inbound link on B's page,
+      // because the related block resolves in both directions.
+      inbound.set(target, (inbound.get(target) ?? 0) + 1);
+      inbound.set(slug, (inbound.get(slug) ?? 0) + 1);
+    }
+  }
+  const unlinked = [...inbound].filter(([, count]) => count === 0).map(([slug]) => slug);
+  if (unlinked.length > 0) {
+    throw new Error(
+      `[articles] ${unlinked.length} article(s) have nothing linking to them: ${unlinked.join(', ')}.\n` +
+        `Give each one a "related" list, or name it in the related list of an article it belongs with.`
+    );
   }
 
   for (const slug of slugs) {

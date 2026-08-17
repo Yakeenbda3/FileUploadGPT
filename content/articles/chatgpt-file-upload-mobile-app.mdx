@@ -1,0 +1,115 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-upload-mobile-app',
+  title: 'Uploading files to ChatGPT on your phone',
+  heading: 'Can you upload files to ChatGPT on a phone?',
+  description:
+    'Yes, the mobile apps support uploads with the same limits as the web. What you cannot do on a phone, and the workaround for it.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt mobile app file upload',
+  related: [
+    'chatgpt-file-upload-limit-free-plan',
+    'chatgpt-scanned-pdf-not-working',
+    'how-many-files-can-you-upload-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can I upload files in the ChatGPT phone app?',
+      a: 'Yes. OpenAI states file uploads are available on the web and in supported mobile apps. The same limits apply: 512 MB per file, 2 million tokens for text and documents, and 3 uploads a day on the Free plan.',
+    },
+    {
+      q: 'Are the limits different on mobile?',
+      a: 'No. The caps are on your account rather than your device, so uploading from your phone spends the same allowance as uploading from your laptop, and the two share one pool.',
+    },
+    {
+      q: 'Why does a photo of a document not work?',
+      a: 'A photo is an image and it goes in as an image, which works for reading a page or two. Where it fails is a long document: a phone photo of text is not a text file, and it counts against a limit of about 100 images per conversation.',
+    },
+    {
+      q: 'Can I use browser extensions on mobile Chrome?',
+      a: 'No. Chrome on Android and iOS does not support extensions at all. That is a limitation of mobile Chrome rather than of any particular extension, and there is no way around it.',
+    },
+  ],
+});
+
+<AnswerBox>
+Yes. OpenAI states uploads are available on the web and in supported mobile apps, with the same
+limits either way, since the caps belong to your account rather than your device. What you cannot do
+on a phone is run a browser extension, because mobile Chrome does not support them at all.
+</AnswerBox>
+
+## The limits are the same
+
+Worth stating, because people assume mobile gets a smaller allowance.
+
+| Limit | Phone | Desktop |
+| --- | --- | --- |
+| File size | <Fact k="maxFileSize" /> | Same |
+| Text and document length | <Fact k="maxTextTokens" /> | Same |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" /> | Same |
+| Free plan daily | <Fact k="freeDailyUploads" /> | Same |
+| Rolling rate | <Fact k="rollingUploadRate" /> | Same |
+| Storage | <Fact k="userStorageCap" /> | Same |
+
+They are account limits, so the two devices share one pool. Three uploads on your phone in the
+morning means none left on your laptop that afternoon, on the Free plan.
+
+## Where phones are genuinely worse
+
+**Getting at the file.** The document is often in email, or in a cloud drive, or on a computer
+somewhere else. Getting it into the app is more steps than dragging it into a browser window.
+
+**Photographing instead of uploading.** The camera is right there, so people photograph a page. That
+works for one or two pages, since images are read directly. It does not work for a report, because a
+phone photo of text is an image and not a text file, and there is a ceiling of about 100 images per
+conversation with PDF pages counting toward it too.
+
+**Long documents.** Anything needing to be split into parts is miserable to manage on a phone, and
+the tools that automate splitting are browser extensions, which mobile cannot run.
+
+<Callout variant="warn" title="Photographs of pages are images, not documents">
+It is worth understanding why this fails on anything long. A photo goes in as a picture. ChatGPT can
+read a picture, but the image ceiling is much lower than the text ceiling, so twenty pages
+photographed is a very different proposition from twenty pages of text.
+
+For anything substantial, get the actual file rather than photographing it.
+</Callout>
+
+## What works well on a phone
+
+**A short document you already have.** A single PDF in your email, a text file in your cloud drive.
+Straightforward.
+
+**One or two pages photographed.** Reading a sign, a form, a page of a book. This is what the camera
+is genuinely good for.
+
+**A screenshot.** Fine, and often the quickest way to ask about something on screen.
+
+**Continuing work you started on a computer.** The conversation is on your account, so a document
+uploaded from your laptop is still there in the phone app.
+
+## Extensions do not run on mobile
+
+Chrome on Android and iOS does not support extensions. Not ours, not any of them.
+
+This is a limitation of mobile Chrome rather than of any individual extension, and no product can
+work around it. Anything promising a mobile browser extension is describing something that does not
+exist.
+
+<InlineInstall
+  heading="If you found this on your phone"
+  body="Send yourself the link and open it on a computer. The install takes about twenty seconds and after that every ChatGPT session on that machine handles long documents properly."
+/>
+
+## The sensible split
+
+**Phone:** short documents, photographs of a page or two, screenshots, and continuing a conversation
+you started elsewhere.
+
+**Computer:** anything long, anything needing splitting, and anything where you want the whole
+document read rather than the first part of it.
+
+The conversation follows you between them, so starting on a laptop and continuing on a phone works
+fine. It is only the getting-it-in step that wants a computer.

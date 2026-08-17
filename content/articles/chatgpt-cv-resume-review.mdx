@@ -1,0 +1,130 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-cv-resume-review',
+  title: 'Getting a useful CV review out of ChatGPT',
+  heading: 'How to get a CV review worth having from ChatGPT',
+  description:
+    'Asked to review a CV it will praise it. The prompts that produce actual criticism, and the formatting trap that loses you interviews.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt review my cv resume',
+  related: [
+    'chatgpt-document-analysis-tips',
+    'chatgpt-uploaded-file-privacy',
+    'can-chatgpt-read-word-docx-files',
+  ],
+  faq: [
+    {
+      q: 'Why does it say my CV is strong when it is not?',
+      a: 'Because you asked it to review a document you clearly wrote, and agreeing is the path of least resistance. Ask it to argue for rejecting you, or to role-play a hiring manager with sixty applications and ten minutes, and the answer changes completely.',
+    },
+    {
+      q: 'Should I upload the PDF or the Word version?',
+      a: 'Upload the exact file you send to employers, because how the text extracts is itself a signal. If ChatGPT cannot read your CV cleanly, an applicant tracking system is likely to struggle with it too.',
+    },
+    {
+      q: 'Is it safe to upload my CV?',
+      a: 'It contains your name, contact details and work history. On consumer plans content may be used to improve models unless you turn that off in data controls. Check the setting, or replace your personal details with placeholders before uploading.',
+    },
+    {
+      q: 'Can it tailor my CV to a specific job?',
+      a: 'Yes, and this is the strongest use. Give it the job advert and your CV together and ask which of your experience maps to which requirement, and which requirements you have not evidenced at all.',
+    },
+  ],
+});
+
+<AnswerBox>
+Do not ask it to review your CV. Ask it to argue for rejecting you, or to act as a hiring manager
+with sixty applications and ten minutes. A review of something you obviously wrote gets you
+encouragement. Adversarial framing gets you the things a real reader would notice and not tell you.
+</AnswerBox>
+
+<Callout variant="warn" title="Before you upload it">
+A CV holds your name, contact details, employer names and dates. On consumer plans, content may be
+used to improve model performance unless you have turned that off in ChatGPT's data controls.
+
+Either check that setting first, or replace your name, address, phone number and current employer
+with placeholders. The feedback is exactly as good either way, since nothing useful depends on your
+actual phone number.
+</Callout>
+
+## The formatting test, which people skip
+
+Do this before any content feedback, because it tests something the content feedback cannot.
+
+Upload the exact file you send to employers and ask:
+
+> Read back the contents of this CV exactly as you received it: every heading, every job title, every
+> date, in order.
+
+If what comes back is garbled, sections are missing, or dates have detached from their jobs, that is
+a finding. Applicant tracking systems parse CVs the same broad way, by extracting text, and a CV that
+does not extract cleanly can be mangled before a human sees it.
+
+The usual culprits are text inside columns, text boxes, tables used for layout, headers and footers,
+and text embedded in images. That last one is the worst: a name in a graphic is invisible to
+extraction entirely.
+
+## Prompts that produce real criticism
+
+**The rejection argument:**
+
+> You are a hiring manager for [role]. Argue the case for rejecting this candidate at the CV screen.
+> Be specific and cite the CV.
+
+**The ten minute screen:**
+
+> You have sixty applications and ten minutes. What do you notice about this one in the first fifteen
+> seconds, and would it make your shortlist? Why not?
+
+**The evidence check:**
+
+> Which claims here are stated without evidence? For each, what would evidence look like?
+
+This one is consistently the most useful. "Led a team" and "led a team of six through a migration
+that cut deploy time by half" are the same claim with and without evidence, and CVs are full of the
+first kind.
+
+**The gap check:**
+
+> What questions would an interviewer ask about this CV that the candidate would rather not be asked?
+
+Unemployment gaps, short stints, unexplained moves. Better to find them now.
+
+## Tailoring to a job
+
+The strongest use of this, and it is a comparison rather than a review.
+
+> Here is a job advert and my CV. Produce a table: requirement, evidence in my CV, strength of that
+> evidence, and where it appears. Mark any requirement I have not evidenced at all.
+
+The unevidenced rows are the output. They are either things to add, because you have done them and
+did not say so, or things to be honest with yourself about.
+
+Then:
+
+> Rewrite my three most relevant bullets to speak directly to the top three requirements, without
+> inventing anything I have not claimed.
+
+That last clause matters. Without it you get impressive bullets describing someone else.
+
+## What it cannot tell you
+
+**Whether you will get the job.** It has no idea about the other applicants, the internal candidate,
+or the budget.
+
+**What is normal in your industry or country.** CV conventions differ enormously. Length, photographs,
+personal details, what goes at the top. It will apply a general convention confidently.
+
+**Whether your experience is genuinely strong.** It can tell you whether your CV communicates your
+experience. Those are different questions and only one of them is a document problem.
+
+## Keep the file clean
+
+Since parsing is part of what is being tested, a plain, single-column layout in a standard font
+survives every system it meets. Elaborate design is worth much less than it looks, and it is what
+breaks extraction.
+
+If ChatGPT reads your CV back perfectly, most automated systems will too, and that is worth more than
+any single piece of wording advice on this page.

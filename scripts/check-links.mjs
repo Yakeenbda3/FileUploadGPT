@@ -38,8 +38,17 @@ try {
   process.exit(1);
 }
 
+// Next's metadata file conventions (opengraph-image, icon, apple-icon, and friends) become routes
+// in the manifest, but they are ASSETS referenced from meta tags rather than pages a person can
+// land on. They must not be in the sitemap, and they are not link targets, so they are excluded
+// from both checks below. Without this the orphan check reports every one of them as a page
+// declared nowhere, which is a false positive that would train everyone to ignore a real one.
+const ASSET_ROUTE = /\/(opengraph-image|twitter-image|icon|apple-icon|favicon)(\.[a-z0-9]+)?$/;
+
 const served = new Set(
-  Object.keys(manifest.routes ?? {}).filter((route) => !route.endsWith('.txt') && !route.endsWith('.xml'))
+  Object.keys(manifest.routes ?? {}).filter(
+    (route) => !route.endsWith('.txt') && !route.endsWith('.xml') && !ASSET_ROUTE.test(route)
+  )
 );
 
 // ── The redirect table, read from the same module next.config.ts uses ────────────────────────

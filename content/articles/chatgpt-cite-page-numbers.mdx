@@ -1,0 +1,156 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-cite-page-numbers',
+  title: 'How to get ChatGPT to cite page numbers in a PDF',
+  heading: 'How to get ChatGPT to cite pages and sections',
+  description:
+    'ChatGPT rarely knows what page anything was on, because extraction strips the page breaks. What to ask it to cite instead.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to get chatgpt to cite page numbers',
+  related: [
+    'did-chatgpt-read-my-whole-document',
+    'chatgpt-research-paper-analysis',
+    'chatgpt-contract-review-guide',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT invent page numbers?',
+      a: 'It is not really inventing them so much as filling in a field it has no data for. The extracted text it works from has no page boundaries in it, so when you ask for a page it produces a plausible number in a plausible sequence. The numbers usually rise sensibly and usually do not match the file.',
+    },
+    {
+      q: 'Can it cite anything reliably?',
+      a: 'Yes. Exact sentences, section headings, numbered clauses and figure captions are all text inside the document, so they survive extraction and can be reproduced. A quoted sentence is a stronger reference than a page number anyway, because you can search for it and confirm it exists.',
+    },
+    {
+      q: 'Does asking it to use Python help?',
+      a: 'It can. When the analysis tool is available, ChatGPT can open the PDF with a library that reads real pages one at a time, which restores genuine page boundaries. Spot check one result against the file before you trust the rest, because the route depends on the tool actually running rather than the model answering from memory of the text.',
+    },
+    {
+      q: 'What if the PDF is a scan?',
+      a: 'Then nothing is citable until the file has been through OCR, because there is no text layer to extract. Images inside documents are discarded on most plans, so a scanned page arrives as nothing at all rather than as unreliable text.',
+    },
+  ],
+});
+
+<AnswerBox>
+ChatGPT usually cannot tell you what page something appeared on. Uploading a PDF runs a text
+extraction step first, and page breaks do not survive it, so a page number in the answer is often a
+guess dressed as a citation. Ask for exact quoted sentences and the nearest section heading instead,
+then search for the quote in your own PDF reader. That gives you a reference in two seconds and lets
+you verify it.
+</AnswerBox>
+
+The request is reasonable. You want to get back to the source, and page numbers are how references
+have worked for a long time. The problem is that the thing you are asking for was discarded before
+the model ever saw the document.
+
+What replaces it is better than it sounds. A quoted sentence is a stronger reference than a page
+number, because you can check it against the file without reading anything around it.
+
+## Why the page number is not there to cite
+
+When you attach a PDF, ChatGPT does not look at pages. An extraction step converts the file into a
+stream of characters and the model works from that stream. Page breaks are a property of the layout
+rather than of the text, so they mostly vanish along with columns, margins and positioning.
+
+OpenAI does not publish how its extraction handles pagination, so treat this as observed behaviour
+and not as documented policy. The behaviour is consistent enough to plan around. Ask for page
+numbers on a long report and you tend to get numbers that look right, climb in a sensible order, and
+do not match the file in front of you.
+
+Anything that was part of an image rather than text is gone as well. Images inside documents are
+<Fact k="imagesInDocuments" />, so a page number sitting in a scanned header never arrives.
+
+## What actually survives extraction
+
+| Reference type | Survives | Why |
+| --- | --- | --- |
+| Exact sentences | Yes | Verbatim strings in the text |
+| Section headings | Usually | Ordinary text in the body |
+| Numbered clauses, such as 7.2 | Yes | The number is printed in the text itself |
+| Figure and table captions | Usually | Text, unless the caption is baked into the image |
+| Printed page numbers in a header or footer | Sometimes | Text, but often dropped or dumped mid sentence |
+| Line numbers in a transcript | Often | They are characters on the line |
+| The actual page boundary | No | It is layout, not text |
+
+The pattern is simple. If a human could select it with a cursor, it probably survived. If it was
+implied by where ink sat on paper, it did not.
+
+## Ask for quotes and headings instead
+
+Put this in the prompt with the file:
+
+> For every point, give the exact sentence from the document in quotation marks, followed by the
+> nearest section heading above it. Do not give page numbers.
+
+The explicit ban matters. Left alone, ChatGPT will supply page numbers because references normally
+carry them, and once a number is on the page it reads as sourced work. Ruling them out pushes it
+toward the anchors that are genuinely in the text.
+
+Then search the quote in your reader. If it is there, you have your page in a second, found by the
+one tool in this chain that does know where the page breaks are.
+
+<Callout variant="tip" title="A quote that will not search is a quote to distrust">
+Paste it into the find box exactly as given. No result usually means paraphrase rather than
+quotation, and a paraphrase that has drifted is where wrong claims hide. Ask for the sentence again
+before you rely on it.
+</Callout>
+
+## When page numbers do work
+
+Two situations produce real ones.
+
+**The document prints its own page numbers.** Running headers and footers are text, so they can come
+through extraction, sometimes intact and sometimes scattered through the stream. Ask for it directly:
+"If there is a running header or footer near this passage, quote it exactly." Journal PDFs and legal
+filings do well here. Loosely typeset ebooks and exports from web pages usually have nothing to
+quote.
+
+**The analysis tool reads the file page by page.** When ChatGPT has its Python tool available, it can
+open the PDF with a library that walks real pages, which is a different route from the text stream
+and gives genuine boundaries. Ask for it: "Use Python to read this PDF page by page, then tell me
+which page contains the phrase X." Check one answer against the file before trusting the rest, since
+the value of this depends on the tool actually running rather than the model answering from the
+flattened text.
+
+## Build the page map yourself
+
+If you truly need page references across a long document, put them into the text before you send it.
+Export the PDF to plain text with a converter that marks each break, or paste markers such as
+`[[page 12]]` at the boundaries. Once a marker is text, it is inside the stream the model reads, and
+citing it becomes string matching rather than reconstruction of a layout that was never there.
+
+This is more work than it sounds worth until you are checking numbers in a compliance document, at
+which point it is the only version of this that holds up.
+
+Documents with numbered clauses already have the same property for free. Contracts, standards and
+legislation carry their own address system in the text, so ask for clause 7.2 and skip pages
+entirely. It is a better reference than a page number even when both are available, because it
+survives reformatting.
+
+## Long documents and part numbers
+
+Files above <Fact k="maxTextTokens" /> get truncated silently, and a document the model only half
+read produces citations that are wrong for a second reason. Splitting the text and sending it in
+labelled parts fixes the truncation and gives you an anchor at the same time, because a part number
+is something you assigned rather than something the model inferred.
+
+<InlineInstall
+  heading="For documents too long to upload whole"
+  body="FileUploadGPT splits the file into numbered parts ChatGPT accepts and sends them in order with a header on each one. It cannot recover page breaks the extractor removed, but the part numbers give you a coordinate the model can cite honestly."
+/>
+
+Then ask for references as part number plus quoted sentence. Narrowing a search to one part of
+twelve is close enough to a page reference for most work.
+
+## What to ask for
+
+Ask for quotes and headings by default, and rule out page numbers explicitly in the same sentence.
+Reach for the Python route when you need real pagination and can spot check it. Insert your own
+markers when the references have to stand up to someone else's scrutiny.
+
+The honest summary is that a page number from ChatGPT is a claim about something it was never shown.
+A quote is a claim you can test in five seconds, which is what a reference was for in the first
+place.

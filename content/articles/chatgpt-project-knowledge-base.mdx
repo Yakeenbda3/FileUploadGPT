@@ -1,0 +1,168 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-project-knowledge-base',
+  title: 'Building a knowledge base in a ChatGPT Project',
+  heading: 'How to build a knowledge base in a ChatGPT Project',
+  description:
+    'What to put in project files, what to leave in a single chat, and why a smaller document set gives you sharper answers.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to build a knowledge base in a chatgpt project',
+  related: [
+    'chatgpt-projects-file-limit',
+    'custom-gpt-knowledge-file-limit',
+    'chatgpt-document-analysis-tips',
+  ],
+  faq: [
+    {
+      q: 'How many documents should a project hold?',
+      a: 'Fewer than the ceiling allows. Plus permits twenty files per project and Pro permits forty, but answer quality falls off well before that when the documents overlap. Eight to twelve distinct, current documents is a comfortable working size for most projects.',
+    },
+    {
+      q: 'Do project files stay available in every chat in the project?',
+      a: 'Yes. That is the main reason to use a project rather than re-attaching the same files to each new conversation. Every chat started inside the project can draw on the uploaded set, and starting a fresh chat clears the conversation without clearing the files.',
+    },
+    {
+      q: 'Should I upload one big combined file or many small ones?',
+      a: 'Combine documents that belong to the same topic, keep separate topics separate. The limit counts files rather than content, so merging related short documents buys you room. Merging unrelated ones makes it harder for ChatGPT to tell you which source an answer came from.',
+    },
+    {
+      q: 'Why does my project give vague answers when it has plenty of files?',
+      a: 'Usually because the set contains near duplicates, superseded versions, or scanned documents that contributed no text. On every plan except Enterprise, ChatGPT extracts digital text and discards images, so a scanned PDF occupies a slot while adding nothing readable.',
+    },
+  ],
+});
+
+<AnswerBox>
+A ChatGPT Project holds a set of files that every chat inside it can use, so you upload once instead
+of re-attaching the same documents to each conversation. Plus allows <Fact k="projectFilesPlus" />
+and Pro, Team, Education and Business allow <Fact k="projectFilesPro" />. Treat those as ceilings,
+not targets. A project of eight current, clearly named documents answers more accurately than one
+stuffed with twenty overlapping versions.
+</AnswerBox>
+
+A project is best understood as a small reference library with a conversation attached. The files
+persist, the chats come and go. When you start a new chat inside the project, you get a clean
+context window but the same documents, which is exactly what you want when you are asking about the
+same body of material week after week.
+
+The mistake is treating it as storage. A project is not a folder for everything you might need one
+day. It is a working set, and the quality of what you get back is tied closely to how disciplined
+that set is.
+
+## What belongs in project files, and what stays in a chat
+
+The dividing line is repetition. If you will ask about a document more than a few times, it belongs
+in the project. If it is today's problem, attach it to the chat.
+
+| Put it in project files | Leave it in a single chat |
+| --- | --- |
+| Documents you will ask about repeatedly | A one-off file you need answered this afternoon |
+| Slow-moving reference: policies, style guides, specs, contracts in force | Drafts that change several times a day |
+| The current, approved version of something | Working versions, redlines, comparisons |
+| Material every chat in the project needs | Data relevant only to one question |
+
+The second column matters more than people expect. Every extra document in the project is another
+candidate answer to every question you ask, including the questions it has nothing to do with.
+
+## The ceilings you are working inside
+
+Five separate limits apply, and they fail in different ways.
+
+| Limit | Value |
+| --- | --- |
+| Files per project, Plus | <Fact k="projectFilesPlus" /> |
+| Files per project, Pro, Team, Education, Business | <Fact k="projectFilesPro" /> |
+| Size of any single file | <Fact k="maxFileSize" /> |
+| Length of a text or document file | <Fact k="maxTextTokens" /> |
+| Uploads across your whole account | <Fact k="rollingUploadRate" /> |
+| Storage, all projects and chats combined | <Fact k="userStorageCap" /> |
+
+Building a project of thirty files in one sitting spends thirty slots against the rolling rate, so a
+bulk import can stop halfway through for reasons that have nothing to do with the project. Storage
+is cumulative across everything in your account and never clears with time.
+
+## Why a smaller set answers better
+
+OpenAI does not publish how project files are selected when you ask a question, so treat any
+confident explanation of the retrieval mechanism with suspicion, including this one. What is
+observable is the failure pattern, and it is consistent.
+
+Crowded projects go wrong in three ways. Near duplicates are the worst: keep version 3 and version 7
+of the same policy in a project and answers will come from one of them with no reliable way to tell
+which. Broad questions across many documents produce blended answers where attribution disappears.
+And dead weight, files that contributed no readable text, makes the project look better stocked than
+it is.
+
+<Callout variant="warn" title="Scanned documents are usually dead weight">
+Except on Enterprise, uploaded documents are handled as <Fact k="imagesInDocuments" />. ChatGPT
+pulls out digital text and discards images. A scanned PDF in a project occupies a slot, uses
+storage, and adds nothing the model can read. Run OCR before it goes in, or leave it out.
+</Callout>
+
+The working rule: one document per topic, one current version of each, and nothing that nobody will
+ask about.
+
+## Preparing files before they go in
+
+Ten minutes of preparation is worth more than any prompt you will write afterwards.
+
+<Steps>
+<Step title="Name every file for what it contains">
+`expenses-policy-2026.pdf` rather than `final_v3_FINAL.pdf`. Filenames travel with the document and
+you will be referring to them out loud in your questions, so make them say something.
+</Step>
+<Step title="Merge related short documents">
+The limit counts files, not words. Six short procedure notes become one operations reference, with a
+clear header before each original so the boundaries survive the merge.
+</Step>
+<Step title="Convert to plain text or markdown where layout does not matter">
+Smaller, cleaner, and it removes images that were going to be discarded anyway.
+</Step>
+<Step title="OCR anything scanned">
+Or accept that it contributes nothing.
+</Step>
+<Step title="Remove the old version when you add a new one">
+This is the habit that keeps a project sharp over months. Superseded documents are the single most
+common cause of a project quietly going wrong.
+</Step>
+</Steps>
+
+<InlineInstall
+  heading="When one reference document is too long for a single file"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, which helps when a single reference exceeds what one upload will carry."
+/>
+
+## Use the project instructions to describe the library
+
+A project carries its own instructions, and this is where you say what the documents are and how
+they relate to each other. Something like:
+
+> These files are our client contracts currently in force, one per client, named by client. When
+> answering, name the file the answer came from and quote the clause. If the files do not cover a
+> question, say so rather than generalising from the others.
+
+That does two jobs. It tells ChatGPT how to attribute answers, which is what makes a knowledge base
+trustworthy rather than merely convenient. And it gives a sanctioned way to say the answer is not
+there, which cuts down on confident invention.
+
+## Keeping it current
+
+A knowledge base decays. Put a recurring twenty minutes in the diary, monthly is plenty for most
+projects, and do three things: delete anything superseded, check the file count against your plan's
+ceiling, and check Settings then Storage against the <Fact k="userStorageCap" /> cap.
+
+Then test it. Ask three questions you already know the answers to and see whether the citations
+point at the right documents. If they point at the wrong file, you have a duplicate to remove.
+
+## The practical decision
+
+Use a project when the same documents come up again and again, and keep the set deliberately small.
+Repeated reference material goes in the project, today's file goes in the chat, and every document
+gets a name that says what it is. Delete the old version when the new one arrives. That single habit
+does more for answer quality than anything else on this page.
+
+If instead you want to hand a fixed reference to other people through one assistant, a custom GPT is
+the better shape, though its ceiling of <Fact k="filesPerGpt" /> covers the lifetime of that GPT and
+never refreshes. Projects are for knowledge bases that keep changing.

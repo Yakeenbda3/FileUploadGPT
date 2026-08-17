@@ -1,0 +1,160 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-apple-pages-files',
+  title: 'Can ChatGPT read Pages, Numbers and Keynote files?',
+  heading: 'Pages, Numbers and Keynote files in ChatGPT',
+  description:
+    'Apple iWork files hold their text as compressed binary. Here is the export from Pages, Numbers and Keynote that keeps the most of it.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read pages numbers keynote files',
+  related: [
+    'chatgpt-file-types-supported',
+    'can-chatgpt-read-word-docx-files',
+    'chatgpt-powerpoint-pptx-support',
+  ],
+  faq: [
+    {
+      q: 'Can I upload a .pages file to ChatGPT directly?',
+      a: 'Not with any useful result. The file is a zip container holding Apple binary data rather than readable text, so there is nothing for ChatGPT to extract. Export it to Word, plain text or PDF from Pages first, which takes about fifteen seconds.',
+    },
+    {
+      q: 'What if I was sent a .pages file and I do not have a Mac?',
+      a: 'Sign in at iCloud.com with a free Apple Account, open Pages in the browser, upload the file by dragging it in, then use the More menu and Download a Copy to get a Word or PDF version. Asking the sender to re-export is faster still if they are reachable.',
+    },
+    {
+      q: 'Should I export a Keynote deck as PowerPoint or PDF?',
+      a: 'PowerPoint, in most cases. It carries the slide text and the presenter notes as text rather than as a rendered page. Export to PDF when the visual arrangement is the point, and check the layout option so notes are included if you need them.',
+    },
+    {
+      q: 'Does renaming a .pages file to .zip help?',
+      a: 'No. ChatGPT can unpack a zip, but the contents are Apple .iwa files, which are compressed binary and unreadable outside iWork. Files created in iWork 09 and earlier sometimes carry a PDF preview inside, which is worth checking as a last resort.',
+    },
+  ],
+});
+
+<AnswerBox>
+Not usefully. A .pages, .numbers or .key file is an Apple container that stores its text as compressed
+binary, so even when the upload goes through there is nothing readable to extract. Export first:
+Pages to Word, Numbers to Excel, Keynote to PowerPoint. Those land squarely inside what OpenAI
+supports, described as &quot;<Fact k="supportedTypesStatement" />&quot;
+</AnswerBox>
+
+Apple's three iWork apps write three formats that almost nothing outside Apple reads. On a Mac you
+never notice the seam. It shows up the moment the file has to go somewhere else, and ChatGPT counts
+as somewhere else.
+
+The fix is an export, and you already have the tool for it on a Mac, an iPhone or in any browser.
+
+## What a .pages file actually is
+
+Rename one to .zip and open it. Inside sits an Index folder full of .iwa files, a Data folder of
+images, and a couple of small JPEG previews. Your writing is in those .iwa files, packed into
+Apple's own binary format. Nothing outside iWork decodes them. Numbers and Keynote files are built
+the same way.
+
+That matters because of how uploads work. ChatGPT pulls the digital text out of a file and reads
+that. Here there is no digital text to find, only a compressed structure it has no decoder for.
+
+You can argue about whether Apple's formats count as common document, spreadsheet and presentation
+types. The argument does not decide anything, because the technical answer already has: there is no
+extractable text in the file.
+
+<Callout variant="warn" title="Renaming to .zip does not rescue it">
+ChatGPT can unpack an archive, but what comes out is still Apple binary. Documents made in iWork 09
+and earlier sometimes include a QuickLook PDF preview inside the package, which is worth a look when
+the original app is out of reach. Anything saved in the last decade carries only thumbnail images.
+</Callout>
+
+## Exporting on a Mac
+
+All three apps use the same menu, and the submenu changes to match what the app can write.
+
+<Steps>
+  <Step title="Open the document and choose File, then Export To">
+    Pages lists Word, PDF, EPUB, Plain Text and Rich Text Format. Numbers lists Excel, PDF, CSV and
+    TSV. Keynote lists PowerPoint, PDF, Images, HTML and Movie.
+  </Step>
+  <Step title="Pick the Microsoft equivalent">
+    Word for Pages, Excel for Numbers, PowerPoint for Keynote. These preserve more usable text than
+    a PDF of the same document.
+  </Step>
+  <Step title="Read the options in the dialog before you save">
+    Keynote's PDF export has a layout setting. If your substance lives in presenter notes, choose the
+    layout that includes them or they will not be in the file at all.
+  </Step>
+  <Step title="Upload the exported file">
+    From here it behaves like any other document.
+  </Step>
+</Steps>
+
+On iPhone and iPad the same thing lives behind the three dots button: tap it, choose Export, then
+the format.
+
+## Which export preserves the most text
+
+| From | Export to | What you keep, what you lose |
+| --- | --- | --- |
+| Pages | Word (.docx) | Headings, lists, tables and footnotes survive. Plain text keeps the words but flattens tables and can drop anything in floating text boxes. |
+| Numbers | Excel (.xlsx) | Every sheet and table stays in one file. CSV splits a multi table document into several files and keeps only values. |
+| Keynote | PowerPoint (.pptx) | Slide text and presenter notes stay as text. A PDF turns the same deck into rendered pages. |
+
+PDF is the honest fallback when an export mangles a complicated layout, and it is the right choice
+when the arrangement on the page is the meaning. For plain reading and analysis, the Microsoft
+formats give ChatGPT more to work with.
+
+For a Pages document that is nothing but prose, plain text is perfectly good and much smaller. The
+moment there are tables, captions or sidebars, use Word instead.
+
+## When you do not own a Mac
+
+The usual version of this problem: a colleague emailed a .pages file and you are on Windows.
+
+Open iCloud.com in any browser and sign in with a free Apple Account. Go to Pages, drag the file into
+the window to upload it, open it, then use the More menu, the three dots, and choose Download a Copy.
+Pick Word or PDF. Numbers and Keynote work identically on the same site.
+
+Faster, if the sender is reachable: ask them to export. It costs them fifteen seconds, and it avoids
+sending a document you may not own through anything else.
+
+<Callout variant="info" title="About online converters">
+They work. They also mean uploading the document to a company you have no relationship with. For a
+draft blog post, fine. For a contract or anything with personal data in it, use iCloud or ask the
+sender.
+</Callout>
+
+## What the export does not fix
+
+Images. Once your file is a DOCX, PPTX or XLSX, ChatGPT reads the text and discards the pictures.
+The current behaviour is <Fact k="imagesInDocuments" />.
+
+So a Keynote deck built from diagrams and screenshots exports cleanly and still reads as almost
+nothing: a list of slide titles with the substance missing. Same for a Pages document holding scanned
+pages. If that describes your file, you need the words themselves, which means either retyping them
+or running OCR before there is anything to upload.
+
+Numbers charts behave better than you might expect, because the numbers behind a chart are real cell
+data and travel to Excel intact. The chart itself does not, and does not need to.
+
+## After the export, the ordinary limits apply
+
+Nothing about iWork changes the caps. A file can be up to <Fact k="maxFileSize" />, text and document
+files are capped at <Fact k="maxTextTokens" />, and spreadsheets sit outside that token cap with a
+practical ceiling near <Fact k="maxSpreadsheetSize" />.
+
+The length cap is the one that catches people, because passing it is silent. The upload succeeds,
+ChatGPT reads as far as it can, and nothing announces the cut. A book length Pages manuscript
+exported to Word is exactly the kind of file that hits this. Ask what the final chapter is called. If
+it cannot tell you, it did not get there.
+
+<InlineInstall
+  heading="For an exported document that runs past the length cap"
+  body="FileUploadGPT splits a long document into parts ChatGPT accepts and sends them in order, so the whole manuscript gets read instead of the opening chapters."
+/>
+
+## The decision
+
+Do not upload iWork files. Export Pages to Word, Numbers to Excel and Keynote to PowerPoint, use PDF
+only when the layout carries the meaning, and use iCloud.com when there is no Mac in reach. Then
+check whether the document was mostly pictures, because that is the failure the export cannot solve.

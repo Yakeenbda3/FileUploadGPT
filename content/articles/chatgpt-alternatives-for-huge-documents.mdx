@@ -1,0 +1,152 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-alternatives-for-huge-documents',
+  title: 'The best tool for very long documents, compared',
+  heading: 'The best tool for a very long document',
+  description:
+    'Three approaches to a document too long for one upload: retrieval, a bigger context window, or splitting. Which one fits the question you are asking.',
+  category: 'compare',
+  updated: '2026-08-17',
+  targetQuery: 'best tool for very long documents',
+  related: [
+    'chatgpt-vs-claude-document-analysis',
+    'chatgpt-vs-notebooklm-documents',
+    'how-to-split-a-document-for-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'What is the best tool for a very long document?',
+      a: 'It depends on the question, not the page count. For pulling specific facts out of something huge, a retrieval tool that searches and reads only the relevant passages wins. For judgement across the whole document, an assistant that holds more at once is better. No tool reads a million words with even attention.',
+    },
+    {
+      q: 'Is ChatGPT ever the right choice for a very long document?',
+      a: 'Yes. Spreadsheets are exempt from its token cap, so large datasets go in where an equally long text document would not. It also runs code, drafts, rewrites and connects to a wide set of integrations. Length is one factor among several, and it only decides things when it is the factor that stops you.',
+    },
+    {
+      q: 'Do retrieval tools miss things?',
+      a: 'They can, and the failure is quiet. Retrieval answers from the passages it fetched, so a question needing full coverage, such as counting every occurrence of something or noticing what is absent, gets answered from a sample. Ask those questions of a tool that has the whole text.',
+    },
+    {
+      q: 'Does a bigger context window solve the problem outright?',
+      a: 'It removes the splitting work, which is real value. It does not guarantee even attention across the input, and long inputs still tend to be read most carefully at the beginning and the end. Verification stays your job regardless of the window size.',
+    },
+  ],
+});
+
+<AnswerBox>
+There is no single best tool, there are three approaches. If you need specific facts out of
+something huge, use retrieval, which searches the document and reads only the relevant part. If you
+need judgement across the whole thing, use the assistant with the largest context you can get. If
+you need to stay in ChatGPT for other reasons, split the document and send it in order.
+</AnswerBox>
+
+We make an extension for ChatGPT, so read this knowing where it comes from. Splitting is a real fix
+and we build a tool for it, but there are documents where the honest answer is that you are using
+the wrong category of product and no workaround changes that.
+
+## The limit you are actually hitting
+
+ChatGPT caps text and document files at <Fact k="maxTextTokens" /> each. The file size ceiling of
+<Fact k="maxFileSize" /> is almost never what stops you, and spreadsheets are exempt from the token
+cap entirely, capped instead around <Fact k="maxSpreadsheetSize" />.
+
+On paper that per-file cap is enormous. What people run into is different. OpenAI publishes the
+per-file limit but does not publish a working limit for how much of a conversation stays live, so
+the honest thing to describe is observed behaviour: on a very long document the answers start
+leaning on the beginning and the end, the middle gets thin, and eventually the conversation itself
+becomes too long to continue. That is the signal you have left the range this tool is built for.
+
+## Three approaches, not a list of products
+
+Products change every few months. The approaches do not.
+
+| Approach | What it does | Strong at | Weak at |
+| --- | --- | --- | --- |
+| Retrieval | Indexes the document, fetches the few passages that match your question | Pinpoint lookup, citations, very large collections | Whole document questions, counting, spotting what is missing |
+| Large context | Holds the entire text in one go | Cross references, consistency, structure across the whole | Cost and latency, uneven attention, still has a ceiling |
+| Split and feed | Breaks the document into ordered pieces for a tool with a smaller limit | Staying in the tool you already pay for | Links between distant pieces weaken, order matters |
+
+Most disappointment comes from using one approach for a question that belongs to another.
+
+## Retrieval: search the document instead of reading it
+
+A retrieval tool chops your document into passages, indexes them, then answers your question from
+the handful of passages that match it. NotebookLM is the familiar consumer example. Enterprise
+document search and anything you build yourself over an API work the same way.
+
+This is the right approach when the document is a reference rather than an argument. Manuals,
+standards, legislation, policy libraries, years of meeting notes, a support archive. Anything you
+would search with ctrl-F if only you knew which word to search for.
+
+The weakness is coverage. Ask it to summarise a whole book and it produces something plausible from
+whatever it happened to fetch. Ask how many times a clause appears, or whether anything important is
+missing, and the answer comes from a sample rather than the text. Those questions need a tool
+holding the whole thing.
+
+## Large context: hold more at once
+
+The other approach is to put everything in front of the model at once. Claude and Gemini both compete
+on this, and their limits move often enough that any figure printed here would be wrong within
+months. A proper comparison needs current published numbers for the chat products rather than the
+APIs, and we do not have reliable ones, so take the direction as the useful part: at the top end,
+both hold considerably more in one piece than ChatGPT's chat interface does.
+
+What that buys you is real. No splitting, no ordering, and cross references between page 4 and page
+390 have a chance of surviving because both are present at the same time.
+
+What it does not buy you is even attention. A model given a very long input still reads the opening
+and the closing more carefully than the middle. Bigger windows move the ceiling, they do not remove
+the need to check.
+
+<Callout variant="tip" title="A pattern that beats both">
+Use search to find the relevant thirty pages, then give only those to an assistant. You get the
+precision of retrieval and the reasoning quality of a short, dense prompt. For most real questions
+about a huge document this outperforms feeding the whole thing to anything.
+</Callout>
+
+## When staying in ChatGPT is the right call
+
+Length is one factor and it is often not the deciding one.
+
+Stay where you are if the document is data rather than prose, because spreadsheets skip the token
+cap. Stay if you need code run over the file, charts produced, or the output drafted into something
+else. Stay if the work sits inside an existing setup of custom GPTs and integrations that would cost
+more to rebuild than the splitting costs you. Stay if the document is long rather than enormous and
+you already pay for the subscription.
+
+In those cases the fix is not a different product, it is a different way of getting the text in.
+
+<InlineInstall
+  heading="If the answer is to stay and split"
+  body="FileUploadGPT breaks a document past ChatGPT's length limit into pieces it accepts and sends them in order, with an instruction to hold the answer until they have all arrived. Free, and nothing leaves your browser."
+/>
+
+## When not to use a chatbot at all
+
+Sometimes the best tool for a 900 page manual is a search box.
+
+If you know roughly what you are looking for, full text search finds it in seconds, shows the exact
+wording, and cannot invent anything. For code and logs, grep does the job better than any assistant
+will. The common mistake is asking a language model to do lookup work, getting a fluent answer, and
+having no way to tell whether it came from the document.
+
+Use search for the part that needs accuracy. Use the assistant for the part that needs judgement.
+
+## Choosing, in one question
+
+Ask what you want from the document.
+
+**A specific fact or passage.** Retrieval, or plain search. Fastest, most verifiable, least likely
+to invent.
+
+**Judgement across the whole document.** The largest context you can get, and check the answer
+against the text yourself.
+
+**A transformation**, such as translating, rewriting or summarising section by section. Splitting
+handles this well, because each piece is self contained and order is what matters, not total
+capacity.
+
+If you are splitting the same 400 page document every week to answer questions about all of it, that
+is the case for changing tools. If you split occasionally, or your questions are lookups, or the file
+is a spreadsheet, the tool you already have is fine and the input is what needs to change.

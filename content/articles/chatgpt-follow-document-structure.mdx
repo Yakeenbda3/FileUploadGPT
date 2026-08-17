@@ -1,0 +1,161 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-follow-document-structure',
+  title: "How to make ChatGPT follow a document's structure",
+  heading: "How to make ChatGPT follow a document's structure",
+  description:
+    "Get output that mirrors your document's own sections instead of a generic summary, by extracting the outline first and templating every answer.",
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to make chatgpt follow a document structure',
+  related: [
+    'chatgpt-summarize-long-documents',
+    'chatgpt-document-analysis-tips',
+    'did-chatgpt-read-my-whole-document',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT rename or merge my headings?',
+      a: 'Because merging related sections is what a summary normally does, and nothing in a plain request tells it otherwise. You have to forbid it explicitly: no adding, renaming, reordering or combining. Say that empty sections keep their heading with a short note, otherwise it drops them and the numbering shifts.',
+    },
+    {
+      q: 'Should I extract the outline or paste it in myself?',
+      a: 'Extract it first, then read what comes back. The outline doubles as a check on how much of the file was actually read. If the headings you can see in the document are missing from the list, the problem is the upload, not the prompt.',
+    },
+    {
+      q: 'Why do the later sections come back thinner than the early ones?',
+      a: 'Two causes look identical. Either the model is spreading effort unevenly across a long answer, or the document was truncated and those sections were never there. Ask it to quote a line from the final section. If it cannot, the file was cut off and no prompt will fix it.',
+    },
+    {
+      q: 'Does this work on a scanned PDF?',
+      a: 'Only if the scan has a usable text layer. A photographed or scanned document with no OCR has no headings to extract, so the outline comes back empty or invented. Run OCR first, or supply the outline yourself and work through it page range by page range.',
+    },
+  ],
+});
+
+<AnswerBox>
+Ask ChatGPT to list the document's headings verbatim before it analyses anything, then hand that
+list back and tell it to answer under exactly those headings, in that order, with nothing added,
+renamed or merged. For anything long, work through a few sections per message rather than asking for
+the whole document at once. If you need consistent output, give it a template with named fields and
+tell it to repeat the template for every section.
+</AnswerBox>
+
+A generic summary flattens a document. Fourteen sections go in, five paragraphs of themes come out,
+and the mapping between them is gone. That is fine when you want the gist. It is useless when you
+need to check a specific clause, brief someone section by section, or compare two versions of the
+same report.
+
+The fix is to stop asking for a summary and start asking for a structured pass. The structure has to
+come from the document, and it has to be visible in the conversation before any analysis happens.
+
+## Extract the outline before asking anything else
+
+Make the first message do nothing but map the file.
+
+> List every heading and subheading in this document, in order, using the document's exact wording.
+> Number them. Do not summarise or comment on anything yet.
+
+Two useful things happen. You get a map you can compare against the real document in a few seconds.
+And the outline now exists as plain text in the conversation, which is a far more stable reference
+than the file itself for the rest of the session.
+
+Read the list properly before continuing. If headings you know are in the document are missing, the
+problem is not your prompt. Anything past <Fact k="maxTextTokens" /> is cut off silently, so a short
+outline for a long file usually means truncation rather than a badly formatted document.
+
+<Callout variant="info" title="No headings to find">
+Plenty of files have no real structure. Exported transcripts, scanned pages with no text layer, and
+Word documents where headings were made by bolding text all come back with a thin or invented
+outline. In that case, write the outline yourself and give it to ChatGPT as the target shape.
+</Callout>
+
+## Hand the outline back as the shape of the answer
+
+This is the instruction that does the work:
+
+> Use the numbered headings above as the headings of your answer, in the same order and the same
+> wording. Do not add headings, rename them, reorder them, or merge two into one. If a section has
+> nothing material in it, keep the heading and write "nothing material" underneath.
+
+The last sentence matters more than it looks. Without it, empty sections get quietly dropped, your
+numbering stops matching the document, and you cannot tell whether section 9 was skipped because it
+was irrelevant or because it was never read.
+
+The explicit ban on merging matters too. Collapsing adjacent related sections is what summarising
+normally does, so it will happen by default unless you rule it out.
+
+## Work through it section by section
+
+For anything past a few thousand words, one request for the whole document produces detailed early
+sections and thin late ones. Batching fixes it.
+
+<Steps>
+<Step title="Get the outline">
+Extract and number the headings, and confirm the list matches the document.
+</Step>
+<Step title="Fix the output template">
+Decide the fields you want per section and state them once, so you do not restate them every time.
+</Step>
+<Step title="Ask for three or four sections at a time">
+"Now do sections 1 to 4, using the template." Then 5 to 8, and so on.
+</Step>
+<Step title="Check the headings back">
+At the end, ask it to list the headings it used. Compare against the original list. Any difference
+is a section it skipped or invented.
+</Step>
+</Steps>
+
+Slower than one prompt, and considerably more accurate. It also means you can stop after the
+sections you actually care about.
+
+## Template the response format
+
+If you want output you can scan, paste, or diff against another document, fix the fields:
+
+| Field | What to ask for |
+| --- | --- |
+| Heading | The document's exact wording, unchanged |
+| Purpose | One sentence on what the section is doing |
+| Key points | Up to three bullets, one line each |
+| Figures | Every number in the section, with the sentence it came from |
+| Flags | Anything unclear, unsupported, or contradicting an earlier section |
+
+Then: "Repeat this template for every section. Keep the field names identical. Do not add fields."
+
+The Figures row is the one people leave out and regret. Requiring the source sentence for every
+number turns a summary you have to trust into one you can verify without reopening the file.
+
+<InlineInstall
+  heading="When the document will not fit in one upload"
+  body="Structure work falls apart on files ChatGPT truncates, because the later headings never arrive. FileUploadGPT splits the document into parts ChatGPT accepts and sends them in order, holding the response until the last part lands, so the outline you extract covers the whole thing."
+/>
+
+## Keep the structure across a split document
+
+When a document has to go in as several parts, number the sections globally rather than per part.
+Section 1 to 12 across the whole report, not 1 to 4 three times over.
+
+Before each new part, restate the running outline and say where the new material picks up. At the
+end, ask for one consolidated pass over the full numbered list. Without that, you get three
+disconnected analyses whose section numbers collide, which is worse than a generic summary because
+it looks organised.
+
+## Checking it actually followed the structure
+
+Three quick tests, in order of how often they catch something:
+
+- Ask it to list the headings it used, and compare against the outline from step one.
+- Pick a section in the middle and ask what the document says under it. Middle sections are where
+  attention thins first.
+- Ask what is in the final section. If it cannot say, the file was truncated and everything after
+  that point is missing rather than merged.
+
+## What to do next time
+
+Extract the outline. Read it. Hand it back with an explicit ban on adding, renaming, merging and
+dropping. Fix a template. Work in batches of three or four sections. Check the headings at the end.
+
+That is five extra sentences of prompting, and it is the difference between output shaped like your
+document and output shaped like every other summary.

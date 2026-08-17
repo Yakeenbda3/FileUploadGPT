@@ -1,0 +1,153 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-many-documents-one-chat',
+  title: 'How to work with many documents in one chat',
+  heading: 'How to work with many documents in one ChatGPT chat',
+  description:
+    'Ten files in one conversation blur into one vague source. Label each on upload, order them deliberately, and know when to open a second chat.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to work with many documents in one chat',
+  related: [
+    'chatgpt-compare-two-documents',
+    'upload-more-than-10-files-to-chatgpt',
+    'chatgpt-conversation-too-long-error',
+  ],
+  faq: [
+    {
+      q: 'How many documents can I keep in one chat?',
+      a: 'OpenAI publishes no per conversation document cap, so the limit you hit is a practical one. In observed use, attribution starts breaking down somewhere around six or seven substantial documents, earlier if they cover similar ground. The account level caps still apply on top: 80 files every 3 hours, and 3 uploads a day on Free.',
+    },
+    {
+      q: 'Does the order I upload files in matter?',
+      a: 'It does in practice, even though OpenAI documents nothing about ordering. Reference material read first tends to shape how everything after it is interpreted, and material attached closest to your question tends to be favoured in the answer. Upload the rubric, policy or brief first, then the documents you want judged against it.',
+    },
+    {
+      q: 'Why does it answer from only one of my files?',
+      a: 'Long documents are retrieved from rather than held open in full, and retrieval matches your wording. The file that phrases the topic the way you phrased the question wins, and a file saying the same thing in different words gets skipped. Naming the file in the question is the fix.',
+    },
+    {
+      q: 'Should I use a Project instead of one long chat?',
+      a: 'For a document set you will come back to, yes. Files sit at the project level, 20 on Plus and 40 on Pro, Team, Education and Business, and every chat inside the project can reach them. That gives you a fresh conversation each time without re-uploading the shelf.',
+    },
+  ],
+});
+
+<AnswerBox>
+Label every file as you attach it, upload them in a deliberate order, and use those labels in every
+question you ask. ChatGPT will not name your documents for you, and unlabelled files get blended into
+one answer you cannot check. Past roughly six or seven substantial documents, stop adding and start
+comparing structured summaries across separate chats instead.
+</AnswerBox>
+
+Two documents in a conversation is manageable. Ten is a different problem, and it fails quietly,
+because the answers keep sounding fine.
+
+What breaks is attribution. Ask a question across a pile of files and you get one confident paragraph
+with nothing indicating which file each sentence came from. Sometimes the sentence is stitched from
+three of them. Sometimes it comes from the one file that happened to match your phrasing, and the
+other nine were never consulted at all.
+
+## What actually happens when you attach ten files
+
+Your documents are not all sitting open in front of the model. Long files are retrieved from: when
+you ask something, passages that match the question get pulled in, and the rest stays outside the
+conversation until something else calls for it.
+
+That is why <Fact k="maxTextTokens" /> per document is misleading if you read it as a reading
+capacity. It is a ceiling on what one file can contain before it is truncated, not a promise about
+how much of it informs any given answer.
+
+The consequence for many documents is specific. Retrieval competes. Whichever passages best match the
+words you used will win, so a document that makes the same point in different vocabulary loses, and
+you never see that it lost.
+
+Two further limits shape the session. Uploads are capped at <Fact k="rollingUploadRate" /> across
+your account, and failed attempts count toward that, so a batch that half fails still costs you.
+Documents are also handled as <Fact k="imagesInDocuments" />, meaning charts and scans inside those
+files contribute nothing on any plan below Enterprise.
+
+## Label every document as you attach it
+
+Attach the files, and in the same message tell ChatGPT what each one is.
+
+> Attaching three files. Label them SUPPLIER-A (their 2025 contract), SUPPLIER-B (their 2025
+> contract), POLICY (our internal procurement rules). Do not analyse anything yet. Confirm you have
+> all three and list them back with the labels.
+
+Short labels, distinct from each other, in caps so they stand out in later answers. Filenames make
+terrible labels, because half of them are some variant of Final_v3_signed(2).pdf and the model will
+refer to them in ways you cannot follow.
+
+<Callout variant="tip" title="The confirmation step is not wasted">
+Asking it to list the files back catches the common failure immediately: one attachment silently did
+not go through. Finding that out now costs a message. Finding it out after twenty minutes of analysis
+costs the analysis.
+</Callout>
+
+## Order them deliberately
+
+Nothing OpenAI publishes describes upload order as significant. In practice it behaves as though it
+is, consistently enough to plan around.
+
+Two rules cover most cases. Put reference material first, because whatever is read early tends to
+frame how everything after it is interpreted: the rubric, the style guide, the policy, the brief.
+Then put the material you want judged against it closest to the question you are about to ask.
+
+Attach in small groups rather than one enormous message. Three files with a short note about what
+they are, then the next three. Each group gets a moment of the model's attention, which a single
+ten file dump does not get.
+
+## Refer to documents by name in every question
+
+This is the habit that does the most work, and it costs nothing.
+
+Never say "the second one" or "the other document". Say SUPPLIER-B. Then ask for the answer to be
+structured per document rather than as one merged view.
+
+> For each of SUPPLIER-A and SUPPLIER-B, give the termination notice period and the clause it comes
+> from. One line each. Write "not found" if it is not in that document.
+
+The tell for a merged answer is simple: no labels in the output. If you asked for per document
+answers and got a paragraph, the sources were blended and the answer is not checkable. Ask again,
+naming the files.
+
+## Keep an index in the chat
+
+After the last upload, ask for a numbered index of every document with a one line description of
+what it contains. That list becomes the thing you point at for the rest of the session.
+
+It also survives length. Long conversations degrade, and the early messages are the first to lose
+their grip, so pasting the index back in after a long stretch is a cheap way to re-anchor which
+documents exist and what they are called.
+
+<InlineInstall
+  heading="When one of those documents is too long to attach in the first place"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, each one labelled and numbered, so a file that will not upload still arrives as one identifiable document rather than an unmarked wall of text."
+/>
+
+## When to split into separate conversations
+
+Three signals say stop adding files and open a new chat.
+
+Answers stop naming documents even when you ask them to. Corrections do not stick, so a mistake you
+fixed ten messages ago comes back. Or the documents have quietly separated into two different
+questions that happen to share a folder.
+
+The useful rule is one chat per question, not one chat per project. If you are asking about
+contracts, the marketing deck does not need to be there, and its presence only gives retrieval more
+ways to answer the wrong question.
+
+For a document set you return to repeatedly, use a Project instead. Files live at the project level,
+<Fact k="projectFilesPlus" /> and <Fact k="projectFilesPro" /> on the higher tiers, and every chat
+inside can reach them. You get a clean conversation each time without re-uploading the shelf.
+
+## What this comes down to
+
+Many documents in one chat works when you take responsibility for identity and order. Label each file
+as it goes in, put reference material first, name the files in every question, and demand per
+document answers so you can see when one has been ignored.
+
+When the answers stop naming names, that is the signal. Split the work, summarise each document into
+the same structure, and compare the summaries rather than the originals.

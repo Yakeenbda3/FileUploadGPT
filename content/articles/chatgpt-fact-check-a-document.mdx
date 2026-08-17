@@ -1,0 +1,154 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-fact-check-a-document',
+  title: 'How to fact check a document with ChatGPT',
+  heading: 'How to fact check a document with ChatGPT, and what it cannot do',
+  description:
+    'ChatGPT cannot verify a claim it has no source for. Use it to find which claims need checking, then check those yourself against real sources.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to fact check a document with chatgpt',
+  related: [
+    'chatgpt-document-analysis-tips',
+    'did-chatgpt-read-my-whole-document',
+    'chatgpt-research-paper-analysis',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT tell me if a statement in my document is true?',
+      a: 'Only for claims that are common knowledge, and even then you have no way to tell the confident right answers from the confident wrong ones. For anything specific, attributed, recent or internal to your organisation, it has no source to consult and is producing the shape of a verdict rather than a verdict. Use it to decide what needs checking, then check it.',
+    },
+    {
+      q: 'Does turning on web search make it a real fact checker?',
+      a: 'It changes what it can retrieve, not how it judges what it retrieves. Searching helps most for claims with a single obvious authoritative source, such as a published figure or a date. It helps least for contested claims, where the difficulty is deciding which source to believe, and that judgement is still yours.',
+    },
+    {
+      q: 'What can it actually verify on its own?',
+      a: 'Internal consistency. If page 3 says 40 percent and page 11 says 55 percent for the same measure, both sides of that check are inside the document and it can find the conflict. The same goes for totals that do not add up, dates that contradict each other, and definitions that shift partway through.',
+    },
+    {
+      q: 'Why does it invent citations for its corrections?',
+      a: 'Because a fact check normally comes with a source, so the pattern it produces includes one. A plausible journal name with a plausible year and plausible authors is easy to generate and looks exactly like a real reference. Open every citation it gives you before you rely on it.',
+    },
+  ],
+});
+
+<AnswerBox>
+Use ChatGPT to find the claims that need checking, not to check them. It has no source to consult for
+a specific claim, so a verdict from it is a guess wearing the costume of a verdict. Ask it instead to
+extract every checkable claim, sort them by how each one could be verified, and flag what a hostile
+reader would attack. Then check the short list yourself.
+</AnswerBox>
+
+## Why it cannot verify a claim
+
+Paste in a document, ask for a fact check, and you get a tidy list of statements marked correct or
+questionable. Nothing was consulted to produce it.
+
+The model is generating the text that a fact check usually looks like. Where a claim is common and
+well represented, that text is often right. Where a claim is specific, recent, contested or private
+to your organisation, the same fluent format arrives with nothing behind it. Both cases read
+identically, which is the actual problem. You cannot sort the good verdicts from the bad ones without
+doing the checking you were trying to avoid.
+
+This is starkest with internal documents. If your board pack says the Manchester site ran at 71
+percent utilisation in Q2, there is no public fact of the matter. Any judgement about that number is
+invention. The only real check is the system the figure came from.
+
+## What it is genuinely good at
+
+Triage. It reads a 90 page report faster than you can, and it reliably recognises the grammatical
+shape of a claim: an attribution, a statistic, a causal assertion, a superlative.
+
+That is the expensive part of fact checking. Finding the forty claims in a long document that carry
+weight, separating them from the sixty that are framing, and ordering them by what breaks if they are
+wrong. Verification is then a short focused job on a short list rather than an open ended read.
+
+## Sort claims by what would settle them
+
+The useful question is never "is this true". It is "what would I have to open to find out".
+
+| Claim type | Can ChatGPT settle it | What actually settles it |
+| --- | --- | --- |
+| Figure attributed to a named report | No | Open the report and find the figure |
+| Two numbers in the document that disagree | Yes | Both are in front of it |
+| A total that does not match its parts | Yes | Arithmetic on visible values |
+| Date, name, definition | Sometimes | A reference source, checked by you |
+| Internal or unpublished number | No | The system of record |
+| Causal claim | No | The study design, read properly |
+| Claim about events after training | No | A current source |
+
+Ask for the classification explicitly and the output stops pretending. A claim it marks as needing
+the original report is more honest, and more useful, than a claim it marks as true.
+
+## The prompt sequence that works
+
+<Steps>
+  <Step title="Extract, do not judge">
+    "List every factual claim in this document. For each one give the exact sentence, the section or
+    page, and the type: statistic, attribution, causal claim, prediction, definition. Do not say
+    whether any of them are true."
+  </Step>
+  <Step title="Classify by how it could be checked">
+    "For each claim, say what a person would need to open to verify it: a named external source, a
+    calculation inside this document, an internal system, or nothing available."
+  </Step>
+  <Step title="Rank by consequence">
+    "Which five of these, if wrong, would change the conclusion of the document or embarrass whoever
+    published it?" This is the list you spend your afternoon on.
+  </Step>
+  <Step title="Ask for the internal contradictions separately">
+    "Find places where this document contradicts itself: conflicting figures for the same measure,
+    dates that cannot both be right, totals that do not match their components, definitions that
+    change partway through."
+  </Step>
+</Steps>
+
+<Callout variant="tip" title="Step four is real verification">
+Internal consistency is the one check it can complete on its own, because both sides of the
+comparison are in the text. It is also where a surprising share of genuine errors live, since numbers
+usually drift between drafts rather than being invented outright.
+</Callout>
+
+<InlineInstall
+  heading="Triage only works if it read the whole document"
+  body="Long files are truncated silently, and a claim list drawn from the first half looks exactly like a complete one. FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, so the extraction covers the end of the report as well as the start."
+/>
+
+## Give it the source and the check becomes possible
+
+Verification turns into comparison the moment both documents are present.
+
+Upload the underlying report alongside the document that cites it and ask a narrow question: does the
+document represent this source correctly, and does the figure on page 4 appear in the source at all.
+That is a text comparison, which is work it can do. It is also most of what practical fact checking
+consists of, because the common failure is not fabrication but a figure quoted out of context, a
+projection reported as an outcome, or a hedged finding repeated as settled.
+
+Keep each check to one source and one document. Three sources at once and attribution blurs, at which
+point you are back to trusting the summary.
+
+## Where it will mislead you
+
+**Fabricated citations.** Corrections arrive with references because references are part of the
+pattern. Open every one.
+
+**Confident false negatives.** It will occasionally flag a correct statement as dubious, which costs
+you time and, worse, teaches you to discount its flags.
+
+**Silent truncation.** Text and document files are capped at <Fact k="maxTextTokens" />, and past
+that the tail is dropped without a warning in the answer. A clean fact check of a document it half
+read is the most dangerous output on this page.
+
+**Charts and figures.** Document retrieval is <Fact k="imagesInDocuments" />, so images inside the
+file are discarded and a graph with a misleading axis is simply not there to question. Screenshot it
+and upload it as an image if the figures matter.
+
+## The practical decision
+
+Ask it what to check. Do not ask it what is true.
+
+An hour spent turning a long document into a ranked list of twelve claims, each tagged with the
+source that would settle it, is an hour that makes the checking tractable. An hour spent reading its
+verdicts is an hour that produces a document you now believe for no reason.

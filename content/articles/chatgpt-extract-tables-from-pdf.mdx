@@ -1,0 +1,164 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-extract-tables-from-pdf',
+  title: 'Extracting tables from a PDF with ChatGPT',
+  heading: 'How to extract tables from a PDF with ChatGPT',
+  description:
+    'Column structure is the first thing PDF extraction loses. How to spot a misread table and get CSV you can check against the original.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to extract tables from a pdf with chatgpt',
+  related: [
+    'chatgpt-extract-data-from-documents',
+    'chatgpt-scanned-pdf-not-working',
+    'chatgpt-csv-excel-file-limits',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT get the numbers right but put them in the wrong columns?',
+      a: 'Because a PDF stores glyphs at coordinates, not a grid. Column boundaries have to be inferred from spacing, and a blank cell or a narrow gutter breaks the inference. The values are real, they have simply been assigned to the wrong header.',
+    },
+    {
+      q: 'How do I check the table without reading every row?',
+      a: 'Recompute a column total and compare it with the total printed in the document. A shifted or dropped value almost always changes a sum. Then spot check the first row, the last row, and any row with an empty cell.',
+    },
+    {
+      q: 'Can ChatGPT extract a table from a scanned page?',
+      a: 'No. Images inside documents are discarded on every plan except Enterprise, so a scanned table has no text to extract. Run OCR first, and treat the result with extra suspicion, because OCR misreads digits and columns at the same time.',
+    },
+    {
+      q: 'Should I ask for CSV or a markdown table?',
+      a: 'Ask for both, in that order of importance. CSV is what you paste into a spreadsheet to check the arithmetic. A markdown table is easier to eyeball for obvious misalignment, but it hides the empty cells that cause most errors.',
+    },
+  ],
+});
+
+<AnswerBox>
+Upload the PDF and ask for the table as CSV, one row per source row, values copied exactly as
+printed, with an empty field for an empty cell. Then check it rather than trusting it. Table
+structure is the first casualty of PDF text extraction, and a misread table comes back looking
+perfectly clean, with real numbers sitting under the wrong headers.
+</AnswerBox>
+
+Getting the text of a PDF into ChatGPT is mostly a solved problem. Getting a table out intact is
+not, and the reason matters before you rely on the output.
+
+## What happens to a table on the way in
+
+A PDF does not contain a table. It contains characters placed at coordinates on a page, and
+sometimes lines drawn near them. The grid you see is a visual arrangement, not a data structure.
+Anything reading that file has to infer which characters belong in which cell from position alone.
+
+That inference works most of the time and fails quietly. There is no error, nothing looks broken,
+and every value in the output is real. It is just in the wrong place. Columns become a run of
+words, and that run gets tidied back into a table that looks authoritative.
+
+## The failure modes worth recognising
+
+| What you see | What probably happened |
+| --- | --- |
+| Two values in one cell, like "1,240 3.2%" | Adjacent columns with a narrow gutter merged |
+| Everything shifted one column left from a certain row down | An empty cell collapsed instead of staying empty |
+| One source row split across two output rows | A cell with wrapped text was read as two lines |
+| Column headers appearing again halfway down as data | A header repeated at the top of each page |
+| Fewer rows than the original | Rows lost at a page break, or the document was truncated |
+| A number that is now text, like "(1,240)" | Accounting negatives, or a non standard space in a figure |
+| Nothing found at all | The table is an image, not text |
+
+The collapsed empty cell is the one to fear. Everything below the gap shifts left, every value is
+real, every row is the right length, and nothing looks wrong until you total a column.
+
+<Callout variant="warn" title="Merged and spanning cells are unreliable">
+A cell spanning three rows, or a header spanning two columns, has no unambiguous flat
+representation. It comes back either duplicated down the rows or applied to the first one only.
+Check that region specifically.
+</Callout>
+
+## Ask for CSV, and define what a cell is
+
+The default output is a prose summary or a prettied up markdown table, neither of which you can
+check quickly. Specify the format and the rules.
+
+> Extract the table on page 14 as CSV.
+>
+> One CSV row per row in the source table. Include the header row exactly as printed. Copy values
+> exactly as they appear, including currency symbols, thousands separators and brackets. Do not
+> round, reformat or convert anything. If a cell is empty in the source, leave the field empty
+> rather than shifting the other values across. If a cell is unreadable, write UNREADABLE. Quote
+> any field containing a comma. After the CSV, tell me how many data rows the source table has.
+
+The row count at the end is the cheapest check you have. Dropped rows and split rows are both
+common, and both obvious once there is a number to compare against.
+
+Copying values verbatim matters too. Once a model normalises currency and percentages, you cannot
+tell a transcription error from a formatting decision.
+
+## Checks that catch a misread
+
+<Steps>
+  <Step title="Compare the row count">
+    Count the rows in the PDF yourself. If the two numbers differ, find out where before you use
+    anything below that point.
+  </Step>
+  <Step title="Recompute a column total">
+    Paste the CSV into a spreadsheet and sum a numeric column, then compare it with the total
+    printed in the document. This catches shifted columns, dropped rows and merged cells, because
+    all three change the sum.
+  </Step>
+  <Step title="Spot check three rows verbatim">
+    The first row, the last row, and any row with an empty cell. Empty cells are where alignment
+    breaks.
+  </Step>
+  <Step title="Confirm the last row is really the last row">
+    Check the final row of the output against the final row on the page. Truncation looks identical
+    to a table that simply ended.
+  </Step>
+</Steps>
+
+If the totals do not reconcile, do not ask for a fix in prose. Ask for that block of rows again on
+its own, naming the page and the first and last row labels. A narrow request often reads correctly
+where a full page did not.
+
+<InlineInstall
+  heading="When the tables are at the back of a long report"
+  body="FileUploadGPT splits a document past ChatGPT's length cap into ordered pieces it will accept. It does not rebuild column structure, nothing sent as text can, but it does get the appendix tables of a 400 page report in front of the model instead of past the cut."
+/>
+
+## Make it produce a file rather than a message
+
+ChatGPT can run code against an uploaded file, and in practice a request for a downloadable CSV
+tends to push it down that route instead of retyping the table from what it read. OpenAI does not
+document which path it takes for any given file, so treat this as observed behaviour rather than a
+guarantee, and ask it to say which method it used.
+
+> Write the extracted table to a CSV file I can download, and say which method you used, parsing
+> the PDF with code or reading the extracted text.
+
+A file preserves exactly what was parsed, including the empty fields a chat message tends to tidy
+away.
+
+## When ChatGPT is the wrong tool for this
+
+**The PDF came from a spreadsheet.** Ask for the original. Uploading the source file skips the
+inference problem entirely, and spreadsheets get their own size allowance of
+<Fact k="maxSpreadsheetSize" />.
+
+**The page is a scan.** Document retrieval is <Fact k="imagesInDocuments" />, so a picture of a
+table has nothing to extract. OCR it first, then check the digits, because OCR errors and column
+errors compound.
+
+**The table is longer than the document allowance.** Text and document files are capped at
+<Fact k="maxTextTokens" />, and a table truncated mid way looks like a table that ended.
+
+**You have hundreds of tables across many files.** That is a job for dedicated extraction tooling
+with a repeatable configuration, not a chat window you verify by hand every time.
+
+## The practical decision
+
+Ask for CSV with explicit rules, then spend two minutes reconciling a total. That is the whole
+method, and it is short because the checking is the part that matters.
+
+Treat a table that arrives looking neat as unverified rather than correct. The failure mode here is
+not garbled output you would notice. It is a clean table with a column quietly out of step, and the
+only reliable way to catch it is arithmetic you do yourself.

@@ -1,0 +1,158 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-legal-document-summary',
+  title: 'Summarising a legal document with ChatGPT',
+  heading: 'Summarising a legal document with ChatGPT',
+  description:
+    'How to summarise a contract, judgment or policy with ChatGPT, what it locates reliably, and why a no such clause answer is never proof.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to summarise a legal document with chatgpt',
+  related: [
+    'chatgpt-contract-review-guide',
+    'did-chatgpt-read-my-whole-document',
+    'chatgpt-summarize-long-documents',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT give me legal advice?',
+      a: 'No, and treating a summary as advice is the main way people get hurt by this. It can tell you what a document says and where it says it, which is a reading task. It cannot tell you how a court in your jurisdiction treats that wording, what your options are, or what the sensible move is.',
+    },
+    {
+      q: 'Why should I not trust it when it says a clause is missing?',
+      a: 'Because it cannot distinguish between a clause that is absent and one it did not retrieve. Long files get truncated at the token limit and retrieval over a big document searches rather than reads, so a negative answer means it did not find the clause, not that the clause does not exist. Confirm absence yourself with a text search.',
+    },
+    {
+      q: 'What is the safest way to check a summary?',
+      a: 'Make it quote. Ask for the exact sentence and the clause or section number behind every claim, then search your own copy for that sentence. A quote that exists in the file is verifiable in seconds, and a quote that does not exist tells you the whole answer needs rechecking.',
+    },
+    {
+      q: 'Is it safe to upload a confidential legal document?',
+      a: 'On consumer plans, uploaded content may be used to improve models unless you turn that off in data controls, while Business and Enterprise plans are excluded from that by policy. For privileged or client material, check the setting before you upload, or redact names, figures and case references first.',
+    },
+  ],
+});
+
+<AnswerBox>
+ChatGPT is good at telling you what a legal document says and where in the document it says it. It
+is poor at telling you what that means for you. Ask it to quote and locate rather than to conclude,
+treat every summary as a map of where to read rather than a substitute for reading, and never accept
+an answer that a clause is not in the document without checking yourself.
+</AnswerBox>
+
+Legal documents are a good fit for this in one narrow way. They are long, densely cross referenced,
+and written so that the part you need is rarely where you would look for it. Finding things in that
+kind of text is exactly what a language model does well.
+
+The risk is that the output reads like advice. A summary of a judgment comes back in the same
+confident prose whether the model understood the ratio or invented it, so checking has to be a habit
+rather than a reaction to something looking wrong.
+
+<Callout variant="warn" title="Check your data setting before uploading">
+On consumer ChatGPT plans, uploaded content may be used to improve model performance unless you have
+switched that off in data controls. Business and Enterprise plans are excluded by policy. If the
+document is privileged, under an NDA, or contains a client's personal data, sort this out before the
+file goes anywhere, or redact the identifying parts first.
+</Callout>
+
+## Confirm it has the whole document
+
+Legal drafting puts the expensive material at the back. Schedules, annexes, definitions, appendices
+of judgments. Text files are truncated at <Fact k="maxTextTokens" /> with no visible warning, and
+files themselves are capped at <Fact k="maxFileSize" />, so a long agreement or a bundled judgment
+can arrive as a fragment that still summarises confidently.
+
+> Before summarising: list every numbered section, schedule and annex in this document, in order,
+> with the first few words of each.
+
+If that list stops short of what you can see in your own PDF, stop. Everything after this point is a
+summary of a fragment, and you now know which part it never read.
+
+## Ask it to quote and locate, not to conclude
+
+The difference between a useful summary and a dangerous one is usually the shape of the prompt.
+
+> Summarise this in plain language. For every point you make, give the clause or paragraph number
+> and quote the sentence it rests on. If you cannot find a sentence that supports a point, say so
+> rather than filling the gap.
+
+Quotes are checkable. Conclusions are not. A quoted sentence either appears in your file or it does
+not, and finding out takes one search. Asking for source text also pushes the model towards
+retrieval and away from what a document of this kind normally contains.
+
+## Never trust a negative answer
+
+This is the single most important habit, and it applies to every legal document you will ever put
+through this.
+
+When you ask whether there is an arbitration clause and the answer is no, the model has not read the
+document end to end and confirmed an absence. It has searched, failed to retrieve, and phrased the
+failure as a fact about the document. Those are different claims and it cannot tell them apart.
+
+The failure modes stack up. The clause sat past the truncation point. It was worded in a way the
+search did not match, an agreement to refer disputes to a tribunal rather than the word arbitration.
+It lived in a schedule that came through as an image and was discarded, since
+<Fact k="imagesInDocuments" />. A confident no covers all of these identically.
+
+So a negative answer is a prompt to check, not an answer. Search your own copy for three or four
+words that any version of the clause would contain. Absence is only ever established by you.
+
+## Different documents need different questions
+
+| Document | What works | What to distrust |
+| --- | --- | --- |
+| Commercial contract | Obligations, money, termination, liability, renewal dates | Any statement that a protection is missing |
+| Court judgment | Facts, procedural history, who won, what each party argued | The ratio, and anything about how it binds later cases |
+| Policy or regulation | Definitions, scope, who it applies to, deadlines | Whether your specific situation falls inside scope |
+| Statute or rules | Locating the relevant section from a plain description | Current status, since amendments may postdate training |
+
+The last column matters more than the first. Everything in it is a judgement call rather than a
+reading task, and judgement is where the output stays fluent while the accuracy quietly leaves.
+
+<InlineInstall
+  heading="For documents too long to upload in one piece"
+  body="FileUploadGPT splits a long agreement or judgment into parts ChatGPT accepts and sends them in order, so the schedules at the back get read rather than silently dropped at the token limit."
+/>
+
+## The verification pass
+
+Four checks, two or three minutes, and they catch nearly everything.
+
+<Steps>
+  <Step title="Search for one quote">
+    Take a quoted sentence from the middle of the summary and search your own file for a distinctive
+    phrase inside it. If it is not there, discard the summary and start again.
+  </Step>
+  <Step title="Check the numbering runs continuously">
+    Ask it to list the section numbers it can see. Gaps in the sequence usually mean truncation
+    rather than unusual drafting.
+  </Step>
+  <Step title="Ask the same question twice, worded differently">
+    Ask about the liability cap, then ask what limits either party's exposure. Two different answers
+    mean it is reconstructing rather than retrieving.
+  </Step>
+  <Step title="Verify every absence yourself">
+    Anything the summary says is missing gets a manual text search before you act on it.
+  </Step>
+</Steps>
+
+## Where the line sits
+
+Reading is a task. Advice is a judgement. The model does the first and imitates the second.
+
+It can save you an hour on a ninety page judgment by pointing at the twelve paragraphs that carry
+the reasoning. It can turn a policy stack into the four obligations that apply to your team. All of
+that is locating and rephrasing text that is in front of it.
+
+What it cannot do is tell you whether a term is enforceable where you live, whether the deal is
+worse than market, or whether something is unusual enough to argue about. Those need someone who
+knows your jurisdiction and your facts, and the tone of the answer never changes at the point where
+you cross from one category into the other.
+
+## The practical decision
+
+Use it for the first read of anything long, always with quotes and clause numbers attached. Use it
+to build a list of what you need to look at properly. Verify every absence by hand. Then take the
+marked up list to whoever is qualified to act on it, which costs less and goes faster than handing
+them an unread document and a vague worry.

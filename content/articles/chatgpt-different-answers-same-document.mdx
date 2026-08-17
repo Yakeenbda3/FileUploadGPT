@@ -1,0 +1,169 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-different-answers-same-document',
+  title: 'Why ChatGPT gives different answers about one document',
+  heading: 'Why ChatGPT gives different answers about the same document',
+  description:
+    'Three causes: silent truncation, sampling randomness, and context eviction. How to tell which one you have in under a minute.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'why does chatgpt give different answers about the same document',
+  related: [
+    'did-chatgpt-read-my-whole-document',
+    'chatgpt-forgot-my-uploaded-file',
+    'chatgpt-context-window-full',
+  ],
+  faq: [
+    {
+      q: 'Is it normal for ChatGPT to answer the same question two different ways?',
+      a: 'Yes, up to a point. The model samples its wording rather than picking one fixed reply, so two runs of the same question read differently and can rank things differently. What is not normal is a quoted sentence, a date or a figure changing between runs. That means the model was working from different text, not different phrasing.',
+    },
+    {
+      q: 'Does regenerating a reply mean the first one was wrong?',
+      a: 'No. A regenerated answer is another sample, not a correction. Neither version is the authoritative one, and picking the answer you prefer is how a wrong figure gets through. Check the disputed detail against the document instead of choosing between two replies.',
+    },
+    {
+      q: 'Why do the numbers change between answers about the same file?',
+      a: 'Either the model is not seeing the same text each time, or it is not seeing the file at all and is reconstructing from earlier messages in the chat. Both are silent. Ask for the exact quote and the heading it sits under, then check it against your copy of the file.',
+    },
+    {
+      q: 'How do I get consistent answers about a document?',
+      a: 'Ask questions with one correct answer, anchored to a clause, heading or page, and require a quote or a section name with every claim. Do the extraction work in the first few turns of a chat while the file is certainly in view. For anything long, send the relevant section rather than the whole document.',
+    },
+  ],
+});
+
+<AnswerBox>
+Almost always one of three things. The model never saw the whole document, so different questions hit
+different parts of it. Or the answers differ only in wording, which is ordinary sampling variation
+and harmless. Or the file dropped out of a long conversation and the later answers are
+reconstructions. One anchor question, asked in a fresh chat, tells you which within a minute.
+</AnswerBox>
+
+The unsettling part is that both replies sound equally certain. The second one does not hedge, does
+not mention revising anything, and gives no sign that the two answers came from different views of
+your document.
+
+Sorting it out is worth the minute it takes, because two of the three causes mean an answer you
+should not act on, and one of them means nothing at all.
+
+## The three causes, side by side
+
+| What you are seeing | Cause | What it means for the answer |
+| --- | --- | --- |
+| Wording and emphasis move, facts stay put | Sampling variation | Nothing. Both answers are sound |
+| The same content missing or wrong every time, in every chat | Truncated or partially read file | The document the model saw is not the document you sent |
+| Answers were solid early in the chat and drifted later | Context eviction | Later answers come from the conversation, not the file |
+
+Start with one question: did the facts move, or only the prose? That single distinction separates the
+harmless case from the two that matter.
+
+## Sampling variation, the harmless one
+
+ChatGPT does not pick the single most likely next word every time. It samples, which is why asking
+the same thing twice returns two differently worded replies. OpenAI does not publish the sampling
+settings behind ChatGPT, so treat the mechanism as observed behaviour rather than documented policy.
+
+What this moves: sentence structure, which points lead, how a borderline judgement lands, whether
+something gets called a risk or a consideration.
+
+What it should not move: a quoted sentence, a date, a figure that appears once in the document, the
+name of a section. If any of those changed between runs, stop looking at randomness. Something about
+what the model received changed.
+
+<Callout variant="info" title="Open questions vary more than closed ones">
+"What are the three biggest risks here" has no single correct answer, so two runs can reasonably rank
+them differently. "What is the notice period in clause 9" has one. Vagueness in the question shows up
+as variance in the answer, and that is not a fault in the model.
+</Callout>
+
+## Truncation and partial reads
+
+Text and document files are capped at <Fact k="maxTextTokens" />. Past that the file is **not
+rejected**. It uploads, ChatGPT reads whatever fitted, and answers from that with no warning anywhere
+in the reply.
+
+That alone produces contradictory answers. A question about the opening gets a well informed reply,
+and a question about the ending gets a plausible invention assembled from the opening.
+
+There is a second version of this that has nothing to do with the cap. For a long attachment, ChatGPT
+works through a tool that pulls in the passages it judges relevant rather than holding the file
+whole. Two questions can therefore be answered from two different slices of the same file. OpenAI
+does not document how that selection works, so rely on the symptom rather than the mechanism: facts
+that vary depending on which question you asked, tracking where in the document the answer lives.
+
+Both versions are consistent across chats. Upload the same file to a fresh conversation, ask the same
+failing question, and you get the same failure. That repeatability is the tell.
+
+## Eviction, where it knew and then stopped knowing
+
+Everything the model uses to write one reply has to fit in one window, and your file text arrived at
+the very top of the chat. When the conversation outgrows the window, the oldest content is dropped
+first.
+
+The discussion about the file survives, because it is more recent. So ChatGPT keeps answering, in the
+same confident register, from its own earlier summaries rather than from your document. That is
+exactly where a figure quietly turns into a different figure.
+
+The shape differs from truncation in a way you can use. Early answers in the chat were good, later
+ones got worse, and re-attaching the file or moving to a fresh chat brings the accuracy back.
+
+## The anchor question
+
+One question, asked the same way every time, with exactly one correct answer you can check by eye.
+Pick something distinctive from late in the document, because the end is what goes missing first.
+
+> Quote, exactly, the last sentence under the final heading, and tell me what that heading is called.
+
+<Steps>
+  <Step title="Ask it in the chat where the answers disagreed">
+    A wrong or evasive answer here proves the model cannot currently see the end of the document. It
+    does not yet tell you why.
+  </Step>
+  <Step title="Ask again in a fresh chat with the file re-attached">
+    Correct now means the file was always fine and the old chat had evicted it. Wrong again means the
+    end never arrived, which is truncation or a partial read.
+  </Step>
+  <Step title="Ask a third time in another fresh chat">
+    Two fresh chats agreeing with each other, and matching your file, means the document is fully
+    present. The differing answers were sampling variation, or the two questions were less alike than
+    they felt.
+  </Step>
+</Steps>
+
+<InlineInstall
+  heading="When the document was never going to fit in one go"
+  body="FileUploadGPT splits a long document into parts ChatGPT accepts and sends them in order, with the instruction to hold its answer until the last part lands. It removes the truncation cause, so anything still moving between runs is one of the other two."
+/>
+
+Check the quote against the file yourself rather than asking whether it is right. A confident wrong
+quote is the most common outcome and the easiest one to accept by accident.
+
+## Working so the answers stop moving
+
+**Ask questions with one right answer.** Anchor to a clause, a heading or a page. "Summarise the
+risks" invites variance by design.
+
+**Require a source with every claim.** Asking for the section name or an exact quote beside each
+point makes reconstruction visible, because invented material rarely comes with a locatable address.
+
+**Do the extraction early.** Pull the quotes, figures and structure in the first few turns, while the
+file is certainly in view. Analysis of an extract stays stable. Questions needing a fresh look at
+page 300 do not.
+
+**Send less.** The section your question concerns beats the whole book, and it removes the truncation
+and eviction causes together.
+
+**Compare on facts, not prose.** Two summaries that read differently and agree on every number are
+not actually in conflict.
+
+## The practical decision
+
+If only the wording moved, there is nothing to fix. If the facts moved, run the anchor question in a
+fresh chat. A correct answer there means the old conversation ran out of room. A wrong one means the
+model never had the whole document to begin with.
+
+Neither failure announces itself, and both produce writing that reads exactly like an answer from a
+document that was read in full. The anchor question is the cheapest way to find out which one you are
+holding.

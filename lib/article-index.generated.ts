@@ -31,6 +31,14 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-17"
   },
   {
+    "slug": "can-chatgpt-read-apple-pages-files",
+    "title": "Can ChatGPT read Pages, Numbers and Keynote files?",
+    "heading": "Pages, Numbers and Keynote files in ChatGPT",
+    "description": "Apple iWork files hold their text as compressed binary. Here is the export from Pages, Numbers and Keynote that keeps the most of it.",
+    "category": "file-types",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "can-chatgpt-read-email-files",
     "title": "Can ChatGPT read EML and MSG email files?",
     "heading": "Can ChatGPT read .eml and .msg email files?",
@@ -43,6 +51,22 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "title": "Can ChatGPT read EPUB files? Yes, with two catches",
     "heading": "Can ChatGPT read EPUB files?",
     "description": "An EPUB is a zip of HTML, so the text is usually reachable. DRM stops you dead, and book length is the problem nobody warns you about.",
+    "category": "file-types",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "can-chatgpt-read-google-docs",
+    "title": "Can ChatGPT open a Google Docs or Drive link?",
+    "heading": "Why pasting a Google Docs link does not work",
+    "description": "ChatGPT holds no Google session, so a Docs or Drive link gets it a sign in page. Here is the export route and which download format to pick.",
+    "category": "file-types",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "can-chatgpt-read-log-files",
+    "title": "Can ChatGPT read log files? Yes, but trim them first",
+    "heading": "Can ChatGPT read log files?",
+    "description": "Server and application logs are plain text, so they upload fine. Size is the real problem. How to cut a log to the window that matters first.",
     "category": "file-types",
     "updated": "2026-08-17"
   },
@@ -103,11 +127,35 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-17"
   },
   {
+    "slug": "chatgpt-alternatives-for-huge-documents",
+    "title": "The best tool for very long documents, compared",
+    "heading": "The best tool for a very long document",
+    "description": "Three approaches to a document too long for one upload: retrieval, a bigger context window, or splitting. Which one fits the question you are asking.",
+    "category": "compare",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-api-vs-web-for-files",
+    "title": "ChatGPT API or the web app for files?",
+    "heading": "ChatGPT API or the web app for file uploads?",
+    "description": "What the OpenAI API changes about document handling, what it costs per token, and why most developers asking should stay on the web app.",
+    "category": "compare",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "chatgpt-attachment-limit",
     "title": "ChatGPT attachment limits, all of them",
     "heading": "Every ChatGPT attachment limit, and which one you hit",
     "description": "Per message, per day, per three hours, per project and per GPT. A short diagnosis for working out which one is actually blocking you.",
     "category": "limits",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-cite-page-numbers",
+    "title": "How to get ChatGPT to cite page numbers in a PDF",
+    "heading": "How to get ChatGPT to cite pages and sections",
+    "description": "ChatGPT rarely knows what page anything was on, because extraction strips the page breaks. What to ask it to cite instead.",
+    "category": "workflows",
     "updated": "2026-08-17"
   },
   {
@@ -167,12 +215,28 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-17"
   },
   {
+    "slug": "chatgpt-different-answers-same-document",
+    "title": "Why ChatGPT gives different answers about one document",
+    "heading": "Why ChatGPT gives different answers about the same document",
+    "description": "Three causes: silent truncation, sampling randomness, and context eviction. How to tell which one you have in under a minute.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "chatgpt-document-analysis-tips",
     "title": "Getting better answers about your documents",
     "heading": "Getting better answers out of ChatGPT about your documents",
     "description": "Twelve things that change what ChatGPT gives you back when analysing a document, starting with the check most people skip.",
     "category": "workflows",
     "updated": "2026-08-16"
+  },
+  {
+    "slug": "chatgpt-document-to-slides",
+    "title": "How to turn a document into slides with ChatGPT",
+    "heading": "How to turn a document into slides with ChatGPT",
+    "description": "Turn a report into a deck: one idea per slide, speaker notes kept separate, and an outline format that pastes into PowerPoint without rework.",
+    "category": "workflows",
+    "updated": "2026-08-17"
   },
   {
     "slug": "chatgpt-enterprise-pdf-visual-retrieval",
@@ -187,6 +251,22 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "title": "Extracting data from documents with ChatGPT",
     "heading": "How to pull specific data out of a document with ChatGPT",
     "description": "Extraction is what ChatGPT is best at with documents. How to ask so the output is structured, checkable, and honest about what is missing.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-extract-tables-from-pdf",
+    "title": "Extracting tables from a PDF with ChatGPT",
+    "heading": "How to extract tables from a PDF with ChatGPT",
+    "description": "Column structure is the first thing PDF extraction loses. How to spot a misread table and get CSV you can check against the original.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-fact-check-a-document",
+    "title": "How to fact check a document with ChatGPT",
+    "heading": "How to fact check a document with ChatGPT, and what it cannot do",
+    "description": "ChatGPT cannot verify a claim it has no source for. Use it to find which claims need checking, then check those yourself against real sources.",
     "category": "workflows",
     "updated": "2026-08-17"
   },
@@ -255,6 +335,22 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-17"
   },
   {
+    "slug": "chatgpt-financial-statement-analysis",
+    "title": "How to analyse financial statements with ChatGPT",
+    "heading": "How to analyse financial statements with ChatGPT",
+    "description": "ChatGPT reasons about numbers rather than calculating them. Upload statements as CSV, not a PDF annual report, and check every figure it gives back.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-follow-document-structure",
+    "title": "How to make ChatGPT follow a document's structure",
+    "heading": "How to make ChatGPT follow a document's structure",
+    "description": "Get output that mirrors your document's own sections instead of a generic summary, by extracting the outline first and templating every answer.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "chatgpt-forgot-my-uploaded-file",
     "title": "ChatGPT forgot my uploaded file: what happened and the fix",
     "heading": "Why ChatGPT forgets a file you already uploaded",
@@ -263,11 +359,43 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-17"
   },
   {
+    "slug": "chatgpt-free-vs-paid-documents",
+    "title": "Is ChatGPT Plus worth it for documents?",
+    "heading": "What paying for ChatGPT actually buys for document work",
+    "description": "Paying lifts how many documents you can send, not how long any one of them can be. Which caps move, which do not, and how to tell.",
+    "category": "compare",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "chatgpt-image-upload-limit",
     "title": "ChatGPT image upload limits explained",
     "heading": "ChatGPT image upload limits, and the 100 page rule",
     "description": "The size cap per image, why PDF pages count as images, and what to do when ChatGPT says you have added too many.",
     "category": "limits",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-large-json-dataset",
+    "title": "Analysing a large JSON dataset with ChatGPT",
+    "heading": "How to analyse a large JSON dataset with ChatGPT",
+    "description": "Send the schema and a sample instead of the whole export, agree the approach first, and convert tabular JSON to CSV to skip the token cap.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-legal-document-summary",
+    "title": "Summarising a legal document with ChatGPT",
+    "heading": "Summarising a legal document with ChatGPT",
+    "description": "How to summarise a contract, judgment or policy with ChatGPT, what it locates reliably, and why a no such clause answer is never proof.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-many-documents-one-chat",
+    "title": "How to work with many documents in one chat",
+    "heading": "How to work with many documents in one ChatGPT chat",
+    "description": "Ten files in one conversation blur into one vague source. Label each on upload, order them deliberately, and know when to open a second chat.",
+    "category": "workflows",
     "updated": "2026-08-17"
   },
   {
@@ -303,6 +431,14 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-17"
   },
   {
+    "slug": "chatgpt-notion-export-upload",
+    "title": "How to upload a Notion export to ChatGPT",
+    "heading": "How to get a Notion export into ChatGPT",
+    "description": "A Notion export is a zip of markdown files, and ChatGPT will not open it. Extract it locally, flatten the pages into one text file, upload that.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "chatgpt-only-upload-one-file-at-a-time",
     "title": "\"You may only upload 1 file at a time\"",
     "heading": "\"You may only upload 1 file at a time\" in ChatGPT",
@@ -335,11 +471,27 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-17"
   },
   {
+    "slug": "chatgpt-project-knowledge-base",
+    "title": "Building a knowledge base in a ChatGPT Project",
+    "heading": "How to build a knowledge base in a ChatGPT Project",
+    "description": "What to put in project files, what to leave in a single chat, and why a smaller document set gives you sharper answers.",
+    "category": "workflows",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "chatgpt-projects-file-limit",
     "title": "How many files fit in a ChatGPT Project?",
     "heading": "How many files can you put in a ChatGPT Project?",
     "description": "Twenty on Plus and forty on Pro, Team, Education and Business. What counts, what shares your storage, and how to make them go further.",
     "category": "limits",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-projects-vs-custom-gpts",
+    "title": "ChatGPT Projects or custom GPTs for documents?",
+    "heading": "Projects or custom GPTs for your documents?",
+    "description": "Both hold files that persist. Projects hold more and stay personal, custom GPTs hold ten for life and can be shared. Which fits your documents.",
+    "category": "compare",
     "updated": "2026-08-17"
   },
   {
@@ -471,11 +623,35 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "updated": "2026-08-16"
   },
   {
+    "slug": "chatgpt-vs-gemini-documents",
+    "title": "ChatGPT vs Gemini for long document work",
+    "heading": "ChatGPT or Gemini for long documents?",
+    "description": "An honest comparison of how each handles long files, where Gemini fits better, and where ChatGPT does, without invented numbers.",
+    "category": "compare",
+    "updated": "2026-08-17"
+  },
+  {
     "slug": "chatgpt-vs-notebooklm-documents",
     "title": "ChatGPT or NotebookLM for your documents?",
     "heading": "ChatGPT or NotebookLM for working with documents?",
     "description": "They are built on different assumptions about what you want. Which one fits depends on whether you need answers grounded in your sources.",
     "category": "compare",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-vs-perplexity-documents",
+    "title": "ChatGPT or Perplexity for your documents?",
+    "heading": "ChatGPT or Perplexity for working with documents?",
+    "description": "Perplexity is built to search and cite. ChatGPT is built to reason over what you hand it. Which one fits depends on where your document already is.",
+    "category": "compare",
+    "updated": "2026-08-17"
+  },
+  {
+    "slug": "chatgpt-website-content-analysis",
+    "title": "How to give ChatGPT a whole website to read",
+    "heading": "Getting a whole website into ChatGPT, page by page",
+    "description": "Links get you one page at a time. How to save pages as text, flatten them into a single upload with URL headers, and keep it attributable.",
+    "category": "workflows",
     "updated": "2026-08-17"
   },
   {
@@ -573,6 +749,14 @@ export const ARTICLE_INDEX: ArticleIndexEntry[] = [
     "description": "A practical walkthrough for getting big documents into ChatGPT, whichever of the four limits is stopping you, with the fix for each.",
     "category": "bypass",
     "updated": "2026-08-16"
+  },
+  {
+    "slug": "keep-document-in-context-chatgpt",
+    "title": "Keeping a document in context through a long chat",
+    "heading": "How to keep a document in context in ChatGPT",
+    "description": "Documents fall out of long chats quietly. How to set the session up, re-anchor when the answers slip, and when to start a fresh chat instead.",
+    "category": "workflows",
+    "updated": "2026-08-17"
   },
   {
     "slug": "paste-vs-upload-chatgpt",

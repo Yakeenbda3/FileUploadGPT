@@ -1,0 +1,153 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-api-vs-web-for-files',
+  title: 'ChatGPT API or the web app for files?',
+  heading: 'ChatGPT API or the web app for file uploads?',
+  description:
+    'What the OpenAI API changes about document handling, what it costs per token, and why most developers asking should stay on the web app.',
+  category: 'compare',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt api vs web interface for file uploads',
+  related: [
+    'upload-large-code-files-to-chatgpt',
+    'paste-vs-upload-chatgpt',
+    'chatgpt-file-types-supported',
+  ],
+  faq: [
+    {
+      q: 'Is there simple example code for sending a PDF to GPT?',
+      a: 'There is, in the official API reference, and that is the only copy you should trust. OpenAI has shipped more than one request surface over the years and parameter names have moved between them, so a snippet from a blog post is a good way to end up calling something deprecated. For plain text formats, the version that never breaks is extracting the text yourself and putting it in the message.',
+    },
+    {
+      q: 'Is the API cheaper than a ChatGPT subscription?',
+      a: 'It depends entirely on volume, and prices change often enough that quoting one here would be irresponsible. The structural point is that the API bills per token in both directions, and every follow-up question re-sends the document unless you build retrieval or caching. For a handful of documents a month, a flat subscription almost always wins.',
+    },
+    {
+      q: 'Does the API have the same file upload limits as ChatGPT?',
+      a: 'No. The daily upload counts, the rolling rate cap and the per-file token ceiling are product limits on the ChatGPT apps, not properties of the models. On the API you are constrained by your account rate limits and by how much fits in a single request, which is a different number and a different problem.',
+    },
+    {
+      q: 'Can the API read a scanned PDF?',
+      a: 'Not as text, because there is no text in it. You would rasterise the pages and send them to a vision-capable model, which works but costs image tokens for every page, or run OCR first and send the output. The web app has the same gap for a different reason: images inside documents are discarded on every plan except Enterprise.',
+    },
+  ],
+});
+
+<AnswerBox>
+The API does not read files the way the web app does. ChatGPT extracts text from your PDF or DOCX,
+retrieves the relevant parts, and runs a code sandbox for spreadsheets, all covered by your
+subscription. The API hands you the model and expects you to arrange the file handling yourself, or
+to pay per token for hosted tools that do it. If the goal is reading documents and asking questions
+about them, the web app is usually still the better tool.
+</AnswerBox>
+
+Most people searching for example code to send a file to GPT want one of two things: a script that
+processes a folder of documents without a human clicking anything, or a way around a limit they just
+hit in the web app. The API is a good answer to the first. It is a poor and expensive answer to the
+second.
+
+## What the web app is doing that you would have to rebuild
+
+The upload box hides a pipeline. When you drop a PDF into ChatGPT, several things happen before the
+model sees a single token.
+
+The file is converted to text. PDF, DOCX, PPTX, CSV and the rest all go through extraction, which is
+why a 40 MB Word file full of images commonly arrives as a few tens of kilobytes of text. Long files
+are not simply pasted into context either; the system retrieves the parts that look relevant to your
+question. Spreadsheets get routed to a Python sandbox that can compute and plot.
+
+None of that is the model. It is product engineering around the model, and it is included in the
+price of the subscription. Point the API at the same PDF with no other work and you get an error or
+a bill for something that did not help.
+
+## What the API gives you instead
+
+Three routes, and it is worth being clear that they are different things.
+
+**Inline text.** You extract the text with your own tooling and put it in the request as a message.
+This is the one that never breaks, works for every text format, and gives you exact control over
+what the model sees.
+
+**Direct document input.** Some file types, PDFs and images among them, can be attached to a request
+and handled by the model without you extracting anything. Convenient, and the pricing follows the
+tokens the file turns into.
+
+**A hosted retrieval tool.** You upload files, they are indexed into a vector store, and the model
+searches them during a request. This is the closest thing to what the web app does, and the closest
+thing to a rebuild of it.
+
+<Callout variant="warn" title="Uploading is not the same as reading">
+Sending a file to the files endpoint gives you a file id. It does not, on its own, make any model
+read it. That id has to be referenced by something: a retrieval tool, a request that accepts document
+input, a batch job. Developers lose an afternoon to this regularly.
+</Callout>
+
+## Do not copy old example code
+
+OpenAI has shipped more than one request surface, and the shape of a file-bearing request has moved
+between them. Parameter names from a 2024 tutorial may not exist now, and model ids from that era
+have been retired.
+
+Get the current shape from the API reference, not from an article, this one included. What is stable
+is the pattern: obtain text or a file reference, attach it to a request, pay for the tokens it
+becomes.
+
+## Cost is the part people underestimate
+
+The subscription is flat. The API is metered in both directions, and the document is not a one-off
+charge.
+
+Ask fifteen follow-up questions about a 50-page report with the whole thing inline, and you have
+sent that report fifteen times. The conversation you have for free in the web app becomes a
+multiplying input bill. Retrieval and prompt caching exist precisely to blunt this, and both are work
+you have to do.
+
+Per-token prices change and vary by model, so any figure printed here would be wrong soon. Do the
+arithmetic yourself with the current rate card before you assume the API is the cheaper option. For
+low volumes it usually is not.
+
+## The limits change shape, they do not disappear
+
+The web app numbers are product policy, not model behaviour: <Fact k="freeDailyUploads" /> on the
+Free plan, <Fact k="rollingUploadRate" />, <Fact k="maxFileSize" />, and
+<Fact k="maxTextTokens" /> for text and document files. None of those follow you to the API.
+
+What replaces them is your account rate limits and, more importantly, how much fits in one request.
+That per-request ceiling is a different number from the web app per-file cap, and confusing the two
+is the single most common mistake in this comparison. A file that ChatGPT accepts is not
+automatically a file that fits in one API call.
+
+<InlineInstall
+  heading="If the API is not worth the plumbing"
+  body="FileUploadGPT splits a document that is too long for one message into pieces ChatGPT accepts, tells it to wait until they have all arrived, then sends them in order. Free, and nothing leaves your browser."
+/>
+
+## Who should switch, and who should not
+
+Switch if the work is repetitive and unattended. A hundred contracts every Monday, the same
+extraction on each, results landing in a database. Switch if the output has to feed another system,
+if you need versioned prompts and evaluation you can run, or if data handling terms mean you cannot
+use a consumer plan.
+
+Do not switch if you read documents one at a time and ask questions about them. You will spend a
+week rebuilding extraction, chunking and retrieval to arrive at a worse version of the upload box,
+and then pay per token to use it.
+
+Do not switch for charts from a spreadsheet either. The web app already writes and runs the code,
+and spreadsheets are exempt from the token cap, capped nearer <Fact k="maxSpreadsheetSize" />
+instead.
+
+And do not switch purely to escape an upload limit. Splitting a long document in the interface you
+already have is minutes of work. The API route to the same outcome is an integration.
+
+## The practical decision
+
+One question: is a person in the loop for every document?
+
+If yes, stay on the web app. Everything the API offers for file handling is machinery you would be
+operating by hand anyway.
+
+If no, and the same operation runs over many files without supervision, the API is the right tool
+and the per-token cost buys you something real. Build the extraction step deliberately, because that
+is where the quality of every answer downstream is decided.

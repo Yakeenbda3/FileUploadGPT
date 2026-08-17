@@ -1,0 +1,165 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'keep-document-in-context-chatgpt',
+  title: 'Keeping a document in context through a long chat',
+  heading: 'How to keep a document in context in ChatGPT',
+  description:
+    'Documents fall out of long chats quietly. How to set the session up, re-anchor when the answers slip, and when to start a fresh chat instead.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to keep a document in context in chatgpt',
+  related: [
+    'chatgpt-forgot-my-uploaded-file',
+    'chatgpt-context-window-full',
+    'did-chatgpt-read-my-whole-document',
+  ],
+  faq: [
+    {
+      q: 'Is there a way to pin a file so ChatGPT always keeps it?',
+      a: 'Not inside a single conversation. There is no pin, lock or priority setting for an attachment, and the chat drops its oldest content as it fills. The closest equivalents are Projects and custom GPT knowledge, where files sit outside any one chat and every new conversation starts with them available.',
+    },
+    {
+      q: 'Should I re-attach the file or start a new chat?',
+      a: 'Re-attach if the chat is still young and the drift is recent, because that puts the text straight back in front of the model. If you are re-attaching for the second time in the same conversation, the room is mostly gone and a fresh chat with a short handover brief will work better.',
+    },
+    {
+      q: 'Can I just ask ChatGPT whether it still has my document?',
+      a: 'You can ask, but treat the answer as a lead rather than evidence. The model is not told when content has been removed, so it usually answers yes and then reconstructs from what the conversation says about the file. Ask it to quote a specific line instead, and compare that against your copy.',
+    },
+    {
+      q: 'Does keeping the chat short really help?',
+      a: 'Yes, more than anything else you can do. Every reply the model writes goes back into the running total for that conversation, so long essay-style answers push the document out faster than short ones. Asking for bullets and keeping one job per chat buys a noticeably longer working life.',
+    },
+  ],
+});
+
+<AnswerBox>
+There is no setting that pins a file in place, so keeping a document in context is a matter of
+habits. Upload it as the first thing in a fresh chat, pull out the quotes and figures you need in the
+first few turns, and keep the conversation to that one job. When answers start going vague, re-attach
+the file and check it with a request for an exact quote. Past a second re-attach, start a new chat
+and carry a short brief across instead.
+</AnswerBox>
+
+The frustrating part of a long document session is that it works well for a while. Precise answers,
+real quotes, the right section names. Then somewhere around the fortieth message it turns generic and
+starts hedging, and nothing tells you the moment it changed.
+
+## Nothing pins a file in place
+
+An attachment lives inside the conversation, and the conversation has a ceiling on how much can sit
+in front of the model while it writes one reply. Your messages count toward that total, its replies
+count, and so does the text pulled out of your file. When the total stops fitting, the oldest content
+goes first, which is almost always the document you uploaded at the top.
+
+That ceiling is a separate thing from the file limits, and much smaller. A document can sit
+comfortably inside <Fact k="maxTextTokens" /> and still be pushed out of a chat an hour later. OpenAI
+publishes no number for the conversation ceiling, because it varies by model and plan.
+
+There is no pin, no lock, no priority flag. So every technique below is one of two moves: spend the
+room more slowly, or put the document somewhere that is supplied fresh each turn.
+
+## Set the chat up so the document lasts
+
+The document survives longer when less else is competing with it.
+
+**Upload first, ask second.** The file is the heaviest thing in the chat. Put it in before the
+discussion starts, so everything else stacks on top of it rather than arriving once the room is
+spent.
+
+**One document, one job.** Tangents are not free. Every unrelated question, and every answer to one,
+is room the document is competing with.
+
+**Ask for bullets, not essays.** The underrated one. Long replies consume the same budget your file
+does, so a chat full of six-paragraph answers fills far faster than one full of tight lists.
+
+**Send the section, not the book.** A twelve page chapter stays in view far longer than a four
+hundred page report, and usually gets a sharper answer anyway.
+
+## Take a working extract early
+
+Do the extraction in the first few turns, while the file is certainly present.
+
+> From the attached document, list the section headings in order, then every figure, date and named
+> party, each with the section it appears in. Quote exactly. No commentary.
+
+Keep that outside ChatGPT. It is a few hundred words standing in for a few hundred pages, and it is
+what you paste into the next chat when this one is finished.
+
+## Re-anchoring when the answers drift
+
+The usual tells are a question you already answered coming back, a rule you set being quietly
+dropped, or a specific detail returning slightly wrong.
+
+<Steps>
+  <Step title="Ask what it can still see">
+    "Without opening the file again, list what you can currently quote from the attached document."
+    Read the answer as a lead, not as evidence. The model is never told that content was removed, so
+    it often describes the file from what the conversation says about it.
+  </Step>
+  <Step title="Check the answer with an exact quote">
+    Pick something distinctive that has not been repeated in the chat, and ask for it word for word.
+    A paraphrase can be reassembled from later mentions. A verbatim line either survives or it does
+    not.
+  </Step>
+  <Step title="Re-attach the file with a pointer">
+    Attach it again to a new message and say what you want from it now, naming the section. That puts
+    the text back in view and aims it at the current question in one move.
+  </Step>
+  <Step title="Restate your constraints in one line">
+    Standing rules about format, tone or scope go back in at the same time, which moves them to the
+    recent end of the chat where they are safe again.
+  </Step>
+</Steps>
+
+<Callout variant="warn" title="Re-anchoring is a delay, not a cure">
+Each re-attach puts the document back into a chat with less room than last time. The second buys far
+less than the first, and the third refills a container that is already overflowing.
+</Callout>
+
+## Give the document a home outside the chat
+
+If you keep coming back to the same material, stop relying on a conversation to hold it.
+
+| Where it lives | What that gets you | Limit |
+| --- | --- | --- |
+| Attached to one chat | Available until that chat fills | No published figure |
+| A Project | Every chat inside the project can reach it | <Fact k="projectFilesPlus" /> on Plus, <Fact k="projectFilesPro" /> on Pro |
+| Custom GPT knowledge | Reference files available in every conversation with that GPT | <Fact k="filesPerGpt" /> for the lifetime of the GPT |
+| Custom instructions | Short standing rules, re-supplied every turn | Text only, keep it brief |
+
+None of these enlarge the conversation ceiling. What they change is the cost of starting over: when
+the document sits in a Project, leaving a spent chat costs seconds rather than another upload.
+
+<InlineInstall
+  heading="For documents that never fit in one chat to begin with"
+  body="FileUploadGPT splits a long file into parts ChatGPT accepts and sends them in order, with the instruction to hold its answer until the last part lands. When a chat starts drifting, re-sending just the section you need takes seconds."
+/>
+
+## When to start fresh instead
+
+Some signals mean the chat is finished and no amount of re-anchoring brings it back. You are
+re-attaching for the second time. It has started confusing two sections with each other. It asks for
+the file after you have already given it twice. Answers get longer and less specific at the same
+time, which is usually the model padding around a gap.
+
+The instinct at that point is to argue with it, correct it, tell it to try harder. That spends more
+room on a chat that has none left. Take the handover instead, while the file is still readable:
+
+> Summarise what we have established as a short brief I can paste into a new chat. Include the
+> decisions made, the constraints I set, and anything still open. Do not repeat the document text.
+
+That last sentence matters. Without it you get pages of quoted source, which is exactly the weight
+you are trying to leave behind. Open a new chat, attach the document first, paste the brief
+underneath, and you are back to where you were in two messages rather than forty.
+
+## The decision
+
+Keeping a document in context is not a setting you turn on. It is spending the room carefully at the
+start, extracting what you need while the file is definitely there, and reading the drift as
+information rather than as a fault to argue with.
+
+When it starts slipping, re-attach once and verify with a quote. When it slips again, take the brief
+and start clean. Fighting a full conversation costs more than leaving it, and the answers you get
+while fighting are the ones least worth keeping.

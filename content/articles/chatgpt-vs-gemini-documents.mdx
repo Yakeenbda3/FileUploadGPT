@@ -1,0 +1,158 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-vs-gemini-documents',
+  title: 'ChatGPT vs Gemini for long document work',
+  heading: 'ChatGPT or Gemini for long documents?',
+  description:
+    'An honest comparison of how each handles long files, where Gemini fits better, and where ChatGPT does, without invented numbers.',
+  category: 'compare',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt vs gemini for long documents',
+  related: [
+    'chatgpt-vs-claude-document-analysis',
+    'chatgpt-vs-notebooklm-documents',
+    'chatgpt-summarize-long-documents',
+  ],
+  faq: [
+    {
+      q: 'Which one accepts a longer document?',
+      a: 'There is no honest one-line answer, because the two vendors publish capacity in different units and change the figures often. OpenAI publishes a firm per-file cap of 2 million tokens for text and document files. Google publishes context window sizes per model rather than a per-upload document cap, and those sizes differ between the Gemini app, Workspace and the API. Read the current documentation from each vendor on the day the decision matters.',
+    },
+    {
+      q: 'Can Gemini read a file straight out of Google Drive?',
+      a: 'Yes, that is the main structural advantage it has. Gemini is built into Workspace, so a document already in Drive or Docs is available without exporting it, downloading it and attaching it. If most of your material lives in Google, that removes a step from every single task.',
+    },
+    {
+      q: 'Which is better for spreadsheets?',
+      a: 'ChatGPT, for analysis work. Spreadsheets are exempt from its 2 million token cap and capped at roughly 50 MB instead, and it will write and run code over the data to produce figures and charts. Gemini is the easier choice when the sheet already lives in Google Sheets and you want a quick read of it rather than analysis.',
+    },
+    {
+      q: 'Do I need to pick one?',
+      a: 'Not really, and most people who work with documents daily end up using both. Keep one as the default so your prompting habits sharpen on a single tool, and reach for the other when the job clearly suits it. Paying for two subscriptions is only worth it if you hit a real limit weekly.',
+    },
+  ],
+});
+
+<AnswerBox>
+Neither is simply better for long documents. ChatGPT caps text and document files at
+<Fact k="maxTextTokens" /> each, and gives you code execution, custom GPTs and a large extension
+market around that. Gemini reads what already sits in Google Drive without an export step, and
+Google publishes context capacity per model rather than per upload. Decide on where your files live
+and what you need done to them, then check each vendor's current figures yourself, because both
+change them.
+</AnswerBox>
+
+We build an extension for ChatGPT, so read this knowing the bias it starts with. What follows tries
+to be straight about the cases where Gemini is the better tool, because pretending otherwise wastes
+your afternoon.
+
+## The capacity comparison you want is not in this article
+
+Most comparisons open with two context window numbers and a winner. Those articles go stale within
+weeks, and the numbers are usually copied from a third source that copied a fourth.
+
+There is a further problem. The two vendors do not measure the same thing. OpenAI publishes a limit
+on the file you attach. Google publishes a context window per model, and which model you are
+actually talking to differs between the Gemini app, the Workspace side panel and the API. A
+comparison of one against the other is not comparing like with like, and the honest version says so.
+
+So this page compares approach and fit. Where a figure would settle it, get the figure from OpenAI's
+file uploads FAQ and Google's own model documentation, on the day you decide.
+
+## What ChatGPT's published limits are
+
+These we can state, because OpenAI publishes them.
+
+| Limit | Value |
+| --- | --- |
+| Per file ceiling | <Fact k="maxFileSize" /> |
+| Text and document files | <Fact k="maxTextTokens" /> |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" />, exempt from the token cap |
+| Free plan | <Fact k="freeDailyUploads" /> |
+| Rolling rate, any plan | <Fact k="rollingUploadRate" /> |
+| Images inside documents | <Fact k="imagesInDocuments" /> |
+
+The token cap is the one that matters for long documents. The size ceiling almost never bites,
+because a text heavy file reaches the token cap at a few megabytes.
+
+## The structural difference
+
+ChatGPT treats a document as an attachment to a conversation. You upload, it extracts the digital
+text, and the conversation works over that extract. Everything else is built around the
+conversation: Projects, custom GPTs, the code sandbox, the extension market.
+
+Gemini treats a document as something that is already in Google. The strongest version of it is the
+Workspace side panel, where the file you want is a click away rather than an export away. Google
+also splits document work across products, with NotebookLM as a separate surface for reading a set
+of sources closely, so &quot;Gemini for documents&quot; can mean two quite different experiences
+depending on which one you open.
+
+That difference decides more day to day work than any capacity figure. A step removed from a task
+you do fifteen times a week is worth more than headroom you touch twice a year.
+
+## Where Gemini fits better
+
+**Files already in Drive, Docs or Gmail.** No export, no download, no attach. If your working
+material lives in Google, this is the whole argument and it is a good one.
+
+**Media as input.** OpenAI publishes its supported types as
+&quot;<Fact k="supportedTypesStatement" />&quot; and neither audio nor video is among those four
+families. Google's models have accepted audio and video as input in Google's own surfaces. What
+your plan and your app version accept today is worth testing rather than assuming, but the
+direction is clear.
+
+**Very long single files**, if the current published figure supports it for the model you are on.
+This is the case where a real number matters and this article does not have a reliable one.
+
+## Where ChatGPT fits better
+
+**Spreadsheets and data work.** Spreadsheets are exempt from the token cap and capped near
+<Fact k="maxSpreadsheetSize" /> instead, and ChatGPT will write and run code over the data. Ask for
+a chart and you get a chart built from your rows.
+
+**Repeatable setups.** A custom GPT holds <Fact k="filesPerGpt" /> for its lifetime, and Projects
+hold <Fact k="projectFilesPlus" /> on Plus and <Fact k="projectFilesPro" /> on Pro. If you answer
+the same kind of question against the same reference material every week, that structure saves real
+time.
+
+**Tooling around it.** A much larger third party ecosystem, including extensions that solve the
+length problem directly.
+
+<InlineInstall
+  heading="If your documents are longer than ChatGPT accepts"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, with the instruction to hold its answer until the last one arrives. Free, and the file never leaves your browser."
+/>
+
+<Callout variant="tip" title="Test before you commit">
+Take one genuinely representative document, run the same task on both, and ask each for the exact
+quote behind three claims. Fifteen minutes of that beats any comparison table, this one included.
+</Callout>
+
+## What neither of them fixes
+
+**Scanned pages.** ChatGPT extracts digital text and discards images from documents on every plan
+except Enterprise, so a scan gives it nothing to read. Gemini's handling depends on the surface, so
+test two pages before you commit an eight hundred page scan to it. Running OCR first is the reliable
+answer on either.
+
+**Verification.** Both write fluent, confident summaries that are occasionally wrong. Asking for the
+quote behind each claim is the habit that catches it, and it works the same way on both.
+
+**A vague prompt.** The largest quality lever is still how you ask. It costs nothing and it moves
+more than the choice of tool.
+
+## Making the decision
+
+Ask three questions in this order.
+
+Where do your documents live? If the answer is Google Drive, Gemini removes a step from every task
+and that usually settles it.
+
+What do you need done? Analysis over rows and repeatable setups point to ChatGPT. Reading and
+summarising point either way.
+
+How long is your longest routine document? If it fits comfortably in whichever tool you already pay
+for, capacity is not your problem and you should stop reading comparisons. If it does not fit, that
+one fact outranks everything else here, and it is worth checking the current published figures
+before you switch.

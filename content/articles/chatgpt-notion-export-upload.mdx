@@ -1,0 +1,182 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-notion-export-upload',
+  title: 'How to upload a Notion export to ChatGPT',
+  heading: 'How to get a Notion export into ChatGPT',
+  description:
+    'A Notion export is a zip of markdown files, and ChatGPT will not open it. Extract it locally, flatten the pages into one text file, upload that.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to upload a notion export to chatgpt',
+  related: [
+    'can-chatgpt-read-zip-files',
+    'chatgpt-markdown-json-code-files',
+    'upload-more-than-10-files-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can I just upload the zip Notion gives me?',
+      a: 'No. ChatGPT does not unpack archives, so the zip arrives as one file it cannot see inside. Unzip it on your own machine first and upload the text.',
+    },
+    {
+      q: 'Should I export as Markdown, HTML or PDF?',
+      a: 'Markdown. HTML wraps every paragraph in tags that add length without adding meaning, and PDF flattens the page hierarchy that makes a wiki navigable. Markdown is already close to plain text, which is the format ChatGPT reads most cleanly.',
+    },
+    {
+      q: 'Why do all the filenames have a long string of letters and numbers?',
+      a: 'Notion appends each page id to its filename so that two pages with the same title do not collide. The ids are noise for ChatGPT and you can strip them with one find and replace before uploading.',
+    },
+    {
+      q: 'What happens to my databases?',
+      a: 'Each database exports as a CSV, usually alongside a folder holding one markdown file per row that had page content. Upload big CSVs as CSVs rather than folding them into the text bundle, because spreadsheets are handled with code rather than read as prose.',
+    },
+  ],
+});
+
+<AnswerBox>
+Export as Markdown, unzip the download on your own machine, then join the .md files into one text
+file with a header line naming each page before its content. Upload that single file. ChatGPT does
+not open archives, and uploading a few hundred markdown pages one at a time burns your upload quota
+for no benefit.
+</AnswerBox>
+
+Notion offers three export formats and only one of them is worth using here. Pick the option
+labelled `Markdown & CSV`. HTML wraps every paragraph in tags that cost length and add nothing, and
+PDF flattens the page hierarchy that made the wiki useful in the first place.
+
+What lands in your downloads folder is a zip. Large workspace exports do not download straight away
+either, Notion emails a link when the archive is ready, and a very large one can arrive in more than
+one part.
+
+## What is actually inside the export
+
+| In Notion | In the export |
+| --- | --- |
+| A page | One `.md` file |
+| A page with subpages | A folder of the same name, with the child pages inside |
+| A database | A `.csv`, plus a folder holding one `.md` per row with page content |
+| An image or file block | A link to a copy sitting in the export folder |
+| A link to another page | A relative link to that page's file |
+
+Every filename carries a 32 character hex id on the end, because Notion appends the page id to keep
+names unique. Each markdown file also starts with the page title as a heading, so titles survive
+even when the filenames get messy.
+
+The text itself is small. A wiki of several hundred pages is usually a few hundred kilobytes of
+words. Images and attachments are what make the zip heavy, and they are the part ChatGPT has least
+use for: on every plan except Enterprise, document handling is <Fact k="imagesInDocuments" />, so
+embedded images are discarded during extraction.
+
+## Why the zip itself goes nowhere
+
+Archives are not unpacked. Upload the zip and ChatGPT holds one file it cannot see inside, and the
+attempt still counts against your quota.
+
+Uploading the extracted files individually is worse than it sounds. The rolling cap is
+<Fact k="rollingUploadRate" />, and a mid sized workspace exceeds that on its own. If the wiki is
+destined for a custom GPT the arithmetic is harsher still, because a GPT accepts
+<Fact k="filesPerGpt" /> for its entire lifetime, not per conversation. Projects are more generous
+at <Fact k="projectFilesPlus" /> on Plus and <Fact k="projectFilesPro" /> on Pro, Team and Business,
+and still nowhere near a page count.
+
+One file solves all three at once.
+
+## Flatten the pages into one file
+
+<Steps>
+  <Step title="Unzip the export">
+    Into its own folder. If Notion sent several parts, unzip them all into the same place first.
+  </Step>
+  <Step title="Delete the attachment folders">
+    Images and PDFs pulled out of blocks are dead weight here. The markdown links to them will
+    dangle, which is harmless.
+  </Step>
+  <Step title="Concatenate the markdown with a path header before each page">
+    The header line is the whole trick. It tells ChatGPT where one page ends and the next begins,
+    and it preserves the folder structure that carried the meaning.
+  </Step>
+  <Step title="Strip the page ids">
+    One find and replace over the finished file.
+  </Step>
+  <Step title="Upload the single text file and say what it is">
+    "This is an export of my team wiki. Each page starts with a line reading === path ===."
+  </Step>
+</Steps>
+
+On macOS or Linux:
+
+```
+cd notion-export
+find . -name "*.md" | sort | while read -r f; do
+  printf '\n=== %s ===\n\n' "$f"
+  cat "$f"
+done > wiki.txt
+sed -E 's/ [0-9a-f]{32}//g' wiki.txt > wiki-clean.txt
+```
+
+On Windows PowerShell:
+
+```
+Get-ChildItem -Recurse -Filter *.md | Sort-Object FullName | ForEach-Object {
+  "`n=== $($_.FullName) ===`n"
+  Get-Content $_.FullName -Raw
+} | Set-Content wiki.txt
+(Get-Content wiki.txt -Raw) -replace ' [0-9a-f]{32}', '' | Set-Content wiki-clean.txt
+```
+
+The `sort` matters more than it looks. Sorted paths keep child pages next to their parents, so the
+flattened file reads in roughly the order the wiki was structured, rather than in whatever order the
+filesystem happened to return.
+
+<Callout variant="tip" title="Keep the paths, drop the ids">
+The path header does two jobs. It names the page, and it shows where the page sat in the hierarchy,
+which is how ChatGPT works out that "Onboarding" under "Engineering" is a different thing from
+"Onboarding" under "Sales". Strip the hex ids and keep everything else.
+</Callout>
+
+## Databases need separate handling
+
+A CSV in the middle of a text bundle becomes prose, which is the wrong shape for it. Uploaded as its
+own file, a CSV is more likely to be analysed with code, and spreadsheets are exempt from the token
+cap that applies to text files, with a separate size ceiling of <Fact k="maxSpreadsheetSize" />.
+
+So split them by size and purpose. A small reference table with twenty rows can stay in the bundle,
+because you want it read alongside the pages that mention it. A task database with four thousand
+rows should go up as its own CSV and be asked about separately.
+
+The per row markdown folders that sit beside each CSV are usually worth keeping in the text bundle.
+That is where the actual writing lives, and the CSV holds only the properties.
+
+<InlineInstall
+  heading="If the flattened wiki is too long to send"
+  body="FileUploadGPT splits a long text file into pieces ChatGPT accepts, tells it to wait until every part has arrived, and sends them in order. It is the same flattening job, without you cutting a several hundred page export by hand."
+/>
+
+## Where this goes wrong
+
+**The file is accepted but not fully read.** A single text file can hold up to
+<Fact k="maxTextTokens" />, which no wiki approaches, but acceptance is not the same as reading.
+Past a certain length the file is searched rather than read end to end, so questions about specific
+pages stay sharp while questions about the whole workspace get vague. Ask about a named area and it
+holds up.
+
+**Internal links stop resolving.** Notion writes links between pages as relative file paths. Once
+flattened, those paths point at nothing. Tell ChatGPT plainly that the `===` lines are the map and
+that the inline links can be ignored.
+
+**A page went missing.** Ask it to list the first and last page paths it can see, and to count the
+`===` markers. If the count is short of your file count, the upload truncated or the concatenation
+missed a folder.
+
+## Which route to pick
+
+If you have one question about three pages, do not export anything. Copy those pages into the
+message. It is faster and the answer is better, because nothing else is competing for attention.
+
+If you will ask about the wiki repeatedly, flatten it once and keep the file in a Project, where it
+stays attached across conversations instead of being uploaded again each time.
+
+And if the real task is finding things in a workspace that keeps changing, an export is the wrong
+tool on the day you make it. It is a snapshot. Notion's own search and AI read the live workspace,
+which no exported file can do.

@@ -1,0 +1,163 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-financial-statement-analysis',
+  title: 'How to analyse financial statements with ChatGPT',
+  heading: 'How to analyse financial statements with ChatGPT',
+  description:
+    'ChatGPT reasons about numbers rather than calculating them. Upload statements as CSV, not a PDF annual report, and check every figure it gives back.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to analyse financial statements with chatgpt',
+  related: [
+    'upload-large-excel-to-chatgpt',
+    'chatgpt-csv-excel-file-limits',
+    'chatgpt-extract-data-from-documents',
+  ],
+  faq: [
+    {
+      q: 'Should I upload the annual report PDF or a CSV?',
+      a: 'CSV for anything you want calculated. A PDF annual report is laid out for print, so extraction scrambles column alignment, units and negative signs. Upload the PDF as well if you want the notes and management commentary read, but do not ask it to do arithmetic on the PDF version.',
+    },
+    {
+      q: 'Do financial spreadsheets count against the token limit?',
+      a: 'No. OpenAI applies the 2 million token cap to text and document files and states that it does not apply to spreadsheets. A CSV of ten years of monthly figures will not be truncated for length, though it can still be refused for size.',
+    },
+    {
+      q: 'Can ChatGPT actually do the maths, or is it guessing?',
+      a: 'Both happen. With a spreadsheet attached it often runs code to compute a real answer, and with prose it frequently produces plausible arithmetic from pattern alone. You usually cannot tell from the reply which one occurred, so ask it to show the calculation and spot check two or three figures yourself.',
+    },
+    {
+      q: 'Will it read the charts in the annual report?',
+      a: 'No. Images embedded in uploaded documents are discarded on every plan except Enterprise, so charts, logos and any table that exists only as a scanned image never reach the model. If a number appears only inside a chart, type it in yourself.',
+    },
+  ],
+});
+
+<AnswerBox>
+Export the statements to CSV and upload those instead of the PDF annual report. Spreadsheets are
+exempt from the <Fact k="maxTextTokens" /> cap that quietly truncates long documents, and a CSV gives
+ChatGPT rows it can compute over rather than prose it has to interpret. Then check the arithmetic
+yourself. It reasons about numbers convincingly whether or not it has actually calculated them.
+</AnswerBox>
+
+Financial analysis is the case where the format of the upload changes the answer, not just the
+convenience of getting there. The same balance sheet delivered two ways produces two different
+levels of reliability, and the difference is not obvious from reading the reply.
+
+## The annual report is the worst version of the data
+
+A published annual report is a design object. The statements inside are typeset for a printed page,
+which means multi-column layouts, figures stated in thousands with the unit declared once in a
+header several pages earlier, negatives shown in parentheses rather than with a minus sign, and
+footnote markers stuck to the end of numbers.
+
+Text extraction flattens all of that. What comes out is a stream of digits where the column a figure
+belonged to is a matter of inference. A model reading `1,234 1,109` has to work out which year is
+which from surrounding context, and it will make a confident guess either way.
+
+The charts do not survive either. <Fact k="imagesInDocuments" /> That covers the revenue bridge, the
+segment pie chart, and any table that was pasted into the report as a picture.
+
+## Spreadsheets get a different set of limits
+
+Documents and spreadsheets fail in opposite directions, which matters when a filing runs to two
+hundred pages.
+
+| | PDF report | CSV or XLSX |
+| --- | --- | --- |
+| Size ceiling | <Fact k="maxFileSize" /> | <Fact k="maxSpreadsheetSize" /> |
+| Token cap | <Fact k="maxTextTokens" /> | Exempt |
+| How it fails | Silently, part way through | At upload, with an error |
+
+A long report uploads cleanly and then gets read in part. Nothing tells you where it stopped. A
+spreadsheet either goes through whole or is refused outright, which is the failure you want because
+you can see it.
+
+## Getting from report to CSV
+
+<Steps>
+  <Step title="Look for the data file first">
+    Listed companies usually publish an Excel or XBRL version of the financials alongside the PDF.
+    Regulators' filing sites often expose the same statements as structured data. That file is the
+    one you want, and it saves the entire transcription step.
+  </Step>
+  <Step title="One file per statement">
+    Income statement, balance sheet and cash flow as three separate CSVs. Mixing them into one sheet
+    makes every question ambiguous about which section it refers to.
+  </Step>
+  <Step title="Normalise the units and the signs">
+    Put the actual numbers in the cells. If the report is in thousands, either multiply through or
+    add a column stating the unit on every row. Replace parenthesised negatives with real minus
+    signs, and strip currency symbols and thousands separators.
+  </Step>
+  <Step title="Label the periods explicitly">
+    A header row of `FY2024`, `FY2023`, `FY2022` removes the guesswork. If periods run across
+    columns, say so in your first message.
+  </Step>
+</Steps>
+
+<Callout variant="tip" title="Transcribe once, reuse forever">
+  Building the CSV takes twenty minutes for a full set of statements and it is the only part of this
+  workflow you cannot delegate safely. Once it exists you can run any question against it, in any
+  future conversation, without touching the PDF again.
+</Callout>
+
+## It reasons about numbers, it does not always calculate them
+
+This is the part that catches people out. With a spreadsheet attached, ChatGPT frequently writes and
+runs code to produce an answer, and that arithmetic is real arithmetic. When it is working from
+prose, or from numbers you pasted into the chat, it often produces the answer the same way it
+produces a sentence, by predicting what should come next. Both replies look identical.
+
+Gross margin of 42.3% derived from a Python calculation and gross margin of 42.3% derived from
+pattern recognition are indistinguishable in the output. The second one is right most of the time,
+which is precisely what makes it dangerous.
+
+Three habits fix this. Ask it to show the calculation, not just the result. Ask directly whether it
+computed the figure or estimated it. And spot check two or three numbers against the source with a
+calculator, choosing ones where an error would change your conclusion.
+
+<Callout variant="warn" title="Cross totals are the giveaway">
+  Check that the segments sum to total revenue and that the balance sheet balances. If a
+  reconstructed table does not add up, the extraction went wrong somewhere upstream and every ratio
+  built on it is unreliable.
+</Callout>
+
+<InlineInstall
+  heading="When the filing is too long to upload"
+  body="FileUploadGPT splits a long report into parts ChatGPT accepts and sends them in order, so the accounting policies at the back get read rather than quietly dropped."
+/>
+
+## What it is genuinely good at
+
+Reading the notes. This is where the useful information in a set of accounts actually lives, and it
+is prose, which plays to the model's strengths. Ask it to summarise the revenue recognition policy,
+list every related party transaction, or flag where an accounting estimate changed between years.
+
+Drafting the ratio set. Given clean data it will produce liquidity, gearing, margin and turnover
+ratios across every period at once, which is tedious to build by hand.
+
+Explaining a movement. "Operating cash flow fell 18% while net income rose. Which working capital
+line drove that." It will point at the right row and describe the mechanism.
+
+Comparing two companies on structure rather than score. Different revenue recognition, different
+capitalisation policies, different segment definitions. It reads both sets of notes and tells you
+what makes the comparison unfair.
+
+## Where the PDF still belongs
+
+Upload both files, for different jobs. The CSV is for anything numeric. The PDF, or the relevant
+extracted sections of it, is for the narrative: management commentary, the notes, the auditor's
+report, the risk factors.
+
+Keep an eye on how many uploads that costs. The rolling allowance is <Fact k="rollingUploadRate" />,
+and a full comparative analysis of three companies gets through it faster than expected. Consolidate
+where you can rather than uploading each year separately.
+
+## The practical decision
+
+Numbers go in as CSV, narrative goes in as text, and you verify the arithmetic before it leaves your
+desk. The transcription work is the price of a reliable answer, and skipping it does not save time
+so much as move the error somewhere you will not spot it. Treat the output as a fast, well informed
+first pass by someone who has not double checked their sums.

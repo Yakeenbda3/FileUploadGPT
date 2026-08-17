@@ -1,0 +1,172 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-large-json-dataset',
+  title: 'Analysing a large JSON dataset with ChatGPT',
+  heading: 'How to analyse a large JSON dataset with ChatGPT',
+  description:
+    'Send the schema and a sample instead of the whole export, agree the approach first, and convert tabular JSON to CSV to skip the token cap.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to analyse a large json dataset with chatgpt',
+  related: [
+    'chatgpt-markdown-json-code-files',
+    'chatgpt-csv-excel-file-limits',
+    'chatgpt-extract-data-from-documents',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT read a large JSON file?',
+      a: 'It can read JSON reliably, because JSON is plain text. The constraint is length rather than format: text and document files are capped at 2 million tokens, and JSON is verbose enough that a big export passes that easily. Past the cap the file is truncated without a warning.',
+    },
+    {
+      q: 'Should I upload JSON or convert it to CSV?',
+      a: 'CSV, whenever the data is genuinely tabular. OpenAI states that the token cap does not apply to spreadsheets, so a converted file can carry far more records than the same data as JSON. Keep JSON only when the nesting itself is part of what you are asking about.',
+    },
+    {
+      q: 'How do I know ChatGPT used all of my records?',
+      a: 'Ask for the row count before the analysis, and compare it with the count you got locally. If the numbers do not match, the answer is drawn from part of the file. Asking for the code it ran is the other useful check.',
+    },
+    {
+      q: 'What is the best way to sample a JSON export?',
+      a: 'Take records from across the file rather than the first twenty, since exports are usually sorted and the head is not representative. Include a few rows with null or unusual values on purpose, because those are what break an analysis later.',
+    },
+  ],
+});
+
+<AnswerBox>
+Do not upload the whole export first. Send the schema plus twenty or so representative records, ask
+what the analysis would need, and only then send data. Where the records are tabular, convert them to
+CSV before uploading, because spreadsheets are exempt from the <Fact k="maxTextTokens" /> cap that
+silently truncates a JSON file.
+</AnswerBox>
+
+Large JSON fails in ChatGPT for a reason that has nothing to do with support. JSON is plain text, and
+plain text is the most reliable thing you can upload. The problem is that JSON is an extremely
+inefficient way to spend a token budget.
+
+Once you accept that, the workflow changes shape. You stop trying to get the file in and start
+deciding what actually needs to be in it.
+
+## JSON is mostly repetition
+
+A JSON export repeats every key name on every record. Forty fields across 300,000 records means those
+forty names are written 300,000 times, along with the braces, quotes and commas holding them
+together. Pretty printed output adds indentation on top.
+
+None of that carries information. It is structure you already know from looking at one record.
+
+| Uploaded as | Size ceiling | Token cap |
+| --- | --- | --- |
+| `.json` | <Fact k="maxFileSize" /> | <Fact k="maxTextTokens" /> |
+| `.csv` | <Fact k="maxSpreadsheetSize" /> | Exempt |
+
+The spreadsheet exemption is documented by OpenAI for spreadsheets specifically. A `.json` file is
+not one, so plan on the token cap applying to it.
+
+## Start with the schema and a sample
+
+This is the step most people skip, and it is the one that saves the most time.
+
+<Steps>
+  <Step title="Pull the field names from one record">
+    `jq '.[0] | keys' data.json` gives you the shape. For newline delimited JSON, one line is enough.
+  </Step>
+  <Step title="Count the records">
+    `jq 'length' data.json`, or `wc -l data.jsonl`. You need this number later to check the analysis
+    saw everything.
+  </Step>
+  <Step title="Take a spread of records, not the first twenty">
+    Exports are usually sorted by date or id, so the head of the file is the least representative
+    part of it. Pull from the start, middle and end.
+  </Step>
+  <Step title="Include the awkward rows deliberately">
+    A few records with nulls, empty arrays or unusual values. These are what break an analysis after
+    you have committed to an approach.
+  </Step>
+</Steps>
+
+Then describe the fields in words. Field names are rarely as self explanatory as they look to the
+person who chose them, and `status`, `type` and `value` mean nothing on their own. Saying what the
+data is and what the enumerated values mean improves every answer that follows.
+
+## Ask for the approach before the answer
+
+With the schema and the sample in, the useful next message is not a question about the data. It is a
+question about the method.
+
+> This is 412,000 records from our order system. Here is the schema and 20 records from across the
+> file. Do not analyse yet. Tell me which fields you would need to answer "which customers reduced
+> their spend after March", what shape the data should be in, and what you would compute.
+
+You will usually find the answer needs four fields rather than forty, and one aggregation rather than
+the raw events. That turns a file too large to upload into one that is comfortably small.
+
+<Callout variant="tip" title="Aggregate before uploading, not after">
+If the question is about totals by customer or by month, upload the totals. Sending two hundred
+thousand transactions so that they can be summed is spending your entire token budget on arithmetic
+you could have done in one line locally.
+</Callout>
+
+## Convert tabular JSON to CSV
+
+Most exports are a list of flat objects, which is a spreadsheet written in an expensive notation.
+Converting is worth doing for the token exemption alone, and it also means the data gets treated as
+data rather than as prose.
+
+Name the fields explicitly rather than dumping every value, so records with differing keys cannot
+shift your columns:
+
+```
+jq -r '["id","created_at","customer","amount"],
+       (.[] | [.id, .created_at, .customer, .amount])
+       | @csv' data.json > data.csv
+```
+
+Nesting is where this stops being clean. A record containing an array of line items does not flatten
+into one row. Usually the right answer is one row per leaf item with the parent fields repeated,
+which is larger in rows and far smaller in tokens than the JSON was.
+
+Keep JSON only when the nesting itself is the subject: when you are asking about the structure of an
+API response, a config file, or how records relate to each other.
+
+<InlineInstall
+  heading="When the JSON has to go in as text"
+  body="FileUploadGPT splits a long text file into pieces ChatGPT accepts and sends them in order. Useful for newline delimited records or logs that will not flatten into a spreadsheet, where the alternative is a file truncated at the token cap. Not the tool for a single nested JSON document, since the pieces will not be valid JSON on their own."
+/>
+
+## When you genuinely need every record
+
+Counting, finding outliers, and anything that must be exact all need the full dataset rather than a
+sample.
+
+Upload the CSV and ask for the work to be done in code, then ask for evidence that the code saw the
+whole file:
+
+> Load the file, print the row count and the number of nulls per column, then answer the question.
+> Show the code.
+
+The row count is the single most valuable check. In practice a wrong answer over a large dataset
+comes from reading part of the file and reporting confidently on it, and comparing two numbers takes
+five seconds.
+
+## Checks that catch a wrong answer
+
+**Ask for the count first.** Then compare it with your local count.
+
+**Ask what the last record is.** If it cannot tell you, it did not reach the end of the file.
+
+**Verify one number by hand.** Pick a customer, sum their orders yourself, compare. One spot check
+finds a misread column faster than any amount of reading the summary.
+
+**Ask for the code, not just the result.** A wrong filter is obvious in three lines of code and
+invisible in a paragraph of conclusions.
+
+## The practical decision
+
+If the data is tabular, convert it to CSV and upload that. The spreadsheet exemption is the single
+biggest lever available, and most JSON exports qualify.
+
+If it is nested and the nesting matters, send the schema plus a sample, agree the approach, and send
+only the fields the approach needs. Uploading the raw export and hoping is the one route that
+reliably produces a confident answer drawn from the first slice of your data.

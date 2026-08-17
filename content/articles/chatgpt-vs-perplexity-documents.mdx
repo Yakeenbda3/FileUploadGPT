@@ -1,0 +1,145 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-vs-perplexity-documents',
+  title: 'ChatGPT or Perplexity for your documents?',
+  heading: 'ChatGPT or Perplexity for working with documents?',
+  description:
+    'Perplexity is built to search and cite. ChatGPT is built to reason over what you hand it. Which one fits depends on where your document already is.',
+  category: 'compare',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt vs perplexity for documents',
+  related: [
+    'chatgpt-vs-claude-document-analysis',
+    'chatgpt-vs-notebooklm-documents',
+    'chatgpt-document-analysis-tips',
+  ],
+  faq: [
+    {
+      q: 'Can Perplexity read files I upload?',
+      a: 'Yes. You can attach files to a thread, and Spaces let you keep a set of files as standing context. Perplexity has changed how many uploads each plan allows more than once, so check the current figure in your own account rather than trusting a number quoted in an article.',
+    },
+    {
+      q: 'Which one is better for one long PDF?',
+      a: 'ChatGPT, in most cases. Sustained work on a single document you already have is what it is shaped for, and follow-up questions build on what came before. Perplexity will read an attached file, but its strength is pulling an answer together from many sources rather than staying inside one.',
+    },
+    {
+      q: 'Do Perplexity citations mean the answer is right?',
+      a: 'No. A citation shows where a claim came from, not that the source supports it as stated. Summaries can compress a hedged finding into a flat assertion and still footnote it correctly. Open the links that matter to you.',
+    },
+    {
+      q: 'Is it worth paying for both?',
+      a: 'Only if you genuinely do both jobs often. If most of your work starts with a file you already have, one subscription to ChatGPT covers it. If most of it starts with a question and no source, Perplexity is the one to keep.',
+    },
+  ],
+});
+
+<AnswerBox>
+They start from different assumptions. Perplexity assumes the material is out there and needs
+finding, then footnotes each claim to a source. ChatGPT assumes you already have the document and
+want it worked on. If the file is sitting on your disk, ChatGPT usually fits better. If the answer is
+spread across sources you have not found yet, Perplexity does.
+</AnswerBox>
+
+We make an extension for ChatGPT, so read this knowing where it comes from. There are document jobs
+where Perplexity is the better tool and this article says so.
+
+## Retrieval first versus chat first
+
+Perplexity's default motion is a search. You ask, it runs queries, pulls back sources, writes an
+answer from them and attaches a footnote to each claim. Files you attach become another source inside
+that same pipeline. The product is organised around the question of where an answer came from.
+
+ChatGPT's default motion is a conversation. You hand it something, it holds that in the thread, and
+you work on it: summarise, restructure, argue with it, rewrite it for a different reader. Browsing
+exists, but it is an option you invoke rather than the frame everything sits inside.
+
+That difference shows up in small ways that matter. Perplexity is happy to tell you your sources do
+not cover something, because absence of a source is a normal outcome in a search product. ChatGPT
+tends to answer anyway, blending your document with everything it already knows, without flagging
+which half is which.
+
+## When the citing is the point
+
+Some work is only useful if the provenance survives.
+
+Desk research you will hand to someone else. Anything time sensitive, where the model's own training
+is stale by definition. Claims you would be embarrassed to repeat without a link. In those cases the
+footnote is not decoration, it is the deliverable, and Perplexity produces it by default rather than
+because you asked nicely.
+
+<Callout variant="warn" title="A citation is not a verification">
+A footnote proves the sentence came from somewhere. It does not prove the source says what the
+summary claims. Compression is where this breaks: a hedged finding turns into a flat assertion and
+keeps its correct-looking link. Open the sources behind the claims you actually plan to rely on.
+</Callout>
+
+## When you already have the document
+
+The contract is in your email. The transcript is on your disk. The report was sent to you last week.
+Nothing needs finding, and search adds nothing to a job that is really about reading closely.
+
+This is where ChatGPT is stronger, and the reasons are ordinary rather than dramatic. It keeps a long
+thread of context over one file, so the fifteenth follow-up question still knows what the first
+established. It generates well, which matters when the output is a rewrite, a summary for a different
+audience, or a draft email built from what the document says. And it will write and run code over a
+spreadsheet, produce charts and check its own arithmetic, which is a category of document work
+Perplexity is not built for.
+
+Spreadsheets are also exempt from ChatGPT's token cap, limited instead around
+<Fact k="maxSpreadsheetSize" />, so a large dataset goes in where an equally long text document
+would not.
+
+## Where the honest numbers run out
+
+ChatGPT's file limits are published. Text and document files are capped at <Fact k="maxTextTokens" />
+each, the hard size ceiling is <Fact k="maxFileSize" />, and the Free plan allows
+<Fact k="freeDailyUploads" />.
+
+Perplexity does not publish an equivalent set in a stable, quotable form, and it has revised what
+each plan allows more than once. Any specific figure in a comparison article, including this one, is
+a liability rather than a help. Check your own account on the day you need to know.
+
+The structural point stands without numbers: neither product is designed for you to hand over a book
+in one piece and get a faithful reading of all of it. Both work best on material that comfortably
+fits.
+
+<InlineInstall
+  heading="If the document is long and you are staying in ChatGPT"
+  body="FileUploadGPT splits a document past ChatGPT's length cap into pieces it accepts and sends them in order, with an instruction to wait until they have all arrived. Free, and nothing leaves your browser."
+/>
+
+## A rough division of labour
+
+| The job | Better fit |
+| --- | --- |
+| Answer a question, sources unknown | Perplexity |
+| Read and rework a file you already have | ChatGPT |
+| Claims that must be traceable to a link | Perplexity |
+| Spreadsheet analysis and charts | ChatGPT |
+| Current events, prices, anything recent | Perplexity |
+| Long back-and-forth over one document | ChatGPT |
+| Drafting and rewriting from findings | ChatGPT |
+
+The interesting cases sit across both. "Is this clause unusual" needs your contract and the outside
+world. "Does this paper's finding still hold" needs the paper and everything published since. The
+practical pattern is to gather and cite in Perplexity, then bring the findings into ChatGPT with the
+document and do the thinking there.
+
+## What neither of them fixes
+
+**Scanned pages have no text.** Retrieval from documents in ChatGPT is
+<Fact k="imagesInDocuments" />, so a scan arrives empty. Run OCR first, whichever tool you use.
+
+**Verification stays yours.** Both write confidently and both are sometimes wrong. Asking for the
+quoted sentence behind each claim catches more than reading the summary twice.
+
+**A vague question gets a vague answer.** The largest quality lever in either product is still how
+you ask, and it costs nothing.
+
+## Choosing
+
+Ask where your work starts. If it starts with a file, use ChatGPT and split anything too long. If it
+starts with a question and no source, use Perplexity and open the citations that matter. If it
+regularly starts with both, use each for the half it was built for rather than forcing one to cover
+the other badly.

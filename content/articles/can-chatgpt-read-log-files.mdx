@@ -1,0 +1,179 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-log-files',
+  title: 'Can ChatGPT read log files? Yes, but trim them first',
+  heading: 'Can ChatGPT read log files?',
+  description:
+    'Server and application logs are plain text, so they upload fine. Size is the real problem. How to cut a log to the window that matters first.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read log files',
+  related: [
+    'chatgpt-file-types-supported',
+    'upload-large-code-files-to-chatgpt',
+    'how-to-split-a-document-for-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'My .log file will not attach. What do I do?',
+      a: 'Copy it and rename the copy to .txt, then upload that. The contents are identical and the picker stops objecting. OpenAI publishes no list of accepted extensions, so refusals of uncommon ones are inconsistent rather than deliberate.',
+    },
+    {
+      q: 'Can I upload a gzipped or rotated log archive?',
+      a: 'Decompress it yourself first. In practice an archive is not unpacked for you, so the upload succeeds and then nothing useful comes back. If you need several rotated files, gunzip them and concatenate the parts you care about into one plain text file.',
+    },
+    {
+      q: 'How much of a log can I upload at once?',
+      a: 'The hard ceilings are 512 MB per file and 2 million tokens for a text file, which sounds like plenty. The useful limit is far lower, because answer quality falls off long before the cap. A few thousand relevant lines beats a few million irrelevant ones every time.',
+    },
+    {
+      q: 'Will ChatGPT actually find the root cause?',
+      a: 'Sometimes. It is good at recognising a known error signature, spotting an ordering problem, and noticing that something failed silently twenty seconds before the visible crash. It cannot see code, config or infrastructure you did not give it, so include the version and the relevant config alongside the log.',
+    },
+  ],
+});
+
+<AnswerBox>
+Yes. Logs are plain text, so they upload without conversion and without a special format. Size is
+the whole problem: a busy service writes more in an hour than is worth sending. Cut the file down to
+the minutes around the failure with `grep`, `tail` or a date range, include the lines leading up to
+the error rather than just the error itself, and upload that.
+</AnswerBox>
+
+Log analysis is one of the things ChatGPT is genuinely good at, and one of the easiest to do badly.
+The failure mode is always the same. Somebody uploads a 400 MB application log, asks why the service
+fell over at 14:07, and gets a confident summary of the health check noise that fills 99% of the
+file.
+
+## The upload part is boring
+
+A log is text. `.log`, `.txt`, `.out`, `.err`, a syslog file, JSON lines, all of it goes in the same
+way as any other text document. Nothing needs converting.
+
+OpenAI publishes no explicit extension whitelist. Their wording for what is accepted is
+<Fact k="supportedTypesStatement" /> Logs sit squarely inside that. Occasionally the file picker
+refuses an unusual extension anyway. When that happens, copy the file, rename the copy to `.txt`,
+and upload it. The bytes are unchanged.
+
+The ceilings are <Fact k="maxFileSize" /> per file and <Fact k="maxTextTokens" /> for a text file.
+Neither is what stops you.
+
+## Size is the real limit, and it arrives early
+
+Two things bite before the published caps do.
+
+The first is tokenisation. Log lines are made of timestamps, UUIDs, hex hashes, IP addresses and
+stack frames, all of which split into many small tokens. A megabyte of log burns through its token
+budget faster than a megabyte of prose.
+
+The second is attention, and this is the one that ruins answers. Give ChatGPT 200,000 lines of
+routine traffic with twelve interesting lines buried inside, and it will summarise the traffic. It
+has no way to know which twelve mattered. You do, or at least you know roughly when.
+
+Uploads are also capped at <Fact k="rollingUploadRate" />, and failed attempts count toward that. On
+the Free plan you get <Fact k="freeDailyUploads" />. Uploading a raw log, watching it fail, and
+retrying is an expensive way to learn this.
+
+## Cut the log to the window that matters
+
+<Steps>
+  <Step title="Find the timestamp of the failure">
+    From an alert, a user report, or the first stack trace. You need a minute, not a second.
+  </Step>
+  <Step title="Choose a window around it">
+    For a crash, two minutes before to one minute after is usually enough. For a memory leak or a
+    slow degradation, take a wider window at lower resolution, or sample.
+  </Step>
+  <Step title="Extract that window into a new file">
+    Never edit the original. Write a slice to a separate file so you can widen it and try again.
+  </Step>
+  <Step title="Check the size before uploading">
+    `wc -l window.log`. If it is over a few thousand lines, filter harder before you send it.
+  </Step>
+</Steps>
+
+The commands depend on where the log lives:
+
+| Where the log is | How to pull a window |
+| --- | --- |
+| Plain file on disk | `sed -n '/14:05:/,/14:10:/p' app.log > window.log` |
+| Plain file, no timestamps | `tail -n 2000 app.log > window.log` |
+| systemd service | `journalctl -u myapp --since "2026-08-17 14:05" --until "2026-08-17 14:10" > window.log` |
+| Docker container | `docker logs --since 30m --timestamps mycontainer > window.log 2>&1` |
+| Kubernetes pod | `kubectl logs mypod --since=30m > window.log` |
+| Windows PowerShell | `Get-Content app.log -Tail 2000 > window.log` |
+
+If you know the error string but not the time, pull context around it instead:
+`grep -C 60 "OutOfMemoryError" app.log > window.log`. The `-C` flag is the important part. It keeps
+60 lines either side, and the lines before the error are usually where the cause is.
+
+## What to include around an error
+
+The error line is rarely the interesting one. Include these:
+
+**The lines immediately before.** Something usually failed quietly first. A retry, a timeout, a
+connection reset, a config value falling back to a default.
+
+**The full stack trace.** All of it, including every "Caused by" chain. Truncating at the first ten
+frames removes the half that names your code.
+
+**The startup block from the same run.** Version, build hash, flags, ports, feature toggles. This is
+how ChatGPT tells a config problem from a code problem.
+
+**One trace through the whole system.** If your logs carry a request or correlation ID, grep for a
+single failing one: `grep "req-8f2a" app.log`. One complete request path is worth thousands of
+interleaved lines.
+
+**A successful example of the same operation.** The comparison does most of the work. Most people
+skip it.
+
+What to cut: heartbeats, health checks, metrics scrapes, and any line that repeats identically
+thousands of times. To see what dominates your file, run
+`awk '{$1=""; print}' app.log | sort | uniq -c | sort -rn | head -20`.
+
+## When the trimmed log is still too long
+
+Sometimes the honest window really is 50,000 lines, because the incident ran for an hour and you
+cannot tell yet which minute matters. Two options.
+
+Split it and send it in order, telling ChatGPT up front that more parts are coming and not to answer
+until the last one lands. Otherwise it analyses part one and stops. Splitting on a time boundary
+keeps each part coherent, and the general approach is covered in
+[how to split a document for ChatGPT](/blog/how-to-split-a-document-for-chatgpt).
+
+<InlineInstall
+  heading="Feeding a long log in ordered parts"
+  body="FileUploadGPT takes a text file, cuts it into pieces ChatGPT accepts, sends the wait-for-all-parts instruction, then feeds them in sequence. Useful when a trimmed log still runs to tens of thousands of lines."
+/>
+
+The other option, and usually the better one, is to go narrower first. Upload the error summary, ask
+what to look for, then upload only the window ChatGPT points at. Two focused rounds beat one
+enormous dump, in the same way they do for
+[large code files](/blog/upload-large-code-files-to-chatgpt).
+
+## Structured logs make all of this easier
+
+If your application emits JSON lines, `jq` does the filtering and the shrinking in one pass. Select
+the records you want and keep only the fields you need:
+
+`jq -c 'select(.level=="error") | {ts, msg, trace_id, svc}' app.jsonl > errors.jsonl`
+
+Dropping the fields nobody is going to read often halves the file on its own. Leave the result as
+JSON lines rather than converting it to prose. ChatGPT handles the structure fine, and consistent
+keys make questions like which service produced the first error much easier to answer.
+
+<Callout variant="warn" title="Redact before you upload">
+Logs leak. Session cookies, bearer tokens, API keys in query strings, customer emails, IP addresses,
+internal hostnames, full SQL with the values still in it. Skim the slice before you send it, and
+mask what you find: `sed -E 's/[Bb]earer [A-Za-z0-9._-]+/Bearer REDACTED/g'`. Uploaded files stay
+available for <Fact k="fileRetention" />, and on consumer plans content may be used to improve
+models unless you turn that off in the data controls.
+</Callout>
+
+## The practical decision
+
+Reading the log is never the constraint. Choosing the slice is. Before you attach anything, ask
+yourself which three minutes matter and which lines you would show a colleague if they were standing
+behind you. Send those, with the stack trace in full and the config from the same run, and you get a
+real answer. Send the whole file and you get a summary of your health checks.

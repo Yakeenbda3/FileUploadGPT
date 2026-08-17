@@ -1,0 +1,169 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-website-content-analysis',
+  title: 'How to give ChatGPT a whole website to read',
+  heading: 'Getting a whole website into ChatGPT, page by page',
+  description:
+    'Links get you one page at a time. How to save pages as text, flatten them into a single upload with URL headers, and keep it attributable.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to give chatgpt a whole website content',
+  related: [
+    'best-file-format-for-chatgpt',
+    'how-to-split-a-document-for-chatgpt',
+    'chatgpt-compare-two-documents',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT read my whole site if I just give it the domain?',
+      a: 'No. When browsing is available it fetches the page you pointed at, not the site around it. Nothing walks your sitemap or follows internal links to bring back a hundred pages, so a question about the site as a whole needs the text supplied as a file.',
+    },
+    {
+      q: 'Can I upload the .html files directly?',
+      a: 'Usually yes, and it is a poor use of the space. Saved HTML carries class attributes, inline scripts and the same navigation repeated on every page, which crowds out the actual content. Convert to text or markdown first and the same site becomes a fraction of the size.',
+    },
+    {
+      q: 'Is it acceptable to scrape a site for this?',
+      a: 'Your own site, freely, and the CMS export is easier than scraping it. Someone else, check the terms of service and robots.txt, keep the request rate slow, and stay off anything behind a login or a paywall. Twenty pages chosen deliberately usually answer the question better than six hundred collected by a crawler.',
+    },
+    {
+      q: 'How many pages fit in one upload?',
+      a: 'Text files are capped at 2 million tokens, and a typical page of body copy is somewhere over a thousand tokens. A few hundred pages fits comfortably. A documentation set of several thousand pages, or a decade of blog archives, is where you start needing to split the file.',
+    },
+  ],
+});
+
+<AnswerBox>
+There is no way to hand ChatGPT a domain and have it read the site. Save the pages you want as plain
+text, put a line carrying the page URL above each one, and join them into a single .txt or .md file.
+The URL headers are the part that matters, because without them the upload is one undifferentiated
+block of prose and no claim in the answer can be traced back to a page.
+</AnswerBox>
+
+A website is not a document. It is a few hundred small documents sharing a navigation bar, a footer
+and a cookie banner, joined by links that a reader follows and a file does not. Most of the work is
+turning that into something with a beginning and an end.
+
+The text itself is small. Markup, stylesheets and images are what make pages heavy, and none of it
+survives the conversion.
+
+## What handing over a link actually gets you
+
+When ChatGPT can browse, pasting a URL gets you that page. Paste ten and you may get ten fetches, or
+a subset of them, decided somewhere you cannot see. What does not happen is a crawl.
+
+OpenAI publishes no crawl depth or page budget for links dropped into a chat, so treat all of this as
+observed behaviour rather than documented policy. The practical consequence is the same either way.
+If the question spans the site, "is the pricing consistent everywhere", "which pages still describe
+the old positioning", then links are the wrong input. The text has to be in front of it, all at once.
+
+## Getting the pages out as text
+
+The route depends on who owns the site.
+
+| Where the content lives | Best route |
+| --- | --- |
+| Your own CMS | Export it. WordPress, Ghost and every static site generator will give you post bodies as XML, JSON or markdown, with none of the theme attached. |
+| A docs site with a public repo | Take the markdown source. It is what the site was built from, minus the chrome. |
+| A handful of pages | Reader view, then copy. Firefox Reader View and Safari Reader drop the nav and the ads before you ever select anything. |
+| Many pages, no export | A crawler that saves text, or save each page and strip the markup afterwards. |
+
+Save Page As gives you HTML. That will usually read, and you are spending the budget on class
+attributes and inline scripts while repeating the same header on every page. Printing to PDF is
+worse again, because fifty pages leaves you holding fifty files.
+
+Some documentation sites now publish a plain text index at /llms.txt intended for exactly this. Most
+sites do not, so check rather than assume.
+
+## Where the line is on scraping
+
+Your own site is your business, and the export is quicker than crawling it anyway.
+
+Someone else's deserves more thought. Read the terms of service, check robots.txt, and put a delay
+between requests. A slow pass over a few dozen public pages is a different act from hammering a
+server for an afternoon. Content behind a login or a paywall is out, because agreeing to the terms
+was part of getting in.
+
+<Callout variant="info" title="Fewer pages, chosen on purpose">
+A crawler brings back tag archives, pagination stubs and the privacy policy. Twenty pages you picked
+yourself usually answer the question better, cost nothing to verify, and sidestep the whole issue.
+</Callout>
+
+## One file, with the URL above every page
+
+The format that works is boring and explicit:
+
+```
+=== https://example.com/pricing ===
+Title: Pricing
+Updated: 2026-03-04
+
+[page text]
+
+=== https://example.com/pricing/enterprise ===
+Title: Enterprise pricing
+...
+```
+
+Three things earn their place there. The delimiter is visually distinct, so the boundary between one
+page and the next is never ambiguous. The URL is an identifier you can click, which turns "the site
+says two things about refunds" into two links. And the order is yours: sitemap or navigation order
+reads far better than the alphabetical soup a crawler leaves behind.
+
+Then say what it is in your first message. "This is 84 pages from one website, each preceded by its
+URL. Cite the URL for anything you tell me." Without that instruction, answers come back describing
+the content with no reference to where it sat.
+
+## How much of a site fits
+
+Text and document files are capped at <Fact k="maxTextTokens" />, with a per file ceiling of
+<Fact k="maxFileSize" /> that plain text will never come close to.
+
+Rough arithmetic, on the usual approximation of about three quarters of a word per token: a 900 word
+page lands somewhere over a thousand tokens. Two hundred pages of that is a couple of hundred
+thousand tokens, comfortably inside. A documentation set running to several thousand pages, or
+fifteen years of blog archives, is where it stops fitting, and a file over the cap is truncated
+silently. Ask what the last URL in the file is. If it cannot say, it never reached the end.
+
+<InlineInstall
+  heading="When the flattened site is bigger than one upload"
+  body="FileUploadGPT splits the combined file into pieces ChatGPT accepts and sends them in order with an instruction to wait for the last one, so your URL headers stay intact and the final pages get read rather than dropped."
+/>
+
+## What the flattened version loses
+
+Links become text. Which page points at which is gone unless you deliberately kept the markup, and if
+site structure is your actual question, keep the links in markdown form.
+
+Images go with them. Retrieval from documents is <Fact k="imagesInDocuments" />, so a diagram
+carrying half the meaning of a page arrives as nothing. Where a page depends on one, type a line
+describing it.
+
+Anything rendered by JavaScript after load may be missing from the saved source. Open one saved page
+and look for text you can see in the browser before you trust a batch of two hundred.
+
+Boilerplate repeats. If nav and footer survived the conversion, your strapline now appears 84 times
+and reads as the central theme of the site.
+
+## Questions worth asking a whole site
+
+This is what repays the setup, because none of it can be answered from a single page.
+
+> Where does this site contradict itself? List each contradiction with both URLs.
+
+> Which pages describe the same product in different words? Quote the phrasing from each.
+
+> Our positioning is now X. Which pages still describe the old one?
+
+> Which claims appear on exactly one page and nowhere else?
+
+The last is the useful one for an audit. A guarantee stated once, on a page nobody has opened since
+2023, is the kind of thing that surfaces at the worst possible moment.
+
+## The short version
+
+Save the pages as text rather than HTML, put the URL above each page, join them into one file, and
+tell ChatGPT in the first message that each page is preceded by its URL. Export if the site is yours,
+be slow and selective if it is not. Those header lines cost a minute and decide whether you get an
+answer you can check or one you have to take on faith.

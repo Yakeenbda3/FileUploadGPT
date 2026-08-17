@@ -1,0 +1,148 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-google-docs',
+  title: 'Can ChatGPT open a Google Docs or Drive link?',
+  heading: 'Why pasting a Google Docs link does not work',
+  description:
+    'ChatGPT holds no Google session, so a Docs or Drive link gets it a sign in page. Here is the export route and which download format to pick.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read a google docs link',
+  related: [
+    'chatgpt-file-types-supported',
+    'best-file-format-for-chatgpt',
+    'can-chatgpt-read-word-docx-files',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT not read my Google Docs link?',
+      a: 'It has no access to your Google account. When it tries to fetch the URL it arrives as a logged out stranger, so it gets a sign in page rather than your document. The link is a pointer to a file, not the file itself.',
+    },
+    {
+      q: 'Will setting the doc to "anyone with the link" fix it?',
+      a: 'Usually not, and it costs you more than it gains. The editor URL serves an application that assembles the document in the browser rather than a page of readable text. You have made the document public to anyone who has the URL for no reliable benefit.',
+    },
+    {
+      q: 'What format should I download a Google Doc as?',
+      a: 'Markdown if the document has headings and lists, DOCX if it has tables, plain text otherwise. All three upload and read cleanly. Choose PDF only when the layout itself carries meaning, because it is the heaviest option and the least useful to read from.',
+    },
+    {
+      q: 'Can ChatGPT connect to my Google Drive directly?',
+      a: 'OpenAI offers connectors that let ChatGPT search connected apps, and Google Drive has been among them on paid plans. Availability by plan and region has changed more than once, so check your own settings rather than trusting any article. A connector searches your Drive, it does not resolve pasted URLs.',
+    },
+  ],
+});
+
+<AnswerBox>
+Not from a link. ChatGPT holds no Google session, so a Docs or Drive URL gets it a sign in page
+rather than your document. Sharing the file more widely does not reliably fix that, and it exposes
+the document to anyone with the URL. Download the file (File then Download) and upload the export,
+or use the Google Drive connector if your plan offers one.
+</AnswerBox>
+
+The link looks like it should work. It is a URL, ChatGPT can browse the web, and the document sits
+right there behind it. The trouble is what is actually at the other end of that address.
+
+Worse, ChatGPT will sometimes answer anyway. It writes a confident summary built from your prompt
+and its own priors rather than from the document, and nothing in the reply says so.
+
+## A link is not a file
+
+Uploading puts the bytes of a document into the conversation. Pasting a URL does something else
+entirely: it asks ChatGPT to go out to the web and fetch a page.
+
+When it fetches `docs.google.com/document/d/...` it arrives with no cookies, no Google session and
+no permission on your account. Google shows it what it shows any stranger, which is a sign in wall.
+Even past that wall, the editor URL serves an application shell that builds the document in the
+browser after loading. There is no page of text sitting there to read.
+
+<Callout variant="warn" title="Check before you trust a summary">
+If ChatGPT summarises a link you never exported, ask it to quote two exact sentences from a
+specific page. A model that could not open the file will either produce nothing or produce
+sentences that are not in your document.
+</Callout>
+
+## Sharing settings are a red herring
+
+The instinct is to open the share dialog and set the document to anyone with the link can view. It
+feels like the missing permission.
+
+It is not. Removing the sign in wall does not turn the editor URL into readable text, and it makes
+your document readable by anyone who holds or guesses that address. For a contract, a client list
+or an unpublished draft, that is a real cost paid for nothing.
+
+There is a version of this trick that does work: Google will serve a plain text export of a
+publicly shared document at a separate export address, and browsing can sometimes read it. It still
+requires publishing the document to the whole internet, and it still depends on the browsing tool
+choosing to fetch it. Thirty seconds of exporting is the better trade.
+
+## The export route
+
+<Steps>
+  <Step title="Open the document and go to File then Download">
+    The submenu lists every format Google can produce from it.
+  </Step>
+  <Step title="Pick a format from the table below">
+    Markdown, DOCX or plain text for almost every case.
+  </Step>
+  <Step title="Upload the downloaded file in ChatGPT">
+    Use the paperclip in the composer. It is now an ordinary file with ordinary limits.
+  </Step>
+</Steps>
+
+The exported file is your document as it stands at that moment. Edit the Doc afterwards and ChatGPT
+still has the old version, which catches people out on documents that several colleagues are
+working on at once.
+
+## Which download format to choose
+
+| Download as | Use it when |
+| --- | --- |
+| Markdown (.md) | The document has headings, lists and links. Keeps structure as plain text, stays small. |
+| Word (.docx) | The document has tables. The most reliable structured option. |
+| Plain text (.txt) | Straight prose. Nothing to parse, nothing to go wrong. |
+| PDF | Layout itself carries meaning, such as a form or a designed report. |
+| OpenDocument (.odt), Rich text (.rtf) | Rarely. They work, but offer nothing DOCX does not. |
+| Web page (.html, zipped) | Never for this. It arrives as an archive and adds a step. |
+| EPUB | Never for this. |
+
+One thing no export saves you from: images inside the document. <Fact k="imagesInDocuments" /> A
+Doc whose meaning lives in screenshots or charts needs those images uploaded separately as images.
+
+## Sheets and Slides export differently
+
+**Google Sheets.** File then Download then CSV gives you the current tab only, which is the single
+most common mistake with multi tab workbooks. XLSX gives you the whole thing. Spreadsheets have
+their own ceiling of <Fact k="maxSpreadsheetSize" /> and are exempt from the
+<Fact k="maxTextTokens" /> text limit, because ChatGPT queries them with code rather than reading
+them into the conversation.
+
+**Google Slides.** PPTX keeps your speaker notes. The plain PDF download does not, so if the notes
+are where the substance lives, take the PPTX.
+
+<InlineInstall
+  heading="When the export is longer than ChatGPT will take"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, so a 400 page export goes in without you cutting it up by hand."
+/>
+
+## The Drive connector, if your plan has one
+
+OpenAI offers connectors that let ChatGPT search connected apps, and Google Drive has been among
+them on paid plans. Which plans and which regions has changed more than once, so open your settings
+and look rather than believing any article, this one included.
+
+If you have it, the working pattern is to ask for the document by name and let ChatGPT search for
+it. A connector is a search tool, not a URL fetcher, so pasting a link still will not do what you
+want. Two things to know about connectors: they read exactly what your Google account can read, and
+they pull the passages relevant to your question rather than the whole document. For a full close
+read of one long file, exporting and uploading remains more predictable, and the uploaded file sits
+under the ordinary <Fact k="maxFileSize" /> ceiling.
+
+## What to do
+
+Export it. File then Download, Markdown or DOCX or plain text, upload the result. It takes half a
+minute and it removes all the guesswork about whether ChatGPT actually saw your words.
+
+Keep the connector for the case it is good at, which is finding a document you cannot be bothered
+to locate yourself. For anything you need read carefully, hand ChatGPT the file.

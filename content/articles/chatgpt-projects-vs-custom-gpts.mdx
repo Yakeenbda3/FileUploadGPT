@@ -1,0 +1,169 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-projects-vs-custom-gpts',
+  title: 'ChatGPT Projects or custom GPTs for documents?',
+  heading: 'Projects or custom GPTs for your documents?',
+  description:
+    'Both hold files that persist. Projects hold more and stay personal, custom GPTs hold ten for life and can be shared. Which fits your documents.',
+  category: 'compare',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt projects vs custom gpts for documents',
+  related: [
+    'chatgpt-projects-file-limit',
+    'custom-gpt-knowledge-file-limit',
+    'chatgpt-storage-limit',
+  ],
+  faq: [
+    {
+      q: 'Which one holds more files?',
+      a: 'Projects, comfortably. A project takes 20 files on Plus and 40 on Pro, Team, Education and Business, and each project you create gets its own allowance. A custom GPT takes 10, and that is for the lifetime of the GPT.',
+    },
+    {
+      q: 'Does the custom GPT file limit ever reset?',
+      a: 'No. OpenAI specifies up to 10 files per GPT for the lifetime of that GPT, which is unusual among ChatGPT limits because most of the others are rates that refresh. Past ten you are swapping files rather than adding them.',
+    },
+    {
+      q: 'Can I put the same document in both?',
+      a: 'Yes, you upload it into each separately. Both copies count against the same 25 GB per user storage pool, which also covers ordinary chats, so duplicating large reference documents across several places adds up quietly.',
+    },
+    {
+      q: 'Which one can I give to other people?',
+      a: 'A custom GPT is the one designed for handing over, since it can be shared by link or published. Projects are built around your own working set, and what can be shared varies by plan, so check your current plan settings rather than assuming.',
+    },
+  ],
+});
+
+<AnswerBox>
+Pick a Project when the files support your own ongoing work and the set will keep changing. Pick a
+custom GPT when you want to hand the same packaged behaviour to other people. Projects hold
+<Fact k="projectFilesPlus" /> files on Plus and <Fact k="projectFilesPro" /> on Pro, Team, Education
+and Business. A custom GPT holds <Fact k="filesPerGpt" />, and that ceiling is for the lifetime of
+the GPT rather than per conversation.
+</AnswerBox>
+
+Both attach documents that survive past a single chat, which is what separates them from dragging a
+PDF into a conversation and losing it when the thread gets too long. Both let ChatGPT draw on those
+documents without you re-uploading anything.
+
+The three differences that decide it are the file ceiling, whether the limit ever refreshes, and who
+else gets to use the result.
+
+## What each one actually is
+
+A **Project** is a container. It holds chats, files and a set of instructions that apply to
+everything inside it. Start a new conversation in the project and it can already see the files. The
+chats stay grouped, so the project accumulates into a working record rather than scattering across
+your sidebar.
+
+A **custom GPT** is a configured assistant. Name, description, instructions, knowledge files, tool
+settings, and optionally Actions that call an external API. It sits in your sidebar as its own
+entry, and it can be shared by link or published.
+
+The shorthand: a Project organises your work. A custom GPT packages a behaviour.
+
+## The file ceilings, side by side
+
+| | Projects | Custom GPTs |
+| --- | --- | --- |
+| Files | <Fact k="projectFilesPlus" /> on Plus, <Fact k="projectFilesPro" /> on Pro, Team, Education and Business | <Fact k="filesPerGpt" /> |
+| Scope of the limit | Per project | Lifetime of the GPT |
+| Multiply it | Create another project | Create another GPT |
+
+That middle row is the one people get caught by. Most ChatGPT limits are rates. The daily allowance
+on Free refreshes daily, the rolling cap of <Fact k="rollingUploadRate" /> refreshes over three
+hours. The custom GPT ceiling does not refresh at all.
+
+<Callout variant="warn" title="Plan the ten before you build the GPT">
+The natural way to build a custom GPT is to add documents as they occur to you. Do that and you
+arrive at ten with a set nobody deliberately chose, half of it marginal.
+
+Decide what the GPT needs to know first, then work out how to fit that into ten files. It is a very
+different exercise from uploading one thing at a time and hoping.
+</Callout>
+
+## Personal against shareable
+
+This is usually the real decision, and it has nothing to do with file counts.
+
+A custom GPT exists to be handed over. Someone else opens it and gets your instructions, your
+knowledge files and your tool configuration without knowing any of that is there. That is the point
+of it. If the thing you are building is for a team, a client or the public, it is a GPT.
+
+A Project centres on your own work. It is a place to keep the twelve documents behind a piece of
+research, along with every conversation you had about them. What can be shared with colleagues
+depends on your plan and OpenAI has changed this more than once, so check your current settings
+rather than trusting any article on the specifics.
+
+If nobody else will ever use it, the sharing advantage of a GPT buys you nothing, and you are giving
+up half the file allowance for it.
+
+## Instructions and tools, where GPTs pull ahead
+
+Both carry standing instructions. A custom GPT carries more than that.
+
+**Actions.** A GPT can call an external API you define. Projects cannot. If the assistant needs to
+look something up in a live system rather than in a static file, that alone decides it.
+
+**Tool configuration.** A GPT lets you switch capabilities on and off deliberately, which matters
+when you want consistent behaviour from someone who did not build it.
+
+**A stable identity.** People find a GPT by name and get the same thing every time. A project is a
+place you go, not a thing you invoke.
+
+<InlineInstall
+  heading="When one reference document is longer than the cap"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, which helps when the material you want attached is longer than a single file is allowed to be."
+/>
+
+## What is identical in both
+
+Neither container changes the per-file rules. The same limits apply wherever the document lands:
+
+| Limit | Value |
+| --- | --- |
+| Size per file | <Fact k="maxFileSize" /> |
+| Text and document length | <Fact k="maxTextTokens" /> |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" /> |
+| Storage, shared across everything | <Fact k="userStorageCap" /> |
+
+That last row is worth pausing on. Chats, every Project and every custom GPT you ever built draw on
+the same <Fact k="userStorageCap" /> pool, and it never clears with time. Old GPTs holding large
+reference documents are a common reason for hitting an upload limit while feeling like you have
+uploaded nothing recently.
+
+Images behave the same in both too. Except on Enterprise, ChatGPT extracts the digital text from a
+document and discards the images. So a scanned handbook contributes nothing in a Project and nothing
+in a GPT, and neither will tell you. The container looks well stocked and the answers come out
+vague.
+
+## Making either allowance go further
+
+Both ceilings count files, not content, so combining is almost always the move.
+
+Group related documents into one file by subject rather than uploading them individually. Ten well
+organised files carry far more usable knowledge than ten arbitrary ones. When you concatenate, put
+an obvious marker before each original so the boundaries survive:
+
+```
+=== Supplier agreement, 2026 ===
+...
+
+=== Amendment 1, March 2026 ===
+...
+```
+
+Convert to plain text before uploading. Smaller, cleaner, and it strips images that were going to be
+discarded anyway. Then leave out whatever nobody will ask about, because a tighter set produces
+better answers than a comprehensive one.
+
+## The decision
+
+If other people will use it, build a custom GPT and accept <Fact k="filesPerGpt" /> files as a
+permanent budget you have to plan.
+
+If it is your own work and the document set will grow, use a Project. More files, per project rather
+than per lifetime, and another project whenever you need another allowance.
+
+If you need both, build the GPT for the stable part and keep a Project for the material still in
+motion.

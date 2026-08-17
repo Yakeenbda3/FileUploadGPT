@@ -1,0 +1,180 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-document-to-slides',
+  title: 'How to turn a document into slides with ChatGPT',
+  heading: 'How to turn a document into slides with ChatGPT',
+  description:
+    'Turn a report into a deck: one idea per slide, speaker notes kept separate, and an outline format that pastes into PowerPoint without rework.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to turn a document into slides with chatgpt',
+  related: [
+    'chatgpt-summarize-long-documents',
+    'chatgpt-powerpoint-pptx-support',
+    'upload-large-powerpoint-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT make a PowerPoint file directly?',
+      a: 'Sometimes. When its Python tool is available it can build a .pptx and hand you a download link. OpenAI does not document this as a slides feature, and the output arrives with default fonts and layouts and no template applied. For anything that has to match a house style, generating a text outline and importing it into PowerPoint gives a cleaner result.',
+    },
+    {
+      q: 'How many slides should I ask for?',
+      a: 'Give it a number rather than letting it choose. Left to itself it produces roughly one slide per section of the source document, which is why report shaped decks happen. Twelve to fifteen slides is a sensible starting point for a half hour slot, and you can ask it to flag which ones should be split.',
+    },
+    {
+      q: 'Why does my imported outline have hyphens and hashes on every line?',
+      a: 'Because the model returned markdown rather than a tab indented outline. PowerPoint treats bullet characters and heading marks as literal text when it imports. Ask specifically for tab indentation with no bullet characters, no numbering and no heading marks.',
+    },
+    {
+      q: 'Can I import an outline into Google Slides?',
+      a: 'No. Google Slides has no equivalent of the Slides from Outline import in PowerPoint, and pasting a multi line outline drops the whole thing into one text box on one slide. Build the deck in PowerPoint and open the .pptx in Google Slides, or paste the content one slide at a time.',
+    },
+  ],
+});
+
+<AnswerBox>
+Ask for the outline, not the deck. Give ChatGPT a slide count, tell it one idea per slide, and
+require every slide title to be a full sentence that states the point rather than naming a topic.
+Ask for the slide text as a tab indented plain outline and the speaker notes as a separate numbered
+block, then import the outline through PowerPoint's Slides from Outline. Google Slides has no
+outline import, so build in PowerPoint and open the file there.
+</AnswerBox>
+
+A deck is not a shorter document. It is a sequence of claims, one per slide, each carrying the
+minimum evidence needed to make it land. Most attempts fail the same way: someone uploads a report,
+asks for slides, and gets the report reflowed into bullets with the section headings as titles.
+
+Two things fix that. Separate the thinking pass from the formatting pass, and ask for a text format
+a slide tool can actually import.
+
+## Ask for the storyline before the slides
+
+Run this first, and do not let it produce bullets yet.
+
+> Read this report. I need a 12 slide deck for our board that supports the decision on whether to
+> renew. Give me the 12 slide titles only. Each title must be a full sentence stating the point of
+> that slide, not a topic label. Nothing else.
+
+The difference between a title and a label decides the deck. "Q3 revenue" is a filing label. "Q3
+revenue grew 12%, entirely on enterprise renewals" is a slide.
+
+Now read the twelve headlines in order. If they hold together as an argument on their own, the deck
+works. If they read as a table of contents, it does not, and no amount of bullet polishing will
+rescue it. Reorder, cut, and tell it what is missing before going any further.
+
+This pass takes two minutes and it is where the value sits. Everything after it is mechanical.
+
+Once the headlines hold, expand them.
+
+> For each headline, give me at most three bullets. Each bullet under twelve words. No bullet may
+> restate the headline. If a slide needs more than three bullets, tell me it should be split rather
+> than adding a fourth.
+
+That last clause does real work. Without it, dense sections come back as slides with eight bullets.
+With it, you get told that slide 7 is really two slides, which is usually correct. Set a word
+ceiling too, rather than asking for something "concise". Concise gets interpreted differently every
+time you ask.
+
+## The outline format that pastes into PowerPoint
+
+PowerPoint reads a plain tab indented outline. Ask for exactly that and you skip the retyping
+entirely.
+
+> Output a plain text outline. Slide titles at the left margin with no bullet character and no
+> numbering. Bullets indented with a single tab. Sub points with two tabs. Nothing else in the
+> output.
+
+| What you want on the slide | How to write it in the outline | Where it lands |
+| --- | --- | --- |
+| Slide title | Line at the left margin, no bullet character | Title placeholder |
+| Bullet | One tab of indentation | First level body text |
+| Sub point | Two tabs | Second level body text |
+| Speaker notes | Cannot travel through the import | Pasted in afterwards |
+
+<Steps>
+<Step title="Save the outline as plain text">
+Copy the output into a text editor and save it with a .txt extension. Keep the tabs intact, which
+means a plain editor rather than Word.
+</Step>
+<Step title="Import it as slides">
+In PowerPoint, Home, New Slide, Slides from Outline, then pick the file. Every left margin line
+becomes a new slide with its indented lines as body text.
+</Step>
+<Step title="Apply your template">
+Select all slides and use Home, Reset, then set the theme from the Design tab. The text is already
+in real placeholders, so your master takes properly.
+</Step>
+</Steps>
+
+<Callout variant="warn" title="Ask for tabs, not markdown">
+If the output comes back with hyphens for bullets and hashes for titles, the import carries those
+characters onto the slides as literal text. Stripping them across forty slides by hand takes longer
+than regenerating the outline with the right instruction.
+</Callout>
+
+## Keeping speaker notes out of the slide text
+
+Notes cannot come through an outline import. The format has no notes level, so if you ask for them
+inline they arrive as bullets on the slide, which is the single most common mess in this workflow.
+
+Ask for two separate blocks instead.
+
+> Give me two blocks. Block one: the tab indented slide outline with no notes in it. Block two: the
+> speaker notes, one short paragraph per slide, each starting with SLIDE 4: so I can match them up.
+
+Import block one, then paste the notes in per slide. Both tools make you do that one at a time, but
+numbered and separated turns it into copy and paste rather than rewriting.
+
+It also helps to say what notes are for. "Three sentences of what a presenter says out loud, first
+person, not a restatement of the bullets" produces something usable. Asking for "speaker notes"
+usually returns the bullets again in longer form.
+
+## Google Slides needs a different route
+
+Google Slides has no outline import. There is no equivalent of Slides from Outline, and pasting a
+multi line outline into a slide puts the whole thing into one text box on one slide.
+
+Two routes work. Build the deck in PowerPoint from the outline, then open the .pptx from Drive in
+Google Slides or use File, Import slides. Or paste slide by slide, which is fine for eight slides
+and miserable for forty. Even when the deck will live in Google Slides permanently, the PowerPoint
+round trip is usually faster.
+
+<InlineInstall
+  heading="For reports too long to upload"
+  body="FileUploadGPT splits a document past ChatGPT's length cap into pieces it accepts and sends them in order. That matters here because the recommendations sit at the end of a report, and that is exactly the part a truncated upload drops."
+/>
+
+## When ChatGPT builds the .pptx itself
+
+Sometimes it can. With its Python tool available it will generate a PowerPoint file and give you a
+download link. OpenAI does not document this as a slides feature, and the output shows it: default
+fonts, default layout, no template, and text often drawn onto the slide rather than placed in real
+placeholders, so applying your corporate theme afterwards does not take.
+
+Worth trying when the deck is disposable or you want something to react to. For anything going in
+front of people in your own template, the outline route wins, because PowerPoint builds the slides
+from your master instead of the model drawing them from scratch.
+
+## Check the deck against the document
+
+Two checks, both fast.
+
+Truncation first. Documents past <Fact k="maxTextTokens" /> are cut off with no warning, and the
+conclusions of a report live at the end. Ask what the final section is called before you ask for
+anything else. If it cannot say, the deck is being built from the first half of the file.
+
+Then the numbers. Every figure on a slide gets read out loud and questioned.
+
+> For each slide, add a line giving the page or section the numbers on it came from.
+
+Spot check three of those against the document, delete the source lines, and present. If all three
+hold, the rest generally do. If one is wrong, check them all.
+
+## What this comes down to
+
+Do the argument first as one sentence headlines, then the bullets, then the format. Ask for a tab
+indented outline and import it rather than building slides by hand. Keep the notes in a separate
+numbered block. And confirm the model reached the end of the document, because the last twenty
+pages of a report are usually where the deck's conclusion is supposed to come from.

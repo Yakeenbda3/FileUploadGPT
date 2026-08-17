@@ -172,11 +172,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </article>
 
           <aside className="hidden lg:block">
-            {/* One sticky rail holding both the contents and the install card, so they travel down
-                the page together as a single unit. */}
+            {/* One sticky rail holding both the install card and the contents, so they travel down
+                the page together as a single unit.
+
+                The install card sits ABOVE the table of contents deliberately. The contents were
+                there first and pushed the call to action below the fold on a laptop, which meant
+                the one thing the page is asking the reader to do was the one thing they had to
+                scroll to find. The contents are a navigation aid for people already committed to
+                reading; they lose nothing by sitting second. */}
             <div className="sticky top-24 space-y-5">
-              <TableOfContents />
               <InstallCard />
+              <TableOfContents />
             </div>
           </aside>
         </div>

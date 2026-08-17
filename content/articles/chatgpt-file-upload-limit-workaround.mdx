@@ -45,11 +45,20 @@ export const meta = defineArticle({
   ],
 });
 
+{/* This page earns roughly two thirds of the site's clicks, so the answer box does two jobs at
+    once. The opening clause stays a clean, self-contained answer, because that is the shape Google
+    lifts for a featured snippet and it is why the page ranks at all. The extension is then named
+    immediately as the way to do it, with a direct install link, rather than being left to a
+    paragraph most readers never reach. The honest caveat stays: nothing running in a browser can
+    raise the limit, and saying so is what makes the recommendation credible. */}
+
 <AnswerBox>
-You cannot raise the limit, so the fix is always to send less at a time. In practice that means
-one of three things: convert the file to plain text so it shrinks, split it into parts and send
-them in order, or use a tool that does the splitting for you. Zipping, renaming, and upgrading
-to Plus do not solve it.
+You cannot raise the limit, so every fix works by sending less at a time, and the quickest way to
+do that is **FileUploadGPT**, a free Chrome extension that splits your document and feeds the parts
+into ChatGPT in order, with the instruction that stops it answering early.
+<InstallLink>Add it to Chrome, free</InstallLink>, pick your file, and the splitting is handled for
+you. The manual methods are below if you would rather do it by hand. Zipping, renaming, and
+upgrading to Plus do not solve it.
 </AnswerBox>
 
 There is a particular kind of annoying where you have exactly the document you need, ChatGPT is

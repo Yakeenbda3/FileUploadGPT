@@ -1,6 +1,7 @@
 import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
 import { InlineInstall } from '@/components/cta/InlineInstall';
+import { InstallLink } from '@/components/cta/InstallLink';
 import { Callout } from '@/components/article/Callout';
 import { AnswerBox } from '@/components/article/AnswerBox';
 import { Steps, Step } from '@/components/article/Steps';
@@ -76,6 +77,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     Step,
     Fact,
     InlineInstall,
+    InstallLink,
 
     ...components,
   };

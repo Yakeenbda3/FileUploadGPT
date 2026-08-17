@@ -1,0 +1,133 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-markdown-json-code-files',
+  title: 'Markdown, JSON and code files in ChatGPT',
+  heading: 'Markdown, JSON, XML and code files in ChatGPT',
+  description:
+    'All of these are plain text underneath, which makes them the most reliable things to upload. Why markdown is the best format of the lot.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt supported file types markdown md',
+  related: [
+    'chatgpt-file-types-supported',
+    'best-file-format-for-chatgpt',
+    'upload-large-code-files-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT support .md markdown files?',
+      a: 'Yes, and markdown is arguably the best format to upload. It is plain text, so nothing can go wrong parsing it, and its headings and lists survive as structure rather than being flattened the way plain text does.',
+    },
+    {
+      q: 'Can I upload JSON or XML?',
+      a: 'Yes. Both are plain text with structure, and both are read reliably. For very large JSON, sending a representative sample plus the schema often works better than the whole file.',
+    },
+    {
+      q: 'Do code files need a special extension?',
+      a: 'No. Source files are read as plain text, so the extension rarely matters. If an unusual one is ever refused, renaming a copy to .txt is a dependable workaround.',
+    },
+    {
+      q: 'Are these formats subject to the same limits?',
+      a: 'Yes: 512 MB per file and 2 million tokens for text files. Because these formats are so compact, the token cap is effectively the only one you will meet.',
+    },
+  ],
+});
+
+<AnswerBox>
+All of these are plain text underneath, which makes them the most reliable category of file to
+upload. Nothing has to be parsed out of a container, no images can be discarded, and nothing is lost.
+Markdown is the pick of them, because its structure survives in a way plain text's does not.
+</AnswerBox>
+
+## Why text formats are the reliable ones
+
+Every other format needs unpacking before ChatGPT sees any words. A PDF has to be parsed. A DOCX has
+to be unzipped and its XML walked. That step is where things go wrong.
+
+Text formats skip it. The file is the content.
+
+Which is why the general test works: open a file in a text editor, and if you see readable words,
+ChatGPT can read it too. Markdown, JSON, XML, YAML, CSV, HTML and every source code file pass that
+test.
+
+## Markdown is the best of them
+
+Worth singling out, because it solves a problem plain text has.
+
+Plain `.txt` keeps your headings as text but loses the fact that they were headings. Everything
+flattens into one undifferentiated block, and on a long document that makes section-by-section work
+harder.
+
+Markdown keeps the structure visible. A `## Section title` is unambiguously a heading, lists stay
+lists, and tables stay tables. It costs nothing and it makes requests like this work properly:
+
+> Summarise this section by section, using the document's own headings.
+
+<Callout variant="tip" title="Converting to markdown rather than plain text">
+When you export a long document to reduce its size, markdown is usually the better target than
+`.txt`. Same size saving, and the structure survives.
+</Callout>
+
+## JSON and XML
+
+Both are read reliably, and there are two things worth doing.
+
+**Say what it is.** "This is an API response describing orders" gets you a much better reading than
+the raw structure alone, because field names are rarely as self-explanatory as they look to the
+person who wrote them.
+
+**For very large files, send a sample plus the schema.** A hundred thousand records is a lot of
+tokens and mostly repetition. Twenty representative records plus a description of the fields answers
+almost every question the full file would, and it fits.
+
+The exception is when the question is genuinely about the whole dataset, such as counting or finding
+outliers. In that case a CSV upload is a better route, since spreadsheets are exempt from the token
+cap and are analysed as data.
+
+## Code files
+
+The extension almost never matters, because source files are read as plain text. Python, Rust, SQL,
+Terraform, or something obscure all behave the same.
+
+If a file is ever refused, rename a copy to `.txt` and it goes through.
+
+For anything spanning several files, concatenate them with a header line naming each, so the
+structure survives and it costs one upload rather than several:
+
+```
+for f in src/**/*.py; do echo "=== $f ==="; cat "$f"; done > bundle.txt
+```
+
+<Callout variant="warn" title="Check for secrets first">
+Text formats are where credentials live. `.env` files, keys in JSON config, connection strings in
+YAML. Bundling a directory sweeps all of it up. Search the result before uploading, because on
+consumer plans content may be used to improve models unless you have turned that off.
+</Callout>
+
+## The limits that apply
+
+<Fact k="maxFileSize" /> per file, and <Fact k="maxTextTokens" /> for text files.
+
+Because these formats are so compact, the size ceiling is effectively unreachable and the token cap
+is the only real constraint. A very large codebase or a big JSON export can reach it, and when it
+does the file is truncated with no warning.
+
+The check is the same as always: ask what the last thing in the file is. If it cannot say, it did not
+get there.
+
+<InlineInstall
+  heading="For a bundle past the token cap"
+  body="FileUploadGPT splits a large text file into pieces ChatGPT accepts and sends them in order, so a whole module gets read rather than the first few files of it."
+/>
+
+## Where these formats do not help
+
+**HTML with heavy markup.** A saved web page can be mostly tags, and the tags consume length without
+carrying meaning. Copying the visible text is often better than uploading the file.
+
+**Minified anything.** A minified bundle is technically text and practically unreadable, to you and
+to ChatGPT alike. Send the source.
+
+**Binary formats with text extensions.** Rare, but some tools write binary into a `.dat` or `.log`.
+The text editor test settles it in seconds.

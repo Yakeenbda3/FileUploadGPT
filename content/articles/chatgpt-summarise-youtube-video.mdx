@@ -1,0 +1,123 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-summarise-youtube-video',
+  title: 'How to summarise a YouTube video with ChatGPT',
+  heading: 'How to get ChatGPT to summarise a YouTube video',
+  description:
+    'You cannot upload the video, so use the transcript. Where to find it, what to ask for, and the limits of a text-only view.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'how to summarize a youtube video with chatgpt',
+  related: [
+    'does-chatgpt-support-mp4-video',
+    'chatgpt-meeting-transcript-analysis',
+    'chatgpt-summarize-long-documents',
+  ],
+  faq: [
+    {
+      q: 'Can I just give ChatGPT the YouTube link?',
+      a: 'Not reliably. Whether it can open a link depends on browsing being available in your session, and even then the result is inconsistent. Pasting the transcript is the approach that works every time.',
+    },
+    {
+      q: 'Where do I get the transcript?',
+      a: 'YouTube itself. Under the video, open the description and look for "Show transcript". Most videos with captions have one, and you can copy it straight out.',
+    },
+    {
+      q: 'The transcript is a mess of timestamps. Does that matter?',
+      a: 'Not much. ChatGPT handles them fine, and they are useful, because you can ask for timestamps in the output and jump straight to the part you care about.',
+    },
+    {
+      q: 'Will it understand what was shown on screen?',
+      a: 'No. A transcript is speech only. For a tutorial where the value is in what is demonstrated rather than said, screenshot the key moments and upload those as images alongside.',
+    },
+  ],
+});
+
+<AnswerBox>
+Use the transcript rather than the video. YouTube provides one for most videos: open the description
+and click Show transcript, then copy it. Paste that into ChatGPT and you can summarise it, pull the
+main claims out, or find the part you actually needed, with timestamps.
+</AnswerBox>
+
+## Getting the transcript
+
+<Steps>
+  <Step title="Open the video description">
+    Click the description area below the video to expand it.
+  </Step>
+  <Step title="Find Show transcript">
+    Usually near the bottom of the expanded description. Most videos with captions have one.
+  </Step>
+  <Step title="Copy it">
+    The panel opens beside the video. Select the text and copy. There is a toggle to hide timestamps
+    if you prefer, though keeping them is usually more useful.
+  </Step>
+  <Step title="Paste it into ChatGPT with your question">
+    No upload needed, which also means it does not touch your upload allowance at all.
+  </Step>
+</Steps>
+
+<Callout variant="tip" title="Keep the timestamps">
+They cost you nothing and they earn their place. Ask for timestamps in the answer and you can jump
+straight to the two minutes you actually needed, instead of scrubbing through forty.
+</Callout>
+
+## Asking for something better than a summary
+
+A summary of a video is usually as unsatisfying as a summary of a meeting. More useful requests:
+
+**For a tutorial:**
+
+> From this transcript, give me the steps in order, as a numbered list, with the timestamp each one
+> starts at. Leave out the introduction and the sponsorship section.
+
+**For a talk or interview:**
+
+> What is the main claim, what evidence is given for it, and what is asserted without support? Quote
+> the line each point came from.
+
+**For deciding whether to watch it at all:**
+
+> In five bullets, what does this video actually cover? Then tell me whether it addresses [your
+> specific question], and at what timestamp.
+
+That last one is the highest value use of this by a distance. Three minutes to find out a forty
+minute video does not answer your question is a good trade.
+
+## What a transcript misses
+
+Speech only. Anything demonstrated on screen and not narrated is absent.
+
+That matters most for tutorials, where "and then you click here" is the whole instruction and the
+transcript records it as exactly that. For a talking-head video, an interview or a lecture, a
+transcript loses very little.
+
+If the visuals carry the content, screenshot the important moments and upload them as images
+alongside the transcript. Images are capped at <Fact k="maxImageSize" /> each with a ceiling of about
+100 per conversation.
+
+## Long videos
+
+Auto-generated transcripts are wordy, since speech is repetitive. A ninety minute video can produce a
+transcript long enough to matter.
+
+If it approaches <Fact k="maxTextTokens" />, it gets truncated silently. Check by asking what the
+final thing discussed was. If it cannot say, it did not reach the end, which for a video with a
+conclusion is the part you wanted.
+
+<InlineInstall
+  heading="For a long transcript, or a series of them"
+  body="FileUploadGPT splits long text into pieces ChatGPT accepts and sends them in order, which is useful for a lecture series or a full conference where the transcripts run to hundreds of pages together."
+/>
+
+## Several videos at once
+
+The same two-pass approach that works everywhere else. Summarise each transcript separately into the
+same structure, then compare:
+
+> Here are structured notes from six videos on the same topic. Where do they agree, where do they
+> conflict, and which one actually explains the mechanism rather than describing the outcome?
+
+Genuinely useful for working through a playlist, and it keeps attribution intact, which uploading six
+transcripts at once does not.

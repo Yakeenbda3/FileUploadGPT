@@ -1,0 +1,131 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-meeting-transcript-analysis',
+  title: 'Turning meeting transcripts into something useful',
+  heading: 'How to get something useful out of a meeting transcript',
+  description:
+    'Transcripts are long, repetitive and full of noise. The prompts that pull decisions and commitments out rather than another summary.',
+  category: 'workflows',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt meeting transcript summary',
+  related: [
+    'can-chatgpt-read-mp3-audio-files',
+    'chatgpt-summarize-long-documents',
+    'chatgpt-extract-data-from-documents',
+  ],
+  faq: [
+    {
+      q: 'Can I upload the meeting recording directly?',
+      a: 'No. Audio is not among the file types OpenAI lists for uploads. Get a transcript first, which most meeting tools now produce automatically, and upload that as text.',
+    },
+    {
+      q: 'Why are the summaries so useless?',
+      a: 'Because "summarise this meeting" asks for a description of what was discussed, which nobody needs. Ask for decisions taken, commitments made and open questions instead, and you get something you can act on.',
+    },
+    {
+      q: 'Should I keep the speaker labels?',
+      a: 'Yes, always. They turn "the team agreed to review pricing" into "Sam agreed to review pricing by Friday", which is the difference between a note and an action.',
+    },
+    {
+      q: 'A week of meetings is too long to upload. What now?',
+      a: 'Process each meeting separately into the same structure, then bring those structured notes together for the cross-meeting questions. Uploading a week of raw transcripts at once blends them and loses which meeting anything came from.',
+    },
+  ],
+});
+
+<AnswerBox>
+Do not ask for a summary. Ask for decisions, commitments with owners, and open questions. A meeting
+summary describes what was discussed, which nobody needs a week later. What people actually want is
+what was decided and who owes what, and those are different requests.
+</AnswerBox>
+
+## First, get a transcript
+
+Audio is not among the file types OpenAI lists for uploads, so the recording itself is not the route.
+
+Most meeting tools now produce transcripts automatically. Failing that, any transcription tool
+handles an hour of audio in a few minutes. What you want out of it is a text file, ideally with
+speaker labels and timestamps.
+
+<Callout variant="tip" title="Keep the speaker labels">
+This is the single biggest quality difference. Without labels you get "the team agreed to look at
+pricing". With them you get "Sam agreed to look at pricing before Friday". One is a note, the other
+is an action with a name on it.
+</Callout>
+
+## Ask for the right four things
+
+Instead of a summary:
+
+> From this meeting transcript, give me four sections.
+>
+> **Decisions:** what was actually decided, with who decided it.
+> **Commitments:** who agreed to do what, by when if a date was mentioned. Say "no date given" where
+> there is not one.
+> **Open questions:** what was raised and left unresolved.
+> **Disagreements:** where people did not agree, and what each position was.
+>
+> Quote the line each item came from. If something is not present, say so rather than inferring it.
+
+That structure works because it maps to what a meeting is for. The "no date given" instruction is
+worth keeping: an undated commitment is a finding, and without permission to say so it tends to get
+a plausible date attached.
+
+## The questions worth asking after that
+
+**What did everyone avoid?**
+
+> What was raised and then dropped without resolution?
+
+Meetings are full of these and nobody writes them down, because they are absences.
+
+**Who actually committed to something?**
+
+> List every person who took on an action, and everyone present who took on nothing.
+
+Uncomfortable and useful in equal measure.
+
+**Was anything decided twice?**
+
+> Does this transcript revisit any decision more than once, and did the answer change?
+
+**What would someone who missed this need to know?**
+
+Good framing, because it forces relevance over completeness.
+
+## Handling a long transcript
+
+An hour of speech is roughly ten thousand words, which goes in comfortably. A full day, or a series
+of meetings, can pass <Fact k="maxTextTokens" /> and get truncated with no warning.
+
+The check is the same as for any long document. Ask what the last thing discussed was. If it cannot
+say, it did not reach the end, and any list of commitments is missing whatever was agreed in the last
+twenty minutes, which is usually where commitments happen.
+
+<InlineInstall
+  heading="For transcripts past the length cap"
+  body="FileUploadGPT splits a long transcript into pieces ChatGPT accepts and sends them in order, so the end of the meeting gets read rather than dropped."
+/>
+
+## Across several meetings
+
+Process each one separately into the same four-section structure, then bring the structured notes
+together:
+
+> Here are structured notes from six weekly meetings. Which commitments were made and never
+> mentioned again? Which topics keep returning without resolution?
+
+That second question is the valuable one. A topic appearing in five consecutive meetings without a
+decision is a real signal about the project, and it is invisible from inside any single meeting.
+
+## What transcripts lose
+
+Worth knowing before you rely on one.
+
+Tone, hesitation, and who sounded unconvinced. A transcript records that someone said yes. It does
+not record that they said it flatly after a long pause, which everyone in the room understood
+perfectly.
+
+For content and commitments, a transcript is better than the recording: searchable, quotable, and
+checkable. For reading the room, it is not, and no prompt recovers what was never written down.

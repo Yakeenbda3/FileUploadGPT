@@ -58,14 +58,17 @@ export function SaveForDesktop({ className = '' }: { className?: string }) {
     }
   }, [announce]);
 
+  // Kept short on purpose. This button sits beside two lines of text in a bar 390px wide on the
+  // commonest phone, and "Send to my computer" squeezed the label next to it until it truncated
+  // mid-word.
   const label =
     outcome === 'shared'
       ? 'Sent'
       : outcome === 'copied'
-        ? 'Link copied'
+        ? 'Copied'
         : outcome === 'failed'
-          ? 'Email it instead'
-          : 'Send to my computer';
+          ? 'Email it'
+          : 'Send to computer';
 
   if (outcome === 'failed') {
     return (

@@ -3,7 +3,7 @@ import { PageShell } from '@/components/layout/PageShell';
 import { CONTACT_EMAIL } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'Terms of service',
+  title: 'Terms of Service | FileUploadGPT',
   description:
     'The terms for using the FileUploadGPT extension and website, including the parts about OpenAI that are genuinely worth reading.',
   alternates: { canonical: '/terms-of-service' },

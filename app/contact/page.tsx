@@ -4,7 +4,7 @@ import { PageShell } from '@/components/layout/PageShell';
 import { CHROME_STORE_URL, CONTACT_EMAIL } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'Contact FileUploadGPT',
+  title: 'Contact FileUploadGPT: Support and Feedback',
   description:
     'How to report a bug, correct a fact on the site, or ask something the guides do not answer, and what to include so it can be fixed.',
   alternates: { canonical: '/contact' },

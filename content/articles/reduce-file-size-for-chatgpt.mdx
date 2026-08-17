@@ -1,0 +1,147 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'reduce-file-size-for-chatgpt',
+  title: 'How to reduce file size for a ChatGPT upload',
+  heading: 'How to shrink a file so ChatGPT will accept it',
+  description:
+    'Export to text, compress the PDF, strip images, export sheets to CSV. What each one saves, what it costs, and which your problem needs.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to reduce file size for chatgpt',
+  related: [
+    'chatgpt-file-is-too-large-error',
+    'upload-large-pdfs-to-chatgpt',
+    'how-to-split-a-document-for-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'What is the fastest way to make a file small enough for ChatGPT?',
+      a: 'Save it as plain text. In a Word file, a slide deck or an image heavy PDF, almost all of the weight is pictures and formatting rather than words, and those are discarded during upload on every plan except Enterprise anyway.',
+    },
+    {
+      q: 'Does compressing a PDF help ChatGPT read it?',
+      a: 'It helps the file upload, not the reading. Compression shrinks the page images, and if the PDF is a scan those images are still images afterwards, so ChatGPT extracts nothing from them either way. A scan needs OCR, not compression.',
+    },
+    {
+      q: 'Will zipping the file get me under the limit?',
+      a: 'No. ZIP archives are not opened during upload, so a zipped document is smaller and completely unreadable. It is the one shrinking method that guarantees a wasted upload.',
+    },
+    {
+      q: 'My file is small but ChatGPT still misses most of it. Why?',
+      a: 'Because size and length are separate limits. A plain text file of a few megabytes can be far past the token cap for documents, and truncation happens quietly. Shrinking the file further will not fix it. Sending less at a time will.',
+    },
+  ],
+});
+
+<AnswerBox>
+Export the document to plain text. That one step removes almost all of the weight in a Word file, a
+slide deck or an image heavy PDF, because most of the megabytes are pictures and formatting rather
+than words. Compressing a PDF, stripping images and exporting sheets to CSV cover the rest. None of
+it helps if your real problem is length rather than size, which is a different limit with a different
+fix.
+</AnswerBox>
+
+The per file cap is <Fact k="maxFileSize" />, which almost nobody reaches. The caps people actually
+hit are the smaller ones: <Fact k="maxSpreadsheetSize" /> for spreadsheets, <Fact k="maxImageSize" />
+for an image, and whatever your connection gives up on before the upload finishes.
+
+## First work out which limit you hit
+
+Two different problems send people looking for the same fix, and only one of them responds to it.
+
+| What you see | The actual limit | Does shrinking help? |
+| --- | --- | --- |
+| An error saying the file is too large | Size, in megabytes | Yes, this is the fix |
+| Upload stalls or fails silently | Size, or the connection | Usually |
+| It answers well about the opening, then goes vague | Length, in tokens | No |
+| It cannot name the final section | Length, in tokens | No |
+
+Length is capped at <Fact k="maxTextTokens" />, and a plain text file can sail past that while
+weighing a couple of megabytes. If that is your problem, every technique below is wasted effort.
+
+## Export to plain text
+
+The largest single reduction available, and usually the only one you need.
+
+Open the document, choose Save As or Export, and pick `.txt` or `.md`. A 40 MB Word file full of
+screenshots commonly comes out in the tens of kilobytes as text. The words were never the weight.
+
+What it costs you is smaller than it looks. Retrieval from documents is
+<Fact k="imagesInDocuments" />, so converting throws away nothing that was going to be read anyway.
+Page layout and column structure go, which rarely matters for a report or a contract. The real loss
+is table structure, which can flatten into runs of text. If a table is central to your question,
+paste it separately so its rows stay unambiguous.
+
+Markdown is worth preferring over plain text for anything with headings. It keeps the hierarchy
+visible at no extra size.
+
+## Compress a PDF
+
+Whether this works depends entirely on what kind of PDF you have.
+
+A text-based PDF is mostly text and embedded fonts. Compressing it saves very little, because there
+was nothing heavy in it to begin with. Export it to text instead.
+
+A scanned PDF is a stack of page photographs, and that is where the megabytes live. Running it
+through a compressor that downsamples images to around 150 dpi will make a real difference, since
+600 dpi pages are many times the size of the same pages scanned lower.
+
+<Callout variant="warn" title="Compression does not make a scan readable">
+A compressed scan is still a scan. The pages are still images, and ChatGPT still extracts no text
+from them on any plan except Enterprise. It will upload and then tell you nothing. Scans need OCR
+first, and once OCR'd they are text, which solves the size problem as a side effect.
+</Callout>
+
+## Strip images and embedded media
+
+For files you want to keep in their original format.
+
+In Word, select an image and use Compress Pictures, applying it to all images at email resolution.
+In PowerPoint, the same option lives under Picture Format. Embedded video in a deck is often the
+single largest object in the file, and removing it costs nothing on upload, because video is not
+among the file types OpenAI lists as supported.
+
+This is the option to reach for when someone else needs the file to stay a DOCX. If nobody does,
+exporting to text is faster and shrinks it further.
+
+## Export spreadsheets to CSV
+
+An XLSX carries formatting, formulas, chart objects, pivot caches and every sheet in the workbook.
+CSV carries the values.
+
+Export only the sheets you need. The file usually drops by an order of magnitude, and spreadsheets
+are exempt from the token cap that truncates documents, so a large CSV often goes through whole where
+the same content as a document would not.
+
+The cost is real but narrow. One sheet per file, formulas become their calculated results, and
+formatting disappears. For analysis that is all fine, since you wanted the numbers.
+
+<InlineInstall
+  heading="When the file is small and still too long"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts, labels them, and feeds them in order with the instruction to wait for all the parts. It is the fix for the limit that no amount of compression touches."
+/>
+
+## What does not shrink anything useful
+
+**Zipping.** ZIP archives are not opened during upload. Smaller file, zero readable content.
+
+**Renaming the extension.** Calling a `.docx` a `.txt` does not convert it. ChatGPT sees binary noise
+and the file size is identical.
+
+**Screenshotting pages.** This turns text into images, which are both larger and unreadable. It is
+the exact opposite of what you want.
+
+**Compressing images below legibility.** If you are shrinking an actual image for ChatGPT to look at,
+push it too far and the model cannot read the small print in it either.
+
+## Which one to reach for
+
+If it is a document and you want the words, export to plain text. That covers most cases and takes
+about ten seconds.
+
+If it is a scan, OCR it, which shrinks and fixes it at once. If it is a spreadsheet, export the
+sheets you need to CSV. If someone needs the original format preserved, strip the images inside it.
+
+And if the file is already small and ChatGPT is still only answering about the first part of it, stop
+shrinking. That is length, and the answer is to send it in pieces.

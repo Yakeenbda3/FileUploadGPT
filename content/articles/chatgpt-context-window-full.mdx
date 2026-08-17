@@ -1,0 +1,165 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-context-window-full',
+  title: 'What ChatGPT drops when its context window fills up',
+  heading: 'What happens when ChatGPT\'s context window is full',
+  description:
+    'The oldest part of the conversation stops being sent, with no error and no marker in the reply. What survives, and the test that proves it.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'what happens when chatgpt context window is full',
+  related: [
+    'chatgpt-message-length-limit',
+    'did-chatgpt-read-my-whole-document',
+    'chatgpt-summarize-long-documents',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT tell you when the context window is full?',
+      a: 'No. The trimming happens before the model receives the conversation, so it is never told that anything was removed. It answers from what arrived, in the same confident tone it used when it had everything.',
+    },
+    {
+      q: 'What gets dropped first?',
+      a: 'The oldest exchanges, which in a long chat means the middle of the conversation rather than the parts you can see on screen. Your most recent turns stay, and so do custom instructions and saved memories, because those are supplied fresh each turn rather than scrolling away.',
+    },
+    {
+      q: 'Does an uploaded file use up the context window?',
+      a: 'Not the way pasted text does. ChatGPT reads attached files with a tool and pulls in the parts it needs, so a long attachment does not sit in the conversation whole. That is one reason uploading beats pasting for anything long.',
+    },
+    {
+      q: 'Can I get the lost part back?',
+      a: 'Not within that chat. Once content stops being sent it is gone from the model\'s view, even though you can still scroll up and read it. Re-paste what still matters, or start a fresh chat with a short brief.',
+    },
+  ],
+});
+
+<AnswerBox>
+Nothing breaks and nothing is announced. Once a conversation grows past what the model can hold, the
+oldest part of it stops being sent, and ChatGPT answers from what is left as though that were the
+whole chat. There is no error, no warning and no marker in the reply. The way you find out is by
+asking it to quote something specific from early in the conversation.
+</AnswerBox>
+
+The context window is how much text the model holds while it composes a reply. It covers the whole
+conversation rather than one message: everything you have typed, everything it has said back, your
+standing instructions, and whatever was read out of any file you attached. Every turn, that running
+total is handed to the model again from the start.
+
+When the total stops fitting, something has to go before the model sees it. That trimming happens
+outside the model, which explains almost everything else about how this failure behaves.
+
+## What gets dropped, and in what order
+
+OpenAI does not publish the trimming rule, so treat the following as observed behaviour rather than
+documented policy. What people see consistently is this.
+
+| Part of the conversation | What happens as the window fills |
+| --- | --- |
+| Your latest message | Always kept |
+| The last few exchanges | Kept |
+| The middle of a long chat | First to go, and unreliable before it goes |
+| A long document you pasted at the start | Goes early, because it is both old and large |
+| Custom instructions | Behave as though re-supplied each turn, so they persist |
+| Saved memories | Supplied separately from the chat, so they persist |
+| An attached file | Not held whole, so it does not compete the same way |
+
+In one line: your recent turns and your standing instructions survive, and the middle of the
+conversation is what you lose. That is the opposite of what most people assume, because the middle is
+usually where the reasoning was done.
+
+## Why the model never mentions it
+
+By the time the conversation reaches the model, the missing part is already missing, and it does not
+arrive with a note saying content was removed. From the model's position, what it received is the
+conversation that happened.
+
+So it does not hedge, apologise or flag a gap. It answers from what arrived, in the same confident
+register it used when it still had everything.
+
+<Callout variant="warn" title="A silent failure beats a loud one, from the model's side">
+An error tells you to go and fix something. This hands you a well written answer built on a partial
+record and lets you act on it. Same shape as a truncated file upload, and harder to catch, because a
+conversation degrades gradually instead of failing at one moment.
+</Callout>
+
+## Degradation starts before anything is dropped
+
+Recall across a long context is not even. Long-context models generally retrieve best from the
+beginning and the end of what they hold, and worst from the middle. This is a widely reported
+characteristic of the technology, not something OpenAI states about ChatGPT specifically.
+
+So a long chat gets vague about its own middle well before the window is actually full. The boundary
+you care about is not a line where things vanish. It is a slope you are already on.
+
+## How it shows up
+
+**It asks you for something you already gave it.** The clearest signal there is. The information did
+not become unclear, it left.
+
+**A rule you set stops holding.** You said no bullet points forty messages ago and bullet points came
+back. The instruction did not weaken over time. It fell out of view.
+
+**Early specifics come back slightly wrong.** A filename, a figure, a person's name. What you are
+seeing is reconstruction from later mentions rather than a read of the original.
+
+**It can no longer quote something it quoted happily an hour ago.** The single most reliable tell,
+and the basis of the test below.
+
+## The test
+
+Pick something distinctive from early in the chat that has not been repeated since, and ask for it
+word for word.
+
+> Quote, exactly, the first sentence of the text I pasted at the start of this conversation.
+
+A paraphrase proves nothing, because it can be reassembled from later references to the same
+material. A verbatim quote either survives or it does not.
+
+<Callout variant="info" title="One thing that can fake a pass">
+If saved memory is switched on, ChatGPT can produce a fact from stored memory rather than from the
+chat, which looks like recall and is not. Choose a detail nobody would ever save, such as an exact
+sentence or a number that only means something in context.
+</Callout>
+
+## Files sit outside this
+
+Attached files are not loaded into the conversation whole. ChatGPT reads them with a tool and pulls
+in the parts it needs, so a long attachment does not consume the window the way the same text pasted
+into a message would.
+
+Two things follow. Uploading beats pasting for anything long, and an attached document can still be
+consulted in a chat that has forgotten what you said about it.
+
+The file's own caps are a separate matter and they apply first. Text and document files are limited
+to <Fact k="maxTextTokens" />, and past that the file is truncated at upload with no warning, before
+any of this comes into play.
+
+<InlineInstall
+  heading="For documents too big to sit in one chat"
+  body="FileUploadGPT splits a long document into parts ChatGPT accepts and sends them in order, with the instruction to hold its answer until the last part lands. Controlled order, rather than everything at once."
+/>
+
+## What to do when a chat is full
+
+**Start a new one.** Usually the right answer, and the one people resist. Open with a six line brief
+of the conclusions so far and you get a clean window carrying only what matters.
+
+**Restate your constraints periodically.** A short message repeating the rules moves them back to the
+recent end of the conversation, where they are safe.
+
+**Move stable material somewhere it is re-supplied.** Custom instructions, a Project, or a custom GPT
+holding reference files, up to <Fact k="filesPerGpt" />. Those are provided fresh each turn rather
+than scrolling out of reach.
+
+**Keep one task per chat.** Long chats that wander across three subjects burn the window on material
+none of the three needs.
+
+## The decision
+
+Treat a long conversation as something with a working life rather than a permanent record. Repeated
+questions, dropped rules and shaky recall of early detail are the chat telling you it has run out of
+room, in the only way it can.
+
+Run the verbatim quote test before you act on anything important from a long thread. It is the
+difference between an answer based on the discussion you had and one based on the last third of it.

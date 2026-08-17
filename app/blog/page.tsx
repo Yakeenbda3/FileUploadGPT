@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CATEGORIES, getAllArticles } from '@/lib/articles';
+import SiteSearch from '@/components/search/SiteSearch';
 
 export const metadata: Metadata = {
-  title: 'Every guide, newest first',
+  title: 'All ChatGPT File Upload Guides, Newest First',
   description:
     'The full archive of FileUploadGPT guides on ChatGPT upload limits, supported file types, error messages, and working with long documents.',
   alternates: { canonical: '/blog' },
@@ -21,12 +22,17 @@ export default function BlogIndexPage() {
         Every guide, newest first
       </h1>
       <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-ink-soft">
-        Sorted by when we last checked the facts in them. Browsing by subject instead?{' '}
+        {articles.length} guides, sorted by when we last checked the facts in them. Browsing by
+        subject instead?{' '}
         <Link href="/guides" className="font-medium text-brand-700 underline">
           Start here
         </Link>
         .
       </p>
+
+      <div className="mt-7 max-w-xl">
+        <SiteSearch variant="panel" placeholder={`Search ${articles.length} guides`} />
+      </div>
 
       <div className="mt-10 divide-y divide-slate-200 border-t border-slate-200">
         {articles.map((article) => (

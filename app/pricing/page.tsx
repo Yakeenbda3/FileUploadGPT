@@ -4,7 +4,7 @@ import { PageShell } from '@/components/layout/PageShell';
 import { InstallButtonRow } from '@/components/cta/InstallButtonRow';
 
 export const metadata: Metadata = {
-  title: 'Pricing: it is free',
+  title: 'FileUploadGPT Pricing: Free, With No Account',
   description:
     'FileUploadGPT is free with no paid tier and no account. Here is why, and what that means for how long it will stay around.',
   alternates: { canonical: '/pricing' },

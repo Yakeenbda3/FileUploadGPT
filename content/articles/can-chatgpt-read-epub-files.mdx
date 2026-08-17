@@ -1,0 +1,154 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-epub-files',
+  title: 'Can ChatGPT read EPUB files? Yes, with two catches',
+  heading: 'Can ChatGPT read EPUB files?',
+  description:
+    'An EPUB is a zip of HTML, so the text is usually reachable. DRM stops you dead, and book length is the problem nobody warns you about.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read epub files',
+  related: [
+    'chatgpt-file-types-supported',
+    'how-to-split-a-document-for-chatgpt',
+    'chatgpt-study-from-textbook',
+  ],
+  faq: [
+    {
+      q: 'Can I upload an EPUB straight to ChatGPT?',
+      a: 'Often yes. An EPUB is a zip archive of XHTML files, so the text sits in readable markup and gets extracted. Results are less consistent than DOCX or PDF because the container also holds navigation files and styling, so converting to plain text first is the reliable route.',
+    },
+    {
+      q: 'Why will my Kindle or library book not work?',
+      a: 'It carries DRM. A Kindle purchase is not an EPUB at all, and a library loan from Libby or OverDrive is encrypted so only the reading app can open it. Converters cannot read those files either. You need a DRM-free copy or a format you already own outright.',
+    },
+    {
+      q: 'Will ChatGPT read a whole novel in one upload?',
+      a: 'It will accept one. A typical novel is far below the 2 million token cap, so nothing gets rejected. The problem is attention: ask about the middle of a long book and the answer leans on whatever was most prominent, usually the opening and the ending.',
+    },
+    {
+      q: 'My EPUB uploaded but ChatGPT says it is empty. Why?',
+      a: 'It is probably a fixed-layout EPUB, where every page is an image rather than text. Every plan except Enterprise extracts digital text and discards images, so there is nothing to read. Open the file and try selecting a word. If you cannot, ChatGPT cannot either.',
+    },
+  ],
+});
+
+<AnswerBox>
+Usually yes. An EPUB is a zip archive of HTML files, so the text is sitting there in readable markup
+and ChatGPT can generally pull it out. Two things stop it: DRM, which makes the file unreadable to
+anything but the store's own app, and length, because a whole book is more text than one upload
+handles well. Converting to plain text and working chapter by chapter fixes the second problem and
+does nothing for the first.
+</AnswerBox>
+
+## What an EPUB actually is
+
+Rename an EPUB to `.zip` and open it. Inside you will find a folder of XHTML files, one per chapter
+or thereabouts, plus a stylesheet, a manifest and an images folder. That is the whole format. An
+ebook is a small website in a box.
+
+This matters because it tells you exactly what ChatGPT will do with it. It extracts digital text and
+discards presentation, and an EPUB hands over its text without much of a fight. OpenAI publishes no
+list of extensions, only the statement that it accepts
+&quot;<Fact k="supportedTypesStatement" />&quot; An ebook is a document in common use, so it sits
+inside that, and uploads generally work.
+
+Generally, not always. The container holds more than your chapters: a table of contents file, cover
+metadata, sometimes a per-chapter split that produces odd ordering once flattened. So an EPUB upload
+can come back with boilerplate mixed into the text, or with chapters in a sequence that does not
+match the book. Converting first removes that whole class of problem.
+
+## DRM is where it stops
+
+This is the real reason most people's EPUB will not work, and no amount of fiddling changes it.
+
+A book bought from Amazon is not an EPUB. It is AZW3 or KFX, Amazon's own formats, readable only by
+Kindle software. Books from Apple Books, Google Play Books and Kobo are usually EPUBs wrapped in
+DRM, which means the text inside is encrypted. A library loan through Libby or OverDrive is the same
+thing with an expiry date attached.
+
+In all of those cases the file on your disk contains no readable text. Not for ChatGPT, not for a
+converter, not for anything except the app that was issued the key. There is no setting to change
+and no upload trick that helps.
+
+<Callout variant="info" title="What to use instead">
+Plenty of books are sold without DRM. Project Gutenberg, Standard Ebooks, most technical publishers,
+and a good number of independent authors all supply plain EPUB. Academic PDFs you have downloaded
+legitimately work too. If you own the book on paper only, you are back to scanning, which brings its
+own problem, since scans are images and images are discarded.
+</Callout>
+
+## Converting an EPUB properly
+
+If you have a DRM-free file, converting takes a minute and makes everything downstream more
+predictable.
+
+<Steps>
+  <Step title="Open it in Calibre">
+    Free, runs everywhere, and it is the standard tool for this. Add the book, then choose Convert.
+  </Step>
+  <Step title="Convert to TXT">
+    Plain text is what ChatGPT works from anyway. You lose fonts and layout, which were being
+    discarded regardless.
+  </Step>
+  <Step title="Split it by chapter">
+    For anything book length, save each chapter as its own file rather than one long dump. The
+    reason is in the next section.
+  </Step>
+</Steps>
+
+If you would rather not install anything, rename the file to `.zip`, unzip it, and open the XHTML
+files in the text folder. It is uglier and it works.
+
+| Convert to | Verdict |
+| --- | --- |
+| `.txt` | Best. It is what gets read in the end |
+| `.docx` | Fine. Keeps chapter headings intact |
+| `.html` | Fine. Essentially what was already inside the EPUB |
+| `.pdf` | Works, but adds page furniture and size for no benefit |
+
+Converting an ebook to PDF is the common instinct and the weakest option. You are adding page
+breaks, headers and pagination to something that had none, and getting a bigger file that reads no
+better.
+
+<InlineInstall
+  heading="When cutting a book into chapter files gets tedious"
+  body="FileUploadGPT splits a long document into parts ChatGPT accepts and sends them in order, so you are not doing the slicing by hand."
+/>
+
+## The length problem nobody mentions
+
+Here is the part that surprises people. The size limits are not what stops you.
+
+A typical novel runs 80,000 to 120,000 words. As plain text that is a file of a few hundred
+kilobytes, nowhere near <Fact k="maxFileSize" />, and its token count is a small fraction of
+<Fact k="maxTextTokens" />. The upload will be accepted without complaint.
+
+Then you ask a question about chapter fourteen and get an answer that is clearly built out of the
+first fifty pages. Nothing failed, nothing warned you. Quality falls off with length long before any
+published cap is reached, and the drop is silent. Textbooks, reference works and omnibus editions
+can be long enough to hit the token cap as well, at which point the tail of the book is simply not
+there.
+
+The fix is unglamorous. Feed it a chapter at a time, keep a running set of notes you re-paste as you
+move forward, and check what it actually read by asking it to name the last section it saw.
+
+## Fixed-layout ebooks read as blank
+
+Comics, children's books, cookbooks and some illustrated textbooks ship as fixed-layout EPUB, where
+each page is an image with the words baked into it. The container looks identical from outside.
+
+ChatGPT handles document files as <Fact k="imagesInDocuments" />, extracting digital text and
+discarding images. A fixed-layout ebook has no digital text to extract, so you get an empty or
+nearly empty read, with no error explaining why.
+
+Test it in two seconds: open the book in any reader and try to select a word. If your cursor will
+not grab text, there is no text, and you are looking at an OCR job rather than an upload problem.
+
+## What to do
+
+If the book is DRM-free, convert it to plain text, split it by chapter, and work through it in
+order. If it came from Kindle or a library app, the file is closed to everything but its own reader
+and no conversion route exists. And if the pages are pictures, no upload of any kind will help until
+the words have been recovered from the images.

@@ -1,0 +1,169 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'how-to-send-a-pdf-to-chatgpt',
+  title: 'How to send a PDF to ChatGPT on desktop and mobile',
+  heading: 'How to send a PDF to ChatGPT',
+  description:
+    'Attach the file with the paperclip, ask your question in the same message, and check it read all of it. Steps for both devices, plus what goes wrong.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to send a pdf to chatgpt',
+  related: [
+    'upload-large-pdfs-to-chatgpt',
+    'chatgpt-scanned-pdf-not-working',
+    'chatgpt-max-pdf-size',
+  ],
+  faq: [
+    {
+      q: 'How do I send a PDF to ChatGPT?',
+      a: 'Open a chat, click the paperclip or plus icon beside the message box, and choose the PDF. On desktop you can also drag the file onto the chat window. Wait for the file tile to finish loading, type your question in the same message, then send.',
+    },
+    {
+      q: 'Can I send more than one PDF in a message?',
+      a: 'Often yes, and sometimes ChatGPT refuses with a message about uploading one file at a time. When that happens, send them one per message and tell it in the first message that more are coming so it waits before answering.',
+    },
+    {
+      q: 'Why does ChatGPT only talk about the first few pages?',
+      a: 'Because that is all it read. Text and document files are capped at 2 million tokens, and a file past that is truncated silently rather than rejected. Ask a question that can only be answered from the final pages to confirm it.',
+    },
+    {
+      q: 'Do I need to convert the PDF to text first?',
+      a: 'Not usually. ChatGPT extracts the text itself, so a normal PDF goes in as it is. Converting only helps in two cases: the file is very large because of embedded images, or the PDF is a scan and needs OCR to have any text at all.',
+    },
+  ],
+});
+
+<AnswerBox>
+On a computer, open a chat, click the paperclip beside the message box, choose your PDF, then type
+your question in the same message and send. Dragging the file onto the chat window does the same
+thing, and in the phone apps you tap the plus button instead. Attaching the file is the easy part.
+What goes wrong afterwards is nearly always one of three things: a scanned PDF, a document past the
+length cap, or an upload allowance you have already spent.
+</AnswerBox>
+
+One thing is worth understanding before the steps, because it explains most of what follows. ChatGPT
+does not open a PDF the way a PDF reader does. It pulls the digital text out of the file and works
+from that, discarding the images on every plan except Enterprise. A PDF is a container, and what
+matters is whether there is real text inside it.
+
+## Sending a PDF on a computer
+
+<Steps>
+  <Step title="Open a chat">
+    A new conversation is cleaner than an old one. Everything already in a chat stays in context and
+    competes with your document for attention.
+  </Step>
+  <Step title="Attach the file">
+    Click the paperclip or plus icon at the left of the message box and pick the PDF. Dragging the
+    file straight onto the chat window does exactly the same thing and is faster.
+  </Step>
+  <Step title="Wait for the tile to settle">
+    A tile with the file name appears above the message box. Until it stops showing a loading state
+    the file is not in yet, and sending early sends your question without the document.
+  </Step>
+  <Step title="Ask in the same message">
+    Type what you want done before you press enter, rather than sending the file on its own.
+  </Step>
+</Steps>
+
+<Callout variant="tip" title="Send the file and the question together">
+A PDF sent with no instruction gets a generic summary you did not ask for, and that summary then
+sits in the conversation shaping everything after it. "List every deadline in this contract and the
+page it appears on" is a better first message than "here is a PDF".
+</Callout>
+
+## Sending a PDF on a phone
+
+The apps handle uploads too, and the limits are identical, because they belong to your account
+rather than your device.
+
+<Steps>
+  <Step title="Tap the plus button">
+    It sits at the left of the message box in both the iOS and Android apps, and opens a menu with
+    camera, photos and files.
+  </Step>
+  <Step title="Choose Files, not Photos">
+    Files reaches your device storage and any cloud drives you have connected. Photos only offers
+    images, and a photograph of a page is not the same thing as the PDF.
+  </Step>
+  <Step title="Get the PDF into Files first if you need to">
+    Most PDFs arrive on a phone as email attachments. Open the attachment, use the share sheet to
+    save it to Files or your drive, then attach it from there.
+  </Step>
+</Steps>
+
+The camera is genuinely useful for a page or two, since ChatGPT reads images directly. It is the
+wrong tool for a long document: photographed pages go in as pictures, not text, and you will be
+fighting a much lower ceiling.
+
+## Then check it actually read the thing
+
+This is the step almost everyone skips, and it is the difference between an answer you can trust and
+one that only sounds right.
+
+Ask something that can only be answered from the end of the document. "What is the final section
+called?" or "quote the last sentence" will do. If it cannot tell you, it did not get that far, and
+whatever it just summarised was the opening pages.
+
+## If it says the PDF is empty or has no readable text
+
+You have a scan. This is the most common confusion with PDFs and it is not a bug.
+
+Retrieval from documents is <Fact k="imagesInDocuments" />. ChatGPT pulls the digital text out of a
+file and discards any images. A scanned page is a photograph, so there is no digital text in it and
+the extraction comes back with nothing.
+
+The test takes two seconds: open the PDF and try to select a sentence with your cursor. If you get a
+box drawn over the page instead of highlighted words, it is an image.
+
+The fix is OCR, which turns the picture of the words back into words. Preview on Mac and Acrobat's
+Recognise Text both do it, and there are free web tools if the document is not confidential. More
+detail in [why ChatGPT cannot read a scanned PDF](/blog/chatgpt-scanned-pdf-not-working).
+
+## If only the first part got read
+
+This one has no error message, which is why it catches people. The limit that matters is
+<Fact k="maxTextTokens" /> per text or document file, not the <Fact k="maxFileSize" /> size ceiling.
+A three-hundred-page report can be a couple of megabytes and still be well past what fits.
+
+When a document is over that line it is truncated, not rejected. The upload looks perfectly normal
+and ChatGPT answers from as much as it could hold.
+
+Three things work, in order of effort:
+
+- **Send only the section you need.** Extract those pages into their own PDF. You usually get a
+  better answer from twenty relevant pages than from three hundred mixed ones.
+- **Split it and send the parts in order.** Tell ChatGPT first that a long document is coming in
+  several parts and that it should reply "received" and wait rather than summarise. Without that
+  instruction it answers part one as though it were the whole thing.
+- **Use a retrieval tool for anything book length.** Past a point, even ordered chunks fall out of
+  memory before the last one lands.
+
+<InlineInstall
+  heading="Splitting a long PDF without doing it by hand"
+  body="FileUploadGPT reads the PDF in your browser, cuts it into pieces ChatGPT will accept, sends the hold-your-answer instruction first, then feeds the parts through in order."
+/>
+
+## If the upload will not start at all
+
+A refusal is the easiest failure to deal with, because it tells you something.
+
+| What you see | Cause | What to do |
+| --- | --- | --- |
+| A size error | Over <Fact k="maxFileSize" />, almost always from high-resolution images | Compress the PDF. The images were going to be discarded anyway |
+| A daily limit message | <Fact k="freeDailyUploads" /> on the Free plan | Wait for the reset or upgrade |
+| A limit message after barely uploading | The rolling cap of <Fact k="rollingUploadRate" />, which failed attempts also count toward | Wait a few hours before trying again |
+| One file at a time | Multiple attachments refused | Send them one per message |
+
+Retrying an upload that failed for size or length will fail identically every time. Zipping the PDF
+does not help either, since ChatGPT does not open archives.
+
+## The short version
+
+Paperclip on desktop, plus button on mobile, question in the same message. That is the whole
+procedure and it works for most documents first time.
+
+If the answer looks thin, work out which of the three it is. Nothing readable means a scan, so run
+OCR. A summary that stops early means truncation, so send the section you need or split it properly.
+A refusal means a size or plan limit, and the error will say which.

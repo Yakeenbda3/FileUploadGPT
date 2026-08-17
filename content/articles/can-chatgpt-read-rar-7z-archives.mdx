@@ -1,0 +1,152 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-rar-7z-archives',
+  title: 'Can ChatGPT read RAR, 7z or tar archives?',
+  heading: 'Can ChatGPT read RAR, 7z or tar archives?',
+  description:
+    'No, none of them are unpacked, so the upload is wasted. How to extract each format, what to do with split sets, and what to send instead.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read rar files',
+  related: [
+    'can-chatgpt-read-zip-files',
+    'chatgpt-file-types-supported',
+    'upload-large-code-files-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT open a RAR file?',
+      a: 'No. The file uploads and nothing errors, but the contents are never reached, so anything you get back is guesswork from the filename. Extract the archive on your own machine and upload the files inside it.',
+    },
+    {
+      q: 'Will converting the RAR to a ZIP help?',
+      a: 'No, and it costs you a step for nothing. Archives are not opened regardless of format, and converting to zip means extracting the RAR first anyway. Once you have extracted it, you already have the files worth uploading.',
+    },
+    {
+      q: 'What about a split archive like part1.rar or 7z.001?',
+      a: 'Those pieces are useless on their own, even locally. Put every part in the same folder and extract from the first one, then upload what comes out. Uploading a single part gets you a fragment of a container nothing will open.',
+    },
+    {
+      q: 'Does renaming the extension to .txt work?',
+      a: 'No. The extension is a label, not the format. Renamed, the file is still compressed binary, and opening it in a text editor shows the same nonsense ChatGPT would see. If the words are not readable to you in a text editor, they are not readable to it either.',
+    },
+  ],
+});
+
+<AnswerBox>
+No. RAR, 7z, tar and tar.gz all arrive as one sealed container, and nothing inside is read.
+Renaming, recompressing or converting to zip changes nothing, because the problem is the container
+rather than which compression it uses. Extract the archive on your own machine and upload the files
+that actually matter to your question.
+</AnswerBox>
+
+OpenAI describes what uploads support as &quot;<Fact k="supportedTypesStatement" />&quot; An archive
+is none of those four things. It is a box that holds them, and the box does not get opened.
+
+The question usually arrives from a specific place. Someone downloaded a bundle that happened to come
+as .rar, or a colleague sent a 7z of last quarter's documents, or you pulled a tar.gz of logs off a
+server. In every case the archive is the shape the files arrived in, not something you chose, which
+is why it feels reasonable to just hand the whole thing over.
+
+## What happens when you upload one
+
+Nothing visibly fails. The file attaches, the upload completes, and you can ask a question about it.
+
+That is the expensive part. You may get a confident answer built entirely from the filename and your
+own prompt, with no contact with the contents at all. A file called `q3-invoices.rar` will happily
+produce paragraphs about invoices.
+
+On Free you get <Fact k="freeDailyUploads" />, so one wasted archive costs you a third of the day.
+Every plan also sits under a rolling cap of <Fact k="rollingUploadRate" />, which matters more than
+people expect once you start extracting and uploading files one at a time.
+
+<Callout variant="warn" title="Compressing does not solve a size problem">
+If you hit a size limit and reached for an archive to shrink the file, the result is smaller and
+completely unreadable. For size, saving a document as plain text is the compression that works. It
+drops fonts, formatting and embedded images and leaves the words, which is the only part being read.
+</Callout>
+
+## Why RAR and 7z are worse bets than zip
+
+Zip is the one archive format with a decoder sitting in almost every standard library. RAR is not
+like that. Unpacking RAR needs a proprietary component that is rarely present anywhere by default.
+7z needs its own tooling. Tar is simple enough that most environments can walk it, and tar.gz layers
+gzip on top of that.
+
+In the end none of this matters, because the container is not opened at all. But it does explain why
+"convert it to zip first" is not the fix people hope for. Converting means extracting the RAR on your
+machine, and the moment you have done that, you are holding the actual files. Uploading those is the
+whole job, and re-zipping them undoes it.
+
+## Extracting each format
+
+| Format | Windows | macOS | Command line |
+| --- | --- | --- | --- |
+| .rar | 7-Zip or WinRAR | The Unarchiver | `unrar x file.rar` |
+| .7z | 7-Zip | Keka or The Unarchiver | `7z x file.7z` |
+| .tar | 7-Zip | Double click | `tar -xf file.tar` |
+| .tar.gz, .tgz | 7-Zip | Double click | `tar -xzf file.tar.gz` |
+
+macOS opens zip and tar.gz on its own but not RAR or 7z, which is why those two need something
+installed. Windows handles zip natively and nothing else on this list.
+
+## Split sets and password protection
+
+Two cases that waste more time than the rest combined.
+
+A split archive looks like `backup.part1.rar` through `backup.part6.rar`, or `data.7z.001` onwards.
+Each piece is a fragment, useless alone even locally. Put every part in one folder and extract from
+the first, which pulls in the rest automatically. Uploading part one on its own is a fragment of a
+container that nothing was going to open.
+
+Password protected archives have no route at all. There is nowhere in a chat to enter a password, and
+the decryption happens on your machine anyway. Extract locally, then decide what is safe to send.
+
+## What to send instead
+
+Pick by question rather than by archive.
+
+<Steps>
+  <Step title="Extract locally">
+    You end up looking at the contents, which is worth doing regardless. Most archives hold more than
+    the two or three files the question is really about.
+  </Step>
+  <Step title="Choose the files that answer the question">
+    Three relevant documents beat thirty every time. More files means more competing for attention
+    and a vaguer answer.
+  </Step>
+  <Step title="Combine them if there are many">
+    Concatenate into a single text file with a header line naming each file before its contents. That
+    keeps the structure, stays readable, and counts as one upload rather than one per file.
+  </Step>
+</Steps>
+
+Log tarballs deserve their own note. A tar.gz of server logs is usually enormous and almost entirely
+noise. Cut the window that matters before you send anything:
+
+```
+tar -xzf logs.tar.gz
+grep -n "ERROR" app.log > errors.txt
+```
+
+That leaves a few hundred readable lines instead of a few hundred megabytes of container.
+
+<InlineInstall
+  heading="When the extracted bundle is still too long"
+  body="FileUploadGPT splits a long text file into pieces ChatGPT accepts and sends them in order, so a whole source tree or log window gets read rather than the first slice of it."
+/>
+
+<Callout variant="warn" title="Check what you are about to send">
+Archives collect things quietly. Backups pick up `.env` files, keys in config, and personal data in
+old spreadsheets. Extracting and then bundling sweeps all of it into one upload. Look through the
+folder before you send it, because uploading means handing that content to OpenAI, and on consumer
+plans it may be used to improve models unless you have turned that setting off.
+</Callout>
+
+## The practical decision
+
+Every archive format gets the same answer, so stop comparing them. RAR, 7z, tar, tar.gz, zip, the
+format is not the variable. Extract on your machine, upload the handful of files the question is
+about, and bundle them into one text file if there are many. The archive was never the thing worth
+sending.

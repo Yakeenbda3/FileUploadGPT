@@ -1,0 +1,161 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-file-upload-stuck-loading',
+  title: 'ChatGPT file upload stuck loading: how to find the cause',
+  heading: 'ChatGPT file upload stuck loading? Work out which cause it is',
+  description:
+    'An upload that spins forever has four common causes. How to tell which one you have in about a minute, and what actually clears each.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt file upload stuck loading',
+  related: [
+    'chatgpt-file-upload-troubleshooting',
+    'chatgpt-file-is-too-large-error',
+    'chatgpt-upload-limit-reached-error',
+  ],
+  faq: [
+    {
+      q: 'Why does my ChatGPT upload spin forever and never finish?',
+      a: 'In most cases the file never left your browser. A browser extension, a stale tab or a slow upload connection interrupts the request, and the interface keeps showing progress because nothing told it to stop. Test with a one line text file in an incognito window to confirm before you touch the document itself.',
+    },
+    {
+      q: 'Does a stuck upload still count against my limit?',
+      a: 'Yes. OpenAI states that failed attempts count toward the rolling cap of 80 files per 3 hours. Retrying a hanging upload fifteen times spends fifteen slots, which is how people end up blocked by a limit message straight after a file that never uploaded at all.',
+    },
+    {
+      q: 'The file attached but ChatGPT never replied. Is that the same problem?',
+      a: 'No. If the file chip appeared, the upload succeeded and the delay is in reading it. Very long documents, large spreadsheets and files with thousands of rows take noticeably longer to process. Waiting is usually right, but past a couple of minutes with no output, start a fresh chat and send a smaller version.',
+    },
+    {
+      q: 'Why does the same file upload on my phone but not my laptop?',
+      a: 'That points at the desktop browser rather than the file. Extensions, a cached service worker or a corporate network filter are the usual differences between the two. Try an incognito window on the laptop, and if the file uploads there, re-enable your extensions one at a time to find the one responsible.',
+    },
+  ],
+});
+
+<AnswerBox>
+A spinner that never finishes is usually the browser, not the file. Test with a one line text file in
+an incognito window: if that uploads, an extension or a stale tab is interrupting the request, and if
+it also hangs, the problem is your network or OpenAI's. Only once both of those pass is it worth
+looking at the document. Diagnose before you retry, because every failed attempt spends one of your
+upload slots.
+</AnswerBox>
+
+Two very different failures wear the same spinner, and the fixes have almost nothing in common. Sorting
+out which one you have takes about a minute and saves you from changing the wrong thing.
+
+## The two failures that look identical
+
+**The file never attaches.** The progress indicator crawls, freezes, or resets, and no file chip
+appears next to the composer. Nothing reached OpenAI. This is a transport problem: browser, extension,
+or connection.
+
+**The file attaches but the answer never comes.** The chip appears, you send the message, and the reply
+sits there generating for minutes. The upload worked. What you are watching is ChatGPT trying to read a
+document that is heavy, long, or awkwardly structured.
+
+The first is worth troubleshooting. The second is often just slow, and the cure is a smaller file rather
+than a fix.
+
+## The one minute test
+
+<Steps>
+<Step title="Make a trivial file">
+Create a plain text file with one sentence in it. This removes your document from the picture entirely.
+</Step>
+<Step title="Upload it in a fresh chat">
+Not the chat you have been fighting with. A long conversation with several attachments already in it
+behaves differently from a new one.
+</Step>
+<Step title="If it fails, open an incognito window">
+Chrome disables extensions in incognito by default, so this tests your extensions and your cached tab in
+a single step. Sign in and try the same tiny file.
+</Step>
+<Step title="If it still fails, check status.openai.com">
+Uploads have their own incidents, and the app does not always make that obvious from the inside.
+</Step>
+</Steps>
+
+| What happened | What it means |
+| --- | --- |
+| Tiny file hangs everywhere, including incognito | Network or an OpenAI incident |
+| Tiny file works in incognito, hangs normally | An extension or your cached session |
+| Tiny file works, your document hangs | Size, length, or the file itself |
+| Your document attaches but the reply never arrives | Processing, not upload |
+
+## Extensions, the most common single cause
+
+Anything that inspects or blocks network requests can break an upload halfway through. Ad blockers,
+privacy and anti-tracking extensions, script blockers and VPN browser extensions are the usual
+offenders. Other ChatGPT extensions matter too, since several rewrite the composer area of the page and
+can interfere with the file picker attached to it.
+
+Once incognito confirms it, re-enable your extensions in small batches rather than one at a time. You
+will find the culprit in three or four reloads instead of fifteen.
+
+<Callout variant="info" title="Including ours">
+This applies to any extension that touches chat.openai.com, ours included. If you are debugging a stuck
+upload, turn everything off first, then bring things back one group at a time. An extension that helps
+with one part of the page can still sit in the way of another.
+</Callout>
+
+## When the browser or the tab is the problem
+
+A ChatGPT tab left open for days accumulates state. The session token behind the upload request expires
+independently of the interface, so the page looks signed in while the upload quietly fails
+authentication.
+
+Reload the tab with a hard refresh first. If that does not clear it, sign out and back in, then clear
+site data for chat.openai.com. Trying a different browser is a fast way to confirm the diagnosis before
+you spend time clearing anything.
+
+## When the file really is the cause
+
+If a one line text file uploads and your document does not, work through these in order.
+
+**Cloud placeholder files.** A file stored in iCloud Drive, OneDrive or Dropbox may exist locally only as
+a stub. The file picker shows it as though it were on the disk, but the browser has to pull it down
+before uploading, and on a slow connection that looks exactly like a hung upload. Right click the file,
+download or keep it locally, then upload again.
+
+**Size ceilings.** <Fact k="maxFileSize" /> per file, <Fact k="maxSpreadsheetSize" /> for spreadsheets
+and CSV, and <Fact k="maxImageSize" /> per image. Files near these thresholds often stall rather than
+producing a clean error.
+
+**Length rather than size.** Text and document files are capped at <Fact k="maxTextTokens" />, and
+spreadsheets are exempt from that cap. A long document can be modest in megabytes and still be far past
+what fits, which shows up as a very slow response instead of a rejection.
+
+**Password protected or damaged PDFs.** An encrypted PDF cannot be read, and a partially corrupted one
+can hang the processing step. Open it, re-export it without protection, then try again.
+
+<InlineInstall
+  heading="For the documents that stall because they are long"
+  body="FileUploadGPT splits a long document into pieces ChatGPT accepts and sends them in order, with a hold-your-answer instruction first, so nothing has to survive a single heavy upload."
+/>
+
+## Network causes worth ruling out
+
+Upload speed is not download speed. A connection that streams video without trouble can still take
+several minutes to push a large file, and on a busy shared network it may never finish.
+
+Corporate networks and VPNs add another layer, since inspection proxies routinely break large multipart
+uploads. If you are on a work laptop and a small file uploads while a large one never does, that is the
+signature. Try the same file on a mobile hotspot. If it goes through, the network is your answer and no
+amount of clearing browser data will help.
+
+## Stop retrying while you diagnose
+
+Failed attempts count toward your allowance. The rolling cap is <Fact k="rollingUploadRate" />, and on
+Free it is <Fact k="freeDailyUploads" />, so a file you retried a dozen times has spent a dozen slots on
+nothing. ChatGPT does not show how much of that rolling allowance remains, which is why the limit
+message so often arrives as a surprise right after a run of stuck uploads.
+
+## The practical order
+
+Tiny text file in incognito, then status.openai.com, then extensions, then the browser session, then the
+file itself. That sequence puts the cheapest checks first and identifies the cause in a few minutes.
+
+If the tiny file uploads everywhere and only your document stalls, stop treating it as a bug. The
+document is too big or too long for one upload, and splitting it is the fix rather than the workaround.

@@ -3,7 +3,7 @@ import { PageShell } from '@/components/layout/PageShell';
 import { CONTACT_EMAIL } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'Privacy policy',
+  title: 'Privacy Policy | FileUploadGPT',
   description:
     'What FileUploadGPT collects, which is nothing in the extension itself, and what the website collects, which is anonymous analytics.',
   alternates: { canonical: '/privacy-policy' },

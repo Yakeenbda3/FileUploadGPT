@@ -4,7 +4,7 @@ import { PageShell } from '@/components/layout/PageShell';
 import { InstallButtonRow } from '@/components/cta/InstallButtonRow';
 
 export const metadata: Metadata = {
-  title: 'How FileUploadGPT works',
+  title: 'How FileUploadGPT Splits Files for ChatGPT',
   description:
     'What happens between picking a file and ChatGPT having read it, including the instruction that stops it answering before every part arrives.',
   alternates: { canonical: '/how-it-works' },

@@ -1,0 +1,160 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-team-enterprise-upload-limits',
+  title: 'ChatGPT Team and Enterprise file upload limits',
+  heading: 'What the business plans change about uploads, and what they do not',
+  description:
+    'Team, Business and Education share their upload ceilings with Plus. Enterprise changes exactly one thing about what ChatGPT can read.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt team enterprise file upload limits',
+  related: ['chatgpt-plus-file-upload-limit', 'chatgpt-storage-limit', 'chatgpt-attachment-limit'],
+  faq: [
+    {
+      q: 'Does ChatGPT Team allow bigger file uploads than Plus?',
+      a: 'No. The ceiling of 512 MB per file, the 2 million token cap on text and document files and the roughly 50 MB spreadsheet limit are the same on Team as on Plus and on Free. Team raises the project allowance to 40 files, not the size of anything.',
+    },
+    {
+      q: 'What does Enterprise actually add for file uploads?',
+      a: 'Visual retrieval for PDF files. OpenAI states that all other plans and document types support text-based retrieval only, meaning digital text is extracted and images are discarded. It is the one upload behaviour the business plans genuinely change.',
+    },
+    {
+      q: 'How much storage does a team account get?',
+      a: '25 GB per end user and 100 GB per organisation. Both figures are published by OpenAI. Four people at their individual ceiling already reach the organisation figure, so past a handful of seats the shared pool is the one that runs out first.',
+    },
+    {
+      q: 'Will moving to Team stop long documents being truncated?',
+      a: 'No. Truncation comes from the 2 million token cap on text and document files, which is identical on every plan including Enterprise. A report that gets half read on Free gets half read on Team, with no warning either time.',
+    },
+  ],
+});
+
+<AnswerBox>
+Team, Business and Education share their upload ceilings with Plus. Same <Fact k="maxFileSize" /> per
+file, same <Fact k="maxTextTokens" /> per text or document file, same rolling rate. What the business
+plans add is <Fact k="projectFilesPro" />, an organisation storage pool of <Fact k="orgStorageCap" />,
+and on Enterprise alone, visual retrieval for PDFs. That last one is the only change to what ChatGPT
+can actually read.
+</AnswerBox>
+
+Teams tend to move up expecting file handling to improve. Mostly it stays exactly where it was, with
+a larger project allowance and better administration around it. Worth knowing before the purchase
+order rather than after.
+
+## Plan by plan
+
+| | Plus | Pro, Team, Education, Business | Enterprise |
+| --- | --- | --- | --- |
+| Upload rate | <Fact k="rollingUploadRate" /> | <Fact k="rollingUploadRate" /> | <Fact k="rollingUploadRate" /> |
+| Files per project | <Fact k="projectFilesPlus" /> | <Fact k="projectFilesPro" /> | not published separately |
+| Size per file | <Fact k="maxFileSize" /> | <Fact k="maxFileSize" /> | <Fact k="maxFileSize" /> |
+| Text and document length | <Fact k="maxTextTokens" /> | <Fact k="maxTextTokens" /> | <Fact k="maxTextTokens" /> |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" /> | <Fact k="maxSpreadsheetSize" /> | <Fact k="maxSpreadsheetSize" /> |
+| Images | <Fact k="maxImageSize" /> | <Fact k="maxImageSize" /> | <Fact k="maxImageSize" /> |
+| Images inside documents | discarded | discarded | **visual retrieval, for PDFs** |
+| Storage | <Fact k="userStorageCap" /> per user | <Fact k="userStorageCap" /> per user, <Fact k="orgStorageCap" /> per organisation | <Fact k="userStorageCap" /> per user, <Fact k="orgStorageCap" /> per organisation |
+
+Three rows move as you read to the right. Everything that governs how much of a document ChatGPT can
+take in stays flat all the way across.
+
+## The one genuine difference
+
+OpenAI's File Uploads FAQ, on images inside documents:
+
+> ChatGPT Enterprise supports Visual Retrieval for PDF files.
+>
+> All other plans and document files only support text-based retrieval. This means that ChatGPT will
+> extract digital text from the file and discard any images.
+
+This is the only upload capability on the list that a business plan adds, and it is Enterprise only.
+Team does not get it. Business does not get it. Pro does not get it.
+
+It matters more than it sounds. On every other plan a scanned contract produces nothing at all, the
+chart carrying the number in a quarterly pack is simply absent, and a slide deck that makes its
+argument in diagrams summarises down to a few headings. None of that is announced. The answer comes
+back fluent and confident, built on whatever text survived.
+
+<Callout variant="info" title="Enterprise is a procurement decision, not an upgrade button">
+Enterprise is sold through OpenAI's sales process rather than bought from a settings page. If visual
+retrieval is the reason you are looking at it, price the alternative first. Running scans through
+OCR, and screenshotting figures to upload as images alongside the document, covers most of the same
+ground for nothing.
+</Callout>
+
+## The numbers that do not move at all
+
+<Fact k="maxFileSize" /> per file. <Fact k="maxTextTokens" /> per text or document file, with
+spreadsheets exempt. <Fact k="maxSpreadsheetSize" /> for spreadsheets, which OpenAI hedges itself
+because it depends on row size. <Fact k="maxImageSize" /> per image.
+
+Identical on Free, Plus, Pro, Team, Education, Business and Enterprise.
+
+<Callout variant="warn" title="The expensive misunderstanding">
+The token cap is what cuts long documents short, and it does not move for money. A 900 page policy
+manual is truncated on Enterprise exactly as it is truncated on Free. The upload succeeds either way
+and nothing tells you where the reading stopped.
+
+If a team upgraded because long reports were coming back oddly thin, the upgrade did not address it,
+and the summaries will carry on looking complete.
+</Callout>
+
+The rolling rate of <Fact k="rollingUploadRate" /> is unchanged too. Business plans lift the Free
+plan restriction of <Fact k="freeDailyUploads" />, but so does Plus, and after that everybody is on
+the same rate. Failed attempts count toward it on paid plans as well, which is worth knowing if your
+team runs batch uploads.
+
+<InlineInstall
+  heading="For the limit that no plan removes"
+  body="FileUploadGPT splits documents past ChatGPT's length cap into pieces it accepts and sends them in order. It behaves the same on Free, Plus, Team and Enterprise, because the cap it works around is the same on all of them."
+/>
+
+## Storage once there is an organisation
+
+Two published figures apply. <Fact k="userStorageCap" /> per end user, and
+<Fact k="orgStorageCap" /> per organisation.
+
+Do the arithmetic before planning around it. Four people at their individual ceiling already come to
+the organisation figure, and ten people would come to 250 GB, so past a handful of seats the shared
+pool is the one that runs out first. One person with a heavy Projects habit can quietly spend what
+everyone else was going to use.
+
+Storage also behaves unlike every other limit here. It is cumulative and it never clears on its own.
+Rate caps sort themselves out within the hour. Storage only goes down when somebody deletes a chat,
+a Project or a custom GPT, and on a shared account the material filling it often belongs to someone
+who has left.
+
+## Projects and custom GPTs on a shared account
+
+The project allowance is the row that genuinely improves. <Fact k="projectFilesPlus" /> on Plus
+against <Fact k="projectFilesPro" /> on Pro, Team, Education and Business. For a team keeping a
+standing set of reference documents in one place, that doubling is the real purchase.
+
+Custom GPTs do not improve. Knowledge is capped at <Fact k="filesPerGpt" /> for the lifetime of that
+GPT, not per conversation, on every plan. A shared internal assistant built on twenty policy
+documents does not fit, and no plan makes it fit. Concatenating related documents into one text file
+before uploading is the usual answer, since the cap counts files rather than length.
+
+## What the business plans change that is not a limit
+
+Administration, mostly. Shared workspaces, seat management, retention controls and the usual
+compliance apparatus. Real reasons to buy, all of them, and none of them touch a number in the table
+above.
+
+Data handling is the other one. OpenAI states it does not use content submitted to business
+offerings such as the API and ChatGPT Enterprise to improve model performance. If the objection to
+uploading company documents was about training rather than about size, that is the part of the
+decision worth examining.
+
+## Making the decision
+
+**Buy Team or Business for** the shared workspace, the administration and the doubled project
+allowance. Sensible reasons, all three.
+
+**Buy Enterprise for** visual retrieval, if your documents genuinely are scans and charts, and for
+the governance. Not for capacity.
+
+**Do not buy any of them expecting** larger files, longer documents or faster uploads. Those
+ceilings are the ones you already have. When a long document is the problem, the fix is to send less
+at a time: convert it to plain text, send only the section that matters, or split it and send the
+parts in order with an instruction to hold the answer until the last one arrives.

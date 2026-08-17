@@ -1,0 +1,156 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'upload-large-powerpoint-to-chatgpt',
+  title: 'How to upload a large PowerPoint to ChatGPT',
+  heading: 'How to upload a large PowerPoint to ChatGPT',
+  description:
+    'A big deck is big because of images, and ChatGPT discards those anyway. Export the text and speaker notes instead, and know what gets left behind.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to upload a large powerpoint to chatgpt',
+  related: [
+    'chatgpt-file-upload-limit-workaround',
+    'how-to-split-a-document-for-chatgpt',
+    'chatgpt-supported-image-formats',
+  ],
+  faq: [
+    {
+      q: 'Why is my PowerPoint file too large to upload?',
+      a: 'Almost always embedded media. The per-file ceiling is 512 MB, and decks get there through full-resolution photos, screenshots and video rather than through words. Compressing the pictures inside PowerPoint usually fixes it in one step.',
+    },
+    {
+      q: 'Does ChatGPT read the speaker notes in a PPTX?',
+      a: 'Speaker notes are text, so they generally come through alongside the slide text. On a visual deck they often carry more of the actual argument than the slides do. Say in your prompt that the notes are the main content, or they get treated as an afterthought.',
+    },
+    {
+      q: 'Should I convert the deck to PDF before uploading?',
+      a: 'It rarely helps. A PDF export has the same shape as the original: the text stays readable, the visuals become images, and images are discarded on every plan except Enterprise. Exporting the slide text and notes to a document is smaller and cleaner.',
+    },
+    {
+      q: 'How do I get ChatGPT to comment on my slide design?',
+      a: 'Export the slides you care about as images and upload those, capped at 20 MB each. Design, layout and chart shape are entirely visual, so a text extraction has nothing to judge and will answer around the gap without saying so.',
+    },
+  ],
+});
+
+<AnswerBox>
+A large PowerPoint is large because of the parts ChatGPT throws away. Photos, screenshots and
+embedded video account for nearly all the weight of a heavy deck, and every plan except Enterprise
+extracts the text and discards the images. Compress the media, or export the slide text and speaker
+notes into a document and upload that instead. Either route costs you nothing ChatGPT was going to
+read.
+</AnswerBox>
+
+The hard ceiling is <Fact k="maxFileSize" /> per file, which sounds generous until you meet a deck
+built from full-bleed photography with a couple of clips embedded in it. The words in that same
+deck, speaker notes included, usually come to a few tens of kilobytes.
+
+That gap is the whole story. Fixing a PowerPoint upload is mostly a matter of separating the part
+that weighs something from the part that gets read.
+
+## Where the megabytes actually are
+
+A .pptx file is a zip archive. Inside it sits a small pile of XML describing the slides, and a media
+folder holding every image, video and audio file in the deck at its original resolution. That
+includes the ones sitting behind other objects, the ones on unused layouts, and the parts of photos
+you cropped away on the slide, which PowerPoint keeps by default in case you want them back.
+
+| Part of the deck | Carries the file weight | Read by ChatGPT |
+| --- | --- | --- |
+| Photos and screenshots | Yes | No |
+| Embedded video and audio | Yes | No |
+| Charts, diagrams, icons | Some | No |
+| Slide titles and body text | Barely | Yes |
+| Text inside tables | Barely | Usually |
+| Speaker notes | Barely | Usually |
+
+Everything in the top half is what makes the file too big. Everything in the bottom half is what
+ChatGPT would have answered from. There is almost no overlap, which is why this problem is easier
+than it looks.
+
+## Compress the media and re-upload
+
+The fastest fix, and the one to try first if the deck is close to the limit rather than far past it.
+
+PowerPoint on Windows has this built in. Select any picture, open the Picture Format tab, choose
+Compress Pictures, then tick both Delete cropped areas of pictures and Apply to all pictures in this
+file. Embedded video and audio are handled separately, under File and then Info, as Compress Media.
+On Mac the equivalent lives under File and then Reduce File Size.
+
+Decks routinely lose most of their size this way. Retrieval from documents is <Fact k="imagesInDocuments" />,
+so the pictures were never going to be read, and dropping them to screen resolution costs you
+nothing at all in the answer you get. Keep a copy of the original if the deck still has to be
+presented.
+
+## Export the text and the notes instead
+
+The better fix when the deck is genuinely enormous, or when you want the analysis to be about the
+content rather than the file.
+
+<Steps>
+  <Step title="Send the deck to Word, with notes">
+    On Windows, File, then Export, then Create Handouts, and pick the layout with notes below the
+    slides. You get a Word document containing slide text and speaker notes in order. On Mac, print
+    the Notes layout to PDF for the same result.
+  </Step>
+  <Step title="Save it as a document or plain text">
+    A .docx or .txt file of the same deck is normally a few tens of kilobytes. There is no size
+    problem left to solve at that point.
+  </Step>
+  <Step title="Tell ChatGPT what it is looking at">
+    Say that this is the text and speaker notes from a slide deck, that the visuals are not
+    included, and that the notes carry the argument. Without that framing it treats sparse slide
+    text as the whole presentation.
+  </Step>
+</Steps>
+
+<Callout variant="warn" title="A sparse deck produces a confidently thin summary">
+Twelve slides carrying a chart and four words each will summarise as roughly fifty words of content,
+delivered as though that were the presentation. Nothing in the answer indicates that most of the
+meaning was in the pictures. This is worth knowing before you judge the output.
+</Callout>
+
+## What you lose, and how to get part of it back
+
+Three things do not survive, and each has a workaround if it matters.
+
+**Charts.** A chart on a slide is an image, so the figures in it are gone. Paste the underlying
+numbers into the chat as text or as a small table. You get a better answer from the raw numbers than
+from any description of the picture.
+
+**Diagrams and process flows.** These carry structure that the slide text does not restate. Write
+the sequence out in one line each. It takes a minute and it is usually the missing piece.
+
+**Design, layout and hierarchy.** Nothing textual to work with here at all. Export the specific
+slides as images and upload those, capped at <Fact k="maxImageSize" /> each. This is the only route
+to feedback on how a slide looks. There is more detail in the piece on
+[what ChatGPT reads from a presentation](/blog/chatgpt-powerpoint-pptx-support).
+
+## When the deck is long rather than heavy
+
+A different problem with the same symptoms, and the one people misdiagnose.
+
+Slide text is light, so a single deck almost never approaches the <Fact k="maxTextTokens" /> length
+cap. A year of weekly decks concatenated into one file, or a training set with dense notes on every
+slide, can. When that happens there is no error. The file uploads, and ChatGPT answers from as much
+of it as it could hold.
+
+Check it directly. Ask what the final slide is titled, or what the last section covers. If it cannot
+say, it never got there, and the summary you were given describes the opening only.
+
+<InlineInstall
+  heading="For a deck set that runs past the length cap"
+  body="FileUploadGPT splits long documents into pieces ChatGPT accepts and feeds them in order, with a hold-your-answer instruction first, so the whole set gets read instead of the first few slides."
+/>
+
+## The short version
+
+Too many megabytes? Compress the pictures. Images are discarded on upload anyway, so you lose
+nothing that was going to be read.
+
+Want a proper analysis? Export the slide text and speaker notes to a document and upload that, then
+say plainly that the visuals are missing.
+
+Need the visuals looked at? Export those slides as images. That is the only way the design and the
+charts get seen at all.

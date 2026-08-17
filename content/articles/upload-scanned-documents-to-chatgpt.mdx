@@ -1,0 +1,179 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'upload-scanned-documents-to-chatgpt',
+  title: 'Run OCR first: how to upload scanned documents to ChatGPT',
+  heading: 'How to upload a scanned document to ChatGPT',
+  description:
+    'How to tell a scan from a real PDF, run OCR on a Mac, on Windows or with free tools, and check the text layer worked before you upload.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to upload scanned documents to chatgpt',
+  related: [
+    'chatgpt-scanned-pdf-not-working',
+    'upload-large-pdfs-to-chatgpt',
+    'chatgpt-image-upload-limit',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT read a scanned PDF?',
+      a: 'Not unless the file has a text layer. Every plan except Enterprise extracts digital text and discards images, and a scanned page is only an image. Run the file through OCR and it reads normally.',
+    },
+    {
+      q: 'What is the quickest way to OCR a document?',
+      a: 'On a Mac, open it in Preview and select the text. On Windows, use PowerToys Text Extractor or OneNote. For a whole document on either machine, OCRmyPDF adds a proper text layer and runs locally.',
+    },
+    {
+      q: 'How do I check the OCR actually worked?',
+      a: 'Open the new file and try to select a sentence, then search for a word you can see on the last page. Words highlighting and the search finding a match means the text layer covers the whole document rather than the first few pages.',
+    },
+    {
+      q: 'Should I just upload screenshots instead?',
+      a: 'For a few pages, yes. Images are supported and capped at 20 MB each, so screenshotting three pages is faster than any OCR setup. For a few hundred pages it is impractical, and text costs far less to read.',
+    },
+  ],
+});
+
+<AnswerBox>
+A scan is a photograph of a page, so ChatGPT extracts nothing from it. Run the file through OCR to
+add a real text layer, confirm the text is selectable, then upload it like any other document.
+Preview on a Mac, PowerToys or OneNote on Windows, and OCRmyPDF on either will do it in about a
+minute.
+</AnswerBox>
+
+The uploading is not the problem. A scanned PDF uploads perfectly happily, and then ChatGPT says it
+cannot find any text, or answers vaguely from the file name. Retrieval from documents is
+<Fact k="imagesInDocuments" />, so a page that holds only an image leaves nothing behind.
+
+OCR, optical character recognition, turns the picture of the words back into words. Everything below
+is that one step, done properly and then checked.
+
+## Confirm it is really a scan
+
+Three tells, fastest first.
+
+**Try to select a sentence.** Click and drag across some words. If they highlight one at a time,
+following your cursor, there is real text and your problem is something else. If a rectangle draws
+over the page instead, it is an image.
+
+**Search the file.** Press Cmd+F or Ctrl+F and look for a word you can see on the screen. No matches
+means no text layer.
+
+**Glance at the size.** Forty pages of text is usually a few hundred kilobytes. Forty scanned pages
+run to several megabytes, because each page is a photograph. Not proof on its own, but a good hint.
+
+Documents are often mixed. A report written digitally with a scanned appendix passes the selection
+test on page one and fails on the page you care about. Test the section you actually want to ask
+about.
+
+## OCR on a Mac
+
+**Preview, for a few pages.** macOS recognises text inside images itself. Open the scan in Preview
+and try to select a line. If the cursor picks out words, you can copy them straight into a chat,
+with nothing installed.
+
+**Preview export, for a text layer.** File, then Export as PDF. On recent macOS versions the
+recognised text is written into the exported file. Run the selection test on the export rather than
+assuming, since this varies by version.
+
+**Shortcuts, for a folder of images.** The Shortcuts app has an Extract Text from Image action.
+Point it at a folder of page images and it writes out the text in one pass.
+
+## OCR on Windows
+
+**PowerToys Text Extractor.** PowerToys is free from Microsoft. Text Extractor copies text out of
+any region of the screen, including a PDF page you happen to be looking at. No conversion, no
+upload, good for a handful of pages.
+
+**OneNote.** Insert the image into a page, right click it, and choose Copy Text from Picture. It has
+been there for years and it is reliable on clean scans.
+
+**Not Word.** Word will open a PDF and convert it, but the pages of a scan usually arrive as
+pictures in the converted document. It is not an OCR step.
+
+## For a whole document, or a private one
+
+**OCRmyPDF.** Free and open source, built on Tesseract. It adds an invisible text layer under the
+original page images, so the document looks identical and is now readable. It runs on your own
+machine and handles hundreds of pages. For anything long or confidential this is the right answer.
+It is a command line tool, which is the only real cost.
+
+**Adobe Acrobat.** Scan and OCR, then Recognise Text. Paid, and the most forgiving on poor scans.
+
+**Google Drive.** Upload the file, right click it, open it with Google Docs. OCR runs and you get a
+document you can copy from. Layout is flattened and long files do not always come through whole, so
+check the last page is there.
+
+**Free OCR websites.** Most of them work fine.
+
+<Callout variant="warn" title="Not for anything confidential">
+A free OCR site means handing your document to a company you know nothing about. For contracts,
+medical records, anything under an NDA, or anything with personal data in it, use software on your
+own machine. The same caution applies to uploading it to Google Drive.
+</Callout>
+
+## After OCR it is an ordinary document
+
+Which means the ordinary limits apply: <Fact k="maxFileSize" /> per file, and
+<Fact k="maxTextTokens" /> for text and document files.
+
+The size cap rarely bites, but a scan is one of the few cases where it can, because an OCR'd PDF
+still carries a full page image for every page. If you are close to it, export the text on its own
+as a .txt or .docx and the file collapses to a fraction of the size. You lose the page images, which
+retrieval was discarding anyway.
+
+The length cap is the more likely wall. A scanned book that comes through OCR cleanly can still be
+too long to be read in one piece, so you go straight from one problem to the next.
+
+<InlineInstall
+  heading="For a document that is long as well as scanned"
+  body="Once the text layer exists, FileUploadGPT splits a document past ChatGPT's length cap into pieces it accepts and sends them in order, so a whole OCR'd book gets read instead of the opening chapters."
+/>
+
+## Check the OCR worked before you upload
+
+<Steps>
+  <Step title="Run the selection test again">
+    On the new file. Words highlight, you have text. Still a rectangle, the OCR did not take and the
+    upload will fail exactly as before.
+  </Step>
+  <Step title="Search for a word from the last page">
+    The step people skip. It confirms the text layer covers the whole document rather than stopping
+    partway through.
+  </Step>
+  <Step title="Read a paragraph of the output">
+    OCR on a faded or skewed scan produces plausible nonsense, not obvious breakage.
+  </Step>
+  <Step title="Spot check the numbers">
+    Digits are where OCR is weakest and where a wrong answer costs most. Zero and O, one and l, and
+    decimal points that quietly vanish. Check any figure you plan to ask about.
+  </Step>
+  <Step title="Once it is uploaded, ask what the final section is called">
+    If ChatGPT cannot say, the text layer is incomplete and you are getting answers about part of
+    the document.
+  </Step>
+</Steps>
+
+Bad OCR does not fail loudly. A document full of mangled words still uploads, still gets read, and
+still produces a confident answer. You cannot tell it is wrong.
+
+## When to skip OCR entirely
+
+**A few pages.** Screenshot them and upload the images. Images are supported, capped at
+<Fact k="maxImageSize" /> each, and quicker than any OCR setup for three pages. Impractical for
+three hundred.
+
+**Handwriting.** Recognition built for print is unreliable on handwriting. Type out the part you
+need instead.
+
+**A bad scan.** Skewed, faded, or photographed at an angle. Rescanning flat, in even light, at a
+decent resolution beats any amount of cleanup afterwards.
+
+**ChatGPT Enterprise.** Enterprise supports visual retrieval for PDFs, so a scan may work as it is.
+Every other plan needs the text layer.
+
+## The short version
+
+Selection test first. If a rectangle draws over the page, OCR it with whatever you already have:
+Preview on a Mac, PowerToys or OneNote on Windows, OCRmyPDF for anything long or private. Then test
+the result before you upload. A silent OCR failure costs far more than the minute it takes to check.

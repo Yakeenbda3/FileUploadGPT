@@ -65,3 +65,87 @@ ${entries}
 
 writeFileSync(outFile, output, 'utf8');
 console.log(`[build-article-index] indexed ${slugs.length} article(s) into lib/articles.generated.ts`);
+
+// ── The client-safe metadata index ─────────────────────────────────────────────────────────────
+//
+// The header's menu and the site search both need every article's title, description and category.
+// They cannot read them from `articles.generated.ts`, because that barrel imports every .mdx file:
+// importing it from a client component would ship the entire compiled body of the whole site to
+// the browser to render a menu. This second file carries the metadata and nothing else.
+//
+// The `meta` object in each article is a plain literal, so it is extracted textually and evaluated
+// in isolation. A file whose meta cannot be read fails the build here rather than rendering an
+// article with no title.
+
+/** Pull the object literal out of `defineArticle({ ... })` by matching braces. */
+function extractMetaLiteral(source, file) {
+  const marker = source.indexOf('defineArticle(');
+  if (marker === -1) {
+    console.error(`[build-article-index] ${file}: no defineArticle(...) call found.`);
+    process.exit(1);
+  }
+  const start = source.indexOf('{', marker);
+  let depth = 0;
+  let inString = null;
+  for (let i = start; i < source.length; i++) {
+    const ch = source[i];
+    const prev = source[i - 1];
+    if (inString) {
+      if (ch === inString && prev !== '\\') inString = null;
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') {
+      inString = ch;
+      continue;
+    }
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) return source.slice(start, i + 1);
+    }
+  }
+  console.error(`[build-article-index] ${file}: meta object literal is not closed.`);
+  process.exit(1);
+}
+
+const index = files.map((file) => {
+  const source = readFileSync(join(articlesDir, file), 'utf8');
+  const literal = extractMetaLiteral(source, file);
+  let meta;
+  try {
+    // The literal contains only data. Evaluated in its own function scope with nothing in scope.
+    meta = Function(`"use strict"; return (${literal});`)();
+  } catch (error) {
+    console.error(`[build-article-index] ${file}: could not read meta. ${error.message}`);
+    process.exit(1);
+  }
+  return {
+    slug: meta.slug,
+    title: meta.title,
+    heading: meta.heading,
+    description: meta.description,
+    category: meta.category,
+    updated: meta.updated,
+  };
+});
+
+const indexOut = `// GENERATED FILE. Do not edit by hand.
+// Written by scripts/build-article-index.mjs.
+//
+// Article metadata only, with no MDX imports, so the header menu and the site search can import it
+// from the browser without dragging every article's compiled body along with them.
+
+export interface ArticleIndexEntry {
+  slug: string;
+  title: string;
+  heading: string;
+  description: string;
+  category: string;
+  updated: string;
+}
+
+export const ARTICLE_INDEX: ArticleIndexEntry[] = ${JSON.stringify(index, null, 2)};
+`;
+
+writeFileSync(join(root, 'lib', 'article-index.generated.ts'), indexOut, 'utf8');
+console.log(`[build-article-index] wrote metadata for ${index.length} article(s) into lib/article-index.generated.ts`);

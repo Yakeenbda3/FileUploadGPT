@@ -1,0 +1,145 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'upload-more-than-10-files-to-chatgpt',
+  title: 'How to upload more than 10 files to ChatGPT',
+  heading: 'How to get more than 10 files into ChatGPT',
+  description:
+    'Which ceiling of ten you hit decides the fix. Per message, per Project and per custom GPT, plus the bundling trick that turns twelve files into one.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to upload more than 10 files to chatgpt',
+  related: [
+    'how-many-files-can-you-upload-to-chatgpt',
+    'chatgpt-only-upload-one-file-at-a-time',
+    'can-chatgpt-read-zip-files',
+  ],
+  faq: [
+    {
+      q: 'Is there a 10 file limit in ChatGPT?',
+      a: 'Only for custom GPT knowledge, which holds 10 files for the lifetime of that GPT. An ordinary conversation has no published total. What people run into there is the per message attach count, which is separate, and the rolling cap of 80 files every 3 hours.',
+    },
+    {
+      q: 'How do I upload 20 documents at once?',
+      a: 'Concatenate them into one text file with a header line naming each document, then upload that single file. It counts as one upload, and ChatGPT can still answer about any individual document because the headers mark the boundaries.',
+    },
+    {
+      q: 'Can I zip the files instead?',
+      a: 'No. ChatGPT does not unpack archives, so a zip arrives as one file it cannot see inside. You spend an upload slot and get nothing readable back. Concatenating into text is the version of the idea that works.',
+    },
+    {
+      q: 'Does bundling get round the size limit too?',
+      a: 'No. Bundling defeats the limits that count files, not the one that measures length. A text or document file caps at 2 million tokens, and a bundle is a single file for that purpose, so a very large bundle needs splitting rather than joining.',
+    },
+  ],
+});
+
+<AnswerBox>
+Bundle them. Concatenate the documents into one text file with a header line naming each one, and
+upload that: one file instead of twelve, and ChatGPT can still answer about any single document
+inside it. Which ceiling of ten you hit changes the detail. A custom GPT holds
+<Fact k="filesPerGpt" /> for its lifetime, a Project holds <Fact k="projectFilesPlus" /> on Plus,
+and an ordinary chat has no published total at all.
+</AnswerBox>
+
+## Which ten you are actually hitting
+
+There is no single ten. Three different ceilings get reported as one, and the fixes are not the same.
+
+| Where you are | The ceiling | How it clears |
+| --- | --- | --- |
+| Ordinary conversation | No published total | Per message count only. Send more messages |
+| Project | <Fact k="projectFilesPlus" /> on Plus, <Fact k="projectFilesPro" /> on Pro and Team | Remove a file to add one |
+| Custom GPT knowledge | <Fact k="filesPerGpt" /> | Nothing. It is for the GPT's lifetime |
+| Any of the above | <Fact k="rollingUploadRate" /> | Waiting about an hour |
+
+In an ordinary chat, nothing stops at ten. The number you meet is how many files attach to a single
+message, and the answer to that is more messages, not a workaround. Every one of them still counts
+separately against <Fact k="rollingUploadRate" />, and on Free against
+<Fact k="freeDailyUploads" />, which is where twelve files becomes a real problem.
+
+Inside a Project or a custom GPT, the ceiling is genuine, and the only lever is making each slot
+carry more.
+
+## Bundling turns many files into one
+
+The count limits count files, not bytes. So stop having many files.
+
+On macOS or Linux:
+
+```
+for f in docs/*.txt docs/*.md; do
+  printf '\n\n===== FILE: %s =====\n\n' "$f"
+  cat "$f"
+done > bundle.txt
+```
+
+On Windows PowerShell:
+
+```
+Get-ChildItem docs\* -Include *.txt,*.md | ForEach-Object {
+  "`n===== FILE: $($_.Name) =====`n"
+  Get-Content $_.FullName -Raw
+} | Set-Content bundle.txt
+```
+
+PDFs and Word files have to become text first, because concatenating binaries produces a file nobody
+can read. Open each one and save as plain text, then bundle the results. That conversion also
+shrinks them enormously, and it strips images that would have been discarded anyway.
+
+## The header line is the part that matters
+
+Without headers a bundle is one undifferentiated wall of text, and ChatGPT blends the documents
+together. Ask what the March report said and you get an answer averaged across all twelve.
+
+Three things earn their place in the header:
+
+A consistent marker, the same shape every time, so the boundaries are unmistakable. The real
+filename, plus a date if the name does not carry one. And a contents list at the very top of the
+bundle, numbered, in the same order as the files below it.
+
+<Callout variant="tip" title="Ask for the list back">
+Send one message after uploading: "List every file in this bundle, in order." If the last two are
+missing, the file was truncated on the way in, and every answer you would have got after that was
+quietly built on part of the material.
+</Callout>
+
+## Where bundling stops helping
+
+Bundling defeats the limits that count. It does nothing about the one that measures length.
+
+A text or document file caps at <Fact k="maxTextTokens" />, and a bundle is one file for that
+purpose. That is a great deal of plain text, so a dozen ordinary reports are nowhere near it, but a
+folder of book length manuscripts is a different matter. Past that point you are splitting again
+rather than joining.
+
+Two things should stay out of the bundle. Spreadsheets, because they are exempt from the token cap
+and because ChatGPT works on a CSV as data rather than as prose, which is lost the moment you paste
+it into a text file. And scans, because ChatGPT supports <Fact k="imagesInDocuments" />, so a
+bundle of scanned pages contributes nothing at all.
+
+<InlineInstall
+  heading="When the bundle is too long for one upload"
+  body="FileUploadGPT reads the combined file on your computer, splits it into pieces ChatGPT accepts, and sends them in order with the instruction to wait until the last one arrives. Twelve documents get read in full without spending twelve upload slots."
+/>
+
+## Projects and custom GPTs need different planning
+
+A Project cap is a working set. Files can be removed, so <Fact k="projectFilesPlus" /> on Plus is
+twenty at a time rather than twenty ever. Group related documents into themed bundles, and clear out
+whatever the current work does not touch.
+
+A custom GPT is not like that. <Fact k="filesPerGpt" /> is for the lifetime of the GPT, so once you
+have used the tenth you are replacing files, not adding them. Plan this before you build. A GPT that
+needs to know thirty documents wants ten bundles grouped by topic, each with its contents list at
+the top, uploaded once and deliberately.
+
+## The decision, in short
+
+If you are in an ordinary chat, nothing is capped at ten. Send the files across several messages,
+and bundle only to protect your rolling allowance.
+
+If you are in a Project, bundle by theme and remove what you are not using.
+
+If you are building a custom GPT, bundle before you upload anything at all, because those ten slots
+never come back.

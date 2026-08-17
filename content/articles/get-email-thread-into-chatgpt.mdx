@@ -1,0 +1,188 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'get-email-thread-into-chatgpt',
+  title: 'How to get an email thread into ChatGPT',
+  heading: 'Getting an email thread into ChatGPT without the noise',
+  description:
+    'Why .eml and .msg files are the wrong route, what to copy instead, and which parts of a long thread to strip before ChatGPT reads it.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to get an email thread into chatgpt',
+  related: [
+    'chatgpt-file-types-supported',
+    'paste-vs-upload-chatgpt',
+    'how-to-split-a-document-for-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT read an .eml file?',
+      a: 'Usually, because .eml is plain text underneath and there is readable content in it. What comes along with the message is every routing header and any attachment encoded as base64, which is a wall of random-looking characters. Copying the message body out is cleaner and takes less time than tidying up afterwards.',
+    },
+    {
+      q: 'Can ChatGPT open a .msg file from Outlook?',
+      a: 'Treat that as a no. A .msg is a proprietary binary container rather than a text file, so there is nothing readable to extract even if the upload is accepted. Open it in Outlook and save as text, or copy the body into the chat.',
+    },
+    {
+      q: 'Can I forward an email to ChatGPT?',
+      a: 'OpenAI does not publish an address that accepts forwarded mail into a chat, so there is nothing to forward to. Forwarding is still useful as a first step: send the whole thread to yourself and you get one message containing everything, which is much easier to copy than clicking through twenty.',
+    },
+    {
+      q: 'Do I really need to remove the quoted replies?',
+      a: 'It is not required and it is worth doing. In a long thread the quoted history is often more than half the characters, and repetition changes the answer as well as the length, because a paragraph that appears nine times reads as the centre of the conversation.',
+    },
+  ],
+});
+
+<AnswerBox>
+Copy the thread as text rather than uploading the .eml or .msg file. A .msg is an Outlook binary
+that has no readable text to extract, and an .eml arrives wrapped in routing headers and encoded
+attachment data. Strip the signatures and the quoted history, keep one sender and date line above
+each message, and paste it oldest first.
+</AnswerBox>
+
+An email thread is not one document. It is twenty short documents, most of which quote the previous
+nineteen, packed in metadata no human has ever read. Get that structure right on the way in and
+ChatGPT handles threads very well. Hand over the raw file and you spend the conversation explaining
+what it is looking at.
+
+## Why the mail file is the wrong starting point
+
+OpenAI describes what it accepts as &quot;<Fact k="supportedTypesStatement" />&quot; Mail files are
+not common documents in that sense, and the two formats fail in different ways.
+
+**.msg** is Outlook's own binary container. Open one in a text editor and you get noise with a few
+readable fragments floating in it. Renaming it to .txt changes nothing, because the problem is not
+the extension, it is that the words are not stored as plain text.
+
+**.eml** has the opposite problem. It is plain text already, so it generally goes through and the
+message is genuinely in there. So are the routing headers, the MIME boundaries, and every attachment
+encoded as base64, which can be thousands of random-looking characters standing in for a logo in
+somebody's signature.
+
+Neither is worth fighting when the text is one copy away.
+
+## Forwarding, and what it is actually good for
+
+There is nothing to forward to. OpenAI does not publish an email address that accepts mail into a
+chat, so forwarding only moves the thread around your own mailbox.
+
+Forwarding to yourself is still the fastest way to gather a thread. Most clients build the forward
+as one message with every reply stacked inside it in order, sender and date on each. That is one
+place to copy from instead of twenty, with the ordering already done.
+
+## What to strip
+
+| Cut this | Why |
+| --- | --- |
+| Quoted history under each reply | The largest single win. A twenty message thread where each reply quotes the last one contains the opening message twenty times. |
+| Signature blocks | Job title, office address, phone, four social links, repeated on every message by every participant. |
+| Legal disclaimers | The confidentiality paragraph adds nothing and appears on every reply in the thread. |
+| Routing headers | Only present if you went the .eml route. Received, DKIM, Message-ID and the rest are for mail servers. |
+| Unsubscribe and tracking footers | Noise on anything that came from a system rather than a person. |
+| Inline logos and images | Retrieval from documents is <Fact k="imagesInDocuments" />, so these were never going to be read anyway. |
+
+The repetition matters beyond length. Ask what was said about pricing, and a model looking at the
+same paragraph quoted nine times reads it as the centre of the thread rather than as one remark
+somebody made in March.
+
+<Callout variant="tip" title="Gmail does some of this for you">
+The "..." button that hides trimmed content is hiding exactly the quoted history you wanted gone.
+Copy with it collapsed and the stripping is done. Print views tend to expand everything instead,
+which is why copying usually gives a cleaner result than printing to PDF.
+</Callout>
+
+## Keep who said what, and when
+
+The one thing never to strip is the attribution. Without it a thread becomes a run of paragraphs
+with no owner, and almost every useful question about a thread is a question about who.
+
+Reduce each mail header to a single line and keep it:
+
+> From: Sam Okafor, 14 March, 09:12
+
+Then check the order. Most clients show newest first, ChatGPT reads top to bottom, and a thread read
+backwards produces answers in which a decision appears to precede the discussion of it. Say what it
+is in the first line:
+
+> This is an email thread between four people, oldest message first.
+
+<Steps>
+  <Step title="Expand every message">
+    Collapsed messages are not included in a copy, and you will not notice the gap until an answer
+    is missing something.
+  </Step>
+  <Step title="Paste into a plain text editor first">
+    Paste without formatting, then copy again from there. That drops the HTML tables, the tracking
+    pixels and the logos in one move.
+  </Step>
+  <Step title="Delete the repeats">
+    Signatures, disclaimers, quoted history. This is where most of the size goes.
+  </Step>
+  <Step title="Order it oldest first, attribution intact">
+    One line of sender and date above each message.
+  </Step>
+  <Step title="Paste it, or save as .txt and upload">
+    Short threads go straight in the message box. Anything long is safer as a file.
+  </Step>
+</Steps>
+
+## When the thread is too long
+
+Cleaned up, most threads are small. A year of correspondence with one client is often ten or twenty
+thousand words, a small fraction of the <Fact k="maxTextTokens" /> a document is allowed.
+
+The limit that actually bites is the message box. A very long paste can be cut short with no warning
+and no visible sign, so past a few thousand words, save the text as a .txt file and upload it
+instead. That avoids the message length ceiling entirely.
+
+Whole mailbox exports are a different problem. Hundreds of threads at once will pass the token cap,
+and the answer there is to split by thread or by month.
+
+<InlineInstall
+  heading="For a mailbox export or a thread that runs to hundreds of messages"
+  body="FileUploadGPT takes the text file, splits it into pieces ChatGPT accepts, labels each one and sends them in order with an instruction to wait for the last part. The tidying up of signatures and quoted history is still yours to do, but the length problem stops being one."
+/>
+
+## Questions worth asking a thread
+
+Not "summarise this". A thread summary reads like the thread, only shorter.
+
+**What was agreed, and where?**
+
+> What was actually agreed in this thread, and in which message? Quote the line.
+
+**Who owes what?**
+
+> List every commitment anyone made, with the person and the date if one was given. Say "no date
+> given" where there is not one.
+
+**What changed?**
+
+> Did anyone's position change over the course of this thread? Show the before and the after.
+
+**What was never answered?**
+
+> Which direct questions were asked and never answered?
+
+That last one is the strongest, because absences are close to invisible when you read a thread
+yourself. A question that fell off the end of a busy week is exactly what a reader with no memory of
+the week is good at spotting.
+
+## Before you paste somebody else's mail
+
+Mail is the most personal thing most people upload. It carries other people's addresses, phone
+numbers, and things they wrote assuming a small audience.
+
+<Callout variant="warn" title="Worth a second of thought">
+Files live as long as the chat that holds them, and are removed <Fact k="fileRetention" />. If the
+thread is a work matter, check what your organisation allows before it leaves the mailbox, and
+replace names with initials where the names are not what your question is about.
+</Callout>
+
+## The short version
+
+Copy the thread, do not upload the mail file. Strip signatures, disclaimers and quoted history, keep
+one sender and date line per message, and put it oldest first. Paste a short thread, upload a long
+one as .txt, split anything larger than that. Almost every complaint about ChatGPT being vague on an
+email thread comes from feeding it the same message twenty times with no idea who sent any of them.

@@ -9,58 +9,13 @@
 // index script. Forgetting the script is caught by the build, not by a reader six weeks later.
 
 import { ARTICLE_MODULES } from './articles.generated';
+import { CATEGORIES, type CategoryKey } from './categories';
 
-/**
- * Content clusters, taken from the site's real Search Console data rather than invented.
- *
- * The split is the important part. `bypass` is the cluster our extension genuinely solves, it is a
- * small share of impressions but nearly all of the clicks, and it converts at roughly 4%. The
- * `file-types` cluster is an order of magnitude more impressions and converts at approximately
- * nothing, because someone asking whether ChatGPT reads mp4 has a problem this product does not
- * touch. Both are worth serving. Only one is worth pushing hard, and the CTA strength per cluster
- * reflects that.
- */
-export const CATEGORIES = {
-  bypass: {
-    slug: 'bypass-upload-limits',
-    label: 'Getting past the limits',
-    blurb: 'Practical fixes for files ChatGPT refuses to take.',
-    ctaStrength: 'strong',
-  },
-  'file-types': {
-    slug: 'file-types',
-    label: 'What ChatGPT accepts',
-    blurb: 'Straight answers on which formats work, which do not, and what to do instead.',
-    ctaStrength: 'soft',
-  },
-  errors: {
-    slug: 'errors',
-    label: 'Error messages explained',
-    blurb: 'The exact message you hit, what causes it, and how to get past it.',
-    ctaStrength: 'strong',
-  },
-  limits: {
-    slug: 'limits',
-    label: 'Limits by plan',
-    blurb: 'What Free, Plus, Pro and Team actually allow.',
-    ctaStrength: 'medium',
-  },
-  workflows: {
-    slug: 'workflows',
-    label: 'Working with documents',
-    blurb: 'Getting better results once the file is in.',
-    ctaStrength: 'medium',
-  },
-  compare: {
-    slug: 'comparisons',
-    label: 'Comparisons',
-    blurb: 'How ChatGPT stacks up against the alternatives for document work.',
-    ctaStrength: 'soft',
-  },
-} as const;
-
-export type CategoryKey = keyof typeof CATEGORIES;
-export type CtaStrength = (typeof CATEGORIES)[CategoryKey]['ctaStrength'];
+// Re-exported so existing imports from '@/lib/articles' keep working. The definitions live in
+// lib/categories.ts because client components need them and must not import this file: this one
+// pulls in the MDX barrel, which is the entire site's compiled content.
+export { CATEGORIES, categoryHref, CATEGORY_ORDER } from './categories';
+export type { CategoryKey, CtaStrength } from './categories';
 
 export interface ArticleMeta {
   /** URL segment. Must match the filename, which the index script enforces. */
@@ -243,10 +198,20 @@ export function assertArticleIntegrity(): void {
       );
     }
 
+    // Google renders roughly 55 to 60 characters of a title. Over that and the tail is cut off;
+    // well under it and we are handing back space that was free. Several pages on this site were
+    // sitting at eleven and fourteen characters, which is a third of the search result given away.
     if (meta.title.length > 65) {
       throw new Error(
         `[articles] "${slug}" title is ${meta.title.length} characters and will be truncated in ` +
           `search results. Keep it at 65 or fewer.`
+      );
+    }
+
+    if (meta.title.length < 25) {
+      throw new Error(
+        `[articles] "${slug}" title is only ${meta.title.length} characters. That wastes most of ` +
+          `the space a search result gives you. Aim for 40 to 60.`
       );
     }
 

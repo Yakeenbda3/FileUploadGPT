@@ -1,0 +1,156 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-unsupported-file-type-error',
+  title: 'ChatGPT says unsupported file type: what to convert to',
+  heading: 'ChatGPT will not accept that file type. Convert it, do not rename it.',
+  description:
+    'Why ChatGPT refuses a file the moment you attach it, which format to convert to instead, and why renaming the extension makes it worse.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt unsupported file type error',
+  related: [
+    'chatgpt-file-types-supported',
+    'chatgpt-file-is-too-large-error',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT say unsupported file type when my file is a document?',
+      a: 'Because the format is not one it parses, and being a document in everyday terms is not the same thing. Pages, Keynote, InDesign files and older proprietary word processor formats all hold documents ChatGPT will not open. Export to PDF, DOCX or TXT and the same content goes through without complaint.',
+    },
+    {
+      q: 'Can I just rename the file extension?',
+      a: 'Only when the new name is true. A .log or .yml file really is plain text, so calling it .txt costs you nothing. Renaming a Pages or Photoshop file to .docx only gets it past the file picker, and then a parser opens it and finds something it cannot read.',
+    },
+    {
+      q: 'Does a paid plan accept more file types?',
+      a: 'No. OpenAI describes the supported families the same way across plans, and paid plans raise how much and how often you can upload rather than which formats are accepted. The one documented plan difference about file content is visual retrieval for PDFs on Enterprise.',
+    },
+    {
+      q: 'The file uploaded fine but ChatGPT read nothing from it. Same problem?',
+      a: 'No, that is the opposite problem. The format was accepted, but there was little or no digital text to extract, which is what happens with scanned pages and image-only PDFs. Run the file through OCR so it has a real text layer, then upload it again.',
+    },
+  ],
+});
+
+<AnswerBox>
+The format is not one ChatGPT will parse, so nothing you do to the file name will help. Convert
+instead: PDF or DOCX for documents, TXT or CSV for anything that is really just text or a table, an
+exported image for design files, a transcript for audio and video. Renaming the extension is the one
+move that actively makes things worse, because it can push the file past the picker and into a
+parser that cannot read it.
+</AnswerBox>
+
+The message arrives immediately, usually as the file lands in the composer rather than after a
+progress bar. That timing is the useful part. Nothing was uploaded, no ceiling was reached, and no
+parser tried and gave up. ChatGPT looked at what kind of file you handed it and stopped there.
+
+OpenAI publishes no list of accepted extensions. The entire official answer is one sentence:
+&quot;<Fact k="supportedTypesStatement" />&quot; Four families, with the word common doing quiet work
+in the middle of them. Things outside those families, and a fair number of uncommon things inside
+them, get turned away at the door.
+
+## Which refusal you actually got
+
+Three different problems produce three messages that people describe with the same words.
+
+| What happened | When | What it means |
+| --- | --- | --- |
+| The file type is refused | The instant you attach | The format is not parsed at all. Convert it. |
+| The file is too large | During or after upload | A size or length ceiling. Shrink it or split it. |
+| It uploads, then the answer is thin | After it lands | Little or no text came out, typical of a scan. |
+
+Only the first row is about format. If your file was accepted and the trouble started afterwards,
+you hit a ceiling or an empty extraction, and neither of those is fixed by changing the extension.
+
+## The file name is not what decides
+
+There are two gates, and they are easy to confuse.
+
+The first is the file picker. Your browser is told which types the page will take, so unsupported
+files show up greyed out. That is a convenience filter working from the extension and the type your
+operating system reports, not an inspection, and on most systems you can override it by switching
+the dialog to show all files. Dragging a file straight onto the page skips it too. Both are how
+people end up looking at the refusal in the first place.
+
+The second gate is the parser that has to open the bytes and pull text out of them. That one does
+not care what the file is called. A file named `report.docx` that is not a Word document inside is
+still not a Word document, and the code that expects Word structure will not find it.
+
+So a matching extension is necessary and not sufficient. Getting past the picker means you were
+allowed to try, nothing more.
+
+## Renaming makes it worse, with one exception
+
+Changing the extension changes nothing about the contents. In the good case you get a second failure
+a few seconds later, having spent an upload attempt for nothing. In the worse case something is
+extracted, it is not your document, and there is no signal telling you that. Confidently wrong
+output from garbled input is harder to catch than an error message.
+
+The exception is when the new name is true. Plenty of files are plain text already and just happen
+to carry an extension nobody registered: `.log`, `.yml`, `.ini`, `.tex`, `.srt`, `.conf`. Saving one
+of those as `.txt` is not a disguise, it is a correction. The bytes were always text.
+
+<Callout variant="warn" title="The test for whether a rename is honest">
+Would the app that owns the new extension open the file and behave normally? If Word would choke on
+your renamed `.pages` file, ChatGPT will too. If a text editor already shows readable text, calling
+it `.txt` is fine.
+</Callout>
+
+## What to convert to
+
+Convert toward what the file actually contains rather than toward what feels closest.
+
+| You have | Send instead | How |
+| --- | --- | --- |
+| `.pages`, `.numbers`, `.key` | DOCX, CSV, PDF | Export To in the Apple app |
+| `.doc` and other old word formats | DOCX | Open and Save As in any editor |
+| `.epub`, `.mobi`, `.azw` | TXT or PDF | Calibre converts all of them |
+| `.zip`, `.rar`, `.7z` | The files inside | Extract locally, upload individually |
+| `.psd`, `.ai`, `.indd` | PNG or JPG, or PDF | Export from the design app |
+| `.heic` | JPG or PNG | Preview, Photos, or any converter |
+| `.msg`, `.eml` | PDF or TXT | Print to PDF, or paste the body |
+| `.db`, `.sqlite`, `.accdb` | CSV | Export each table you need |
+| `.mp4`, `.mov`, `.mp3`, `.m4a` | A transcript, as TXT | Transcribe first, upload the text |
+| `.tex`, `.yml`, `.srt`, `.log` | TXT | Save as, no conversion required |
+
+Two things follow from that table. Archives are not a format problem you can convert your way out
+of, because the content is other files and ChatGPT does not unpack them. And design files have
+picture content, so the honest conversion is a picture, capped at <Fact k="maxImageSize" /> each,
+not a document.
+
+For anything that is genuinely words, plain text is the most reliable target of the lot. There is no
+structure to misread and nothing to strip.
+
+<InlineInstall
+  heading="Converted, and now it is too long"
+  body="FileUploadGPT splits a long text file into pieces ChatGPT accepts and feeds them in order, which is the problem waiting on the other side once an exported book or transcript lands past the length cap."
+/>
+
+## When there is no clean conversion
+
+Print to PDF is the general escape hatch. Anything that can be printed can become a PDF, and PDF is
+accepted. One caveat: printing preserves whatever was there. If the source was already a picture of
+text, the PDF is a picture of text too, and you trade this problem for an empty answer instead.
+
+Copying the text into the message box is the other fallback, and it sidesteps file rules entirely
+because nothing is uploaded. It is governed by message length rather than by format, so it suits a
+clause, a page, or a short email, and not a report.
+
+For audio and video, neither is among the four families OpenAI lists, so there is no conversion that
+makes the media file itself acceptable. Get a transcript and upload that.
+
+## Do not keep retrying the same file
+
+OpenAI's own FAQ says failed upload attempts can count toward the rolling cap of
+<Fact k="rollingUploadRate" />. It does not say which failures count, so treat repeated attempts as
+expensive rather than harmless. On the Free plan, where the allowance is
+<Fact k="freeDailyUploads" />, four hopeful retries with a format that was never going to work can
+leave you unable to upload the converted version once you have it.
+
+## The practical decision
+
+Read the timing of the failure first. Refused as you attach it means format, and format has exactly
+one fix, which is conversion. Work out what the file really holds, export to the closest accepted
+form of that, and upload once. Leave the extension alone unless the new one tells the truth.

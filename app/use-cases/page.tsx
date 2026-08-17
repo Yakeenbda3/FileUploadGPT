@@ -4,7 +4,7 @@ import { USE_CASES } from '@/lib/use-cases';
 import { PageShell } from '@/components/layout/PageShell';
 
 export const metadata: Metadata = {
-  title: 'Who uses FileUploadGPT, and for what',
+  title: 'Who Uses FileUploadGPT: Students, Devs, Researchers',
   description:
     'How students, developers, researchers, business professionals and content creators work around ChatGPT limits on long documents.',
   alternates: { canonical: '/use-cases' },

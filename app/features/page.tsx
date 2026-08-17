@@ -4,7 +4,7 @@ import { InstallButtonRow } from '@/components/cta/InstallButtonRow';
 import { CHATGPT_FACTS } from '@/lib/chatgpt-facts';
 
 export const metadata: Metadata = {
-  title: 'What FileUploadGPT does',
+  title: 'FileUploadGPT Features: What the Extension Does',
   description:
     'Everything the extension does, in plain terms, and an honest list of what it does not do so you can tell whether it fits your problem.',
   alternates: { canonical: '/features' },

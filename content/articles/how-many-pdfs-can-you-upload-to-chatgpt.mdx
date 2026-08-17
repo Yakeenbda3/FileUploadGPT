@@ -1,0 +1,158 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'how-many-pdfs-can-you-upload-to-chatgpt',
+  title: 'How many PDFs can you upload to ChatGPT?',
+  heading: 'How many PDFs can you upload, and how many get read?',
+  description:
+    'How many PDFs you can upload on Free, Plus, Pro, in Projects and to a custom GPT, plus the length cap that decides how much of a long PDF gets read.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'how many pdfs can i upload to chatgpt',
+  related: [
+    'chatgpt-max-pdf-size',
+    'chatgpt-pdf-page-limit',
+    'how-many-files-can-you-upload-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'How many PDFs can I upload in a day?',
+      a: 'On Free, 3 file uploads per day, and PDFs are counted like any other file. On paid plans there is no separate daily figure, only the general cap of 80 files every 3 hours, which rolls rather than resetting at midnight.',
+    },
+    {
+      q: 'Is there a separate limit just for PDFs?',
+      a: 'No. OpenAI publishes no PDF-specific count. A two page PDF and a nine hundred page PDF each spend one upload slot, which is why bundling several short PDFs into one file stretches your allowance.',
+    },
+    {
+      q: 'How many PDFs can a Project hold?',
+      a: '20 on Plus and 40 on Pro, Team, Education and Business. That is per project rather than per conversation, and the files stay there until you remove them, so an old project can be quietly holding your allowance.',
+    },
+    {
+      q: 'I have plenty of uploads left, so why did only part of my PDF get read?',
+      a: 'Because the count and the length cap are different limits. Text and document files are capped at 2 million tokens, and past that point the file still uploads with no error while ChatGPT answers from the part that fitted.',
+    },
+  ],
+});
+
+<AnswerBox>
+The same number as any other file, because nothing counts PDFs separately.
+<Fact k="freeDailyUploads" /> on Free, <Fact k="rollingUploadRate" /> on paid plans,
+<Fact k="projectFilesPlus" /> inside a Plus project, <Fact k="projectFilesPro" /> on Pro and Team,
+and <Fact k="filesPerGpt" /> for a custom GPT's entire lifetime. With PDFs the count is rarely what
+stops you first. Length is.
+</AnswerBox>
+
+People ask this about PDFs in particular because PDFs are what they have a lot of: a folder of
+research papers, a stack of invoices, four versions of the same contract. The count answer is
+mildly boring. ChatGPT treats a PDF exactly like a text file or a spreadsheet, one slot each,
+regardless of what is inside it.
+
+The useful answer is the second half. Uploading ten PDFs and having ten PDFs read are different
+achievements, and the limits that decide the second one are not counts at all.
+
+## The counts, by plan
+
+| Where you are | PDFs allowed | How it behaves |
+| --- | --- | --- |
+| Free, per day | <Fact k="freeDailyUploads" /> | Resets daily |
+| Any paid plan | <Fact k="rollingUploadRate" /> | Rolls over three hours, no midnight reset |
+| A project on Plus | <Fact k="projectFilesPlus" /> | Per project, not per chat |
+| A project on Pro, Team, Business | <Fact k="projectFilesPro" /> | Per project, not per chat |
+| A custom GPT | <Fact k="filesPerGpt" /> | For the lifetime of that GPT |
+| One message | A small number | The interface says so if you exceed it |
+| Storage behind all of it | <Fact k="userStorageCap" /> | Cumulative, never resets |
+
+These stack rather than replacing each other. Having daily allowance left does not help inside a
+project that is already full, and an empty project does not help if your storage is at the ceiling.
+
+## Nothing on that table is about PDFs
+
+There is no published PDF count anywhere, and that is worth understanding rather than just noting.
+A three page PDF costs one slot. A nine hundred page PDF costs one slot. The caps count files.
+
+Which cuts both ways. Merging six short PDFs into one before uploading turns six slots into one, and
+on Free that is the difference between two days of allowance and part of an afternoon. But an
+enormous PDF gets no extra room for being large, and it is the one most likely to be truncated.
+
+<Callout variant="warn" title="Failed uploads count too">
+OpenAI states that failed upload attempts can count toward the rate cap. A PDF that keeps failing
+and gets retried three times has spent three slots and delivered nothing. On Free, with
+<Fact k="freeDailyUploads" />, that is the whole day gone on one file that never arrived.
+</Callout>
+
+## The limit you actually meet first
+
+Text and document files are capped at <Fact k="maxTextTokens" />. That is the ceiling that decides
+how much of a PDF gets read, and it is nothing to do with how many you sent.
+
+The failure mode is what makes it awkward. The PDF is not rejected. It uploads normally, ChatGPT
+reads whatever fitted, and answers with total confidence about a document it has seen part of. No
+warning, no marker in the reply.
+
+<Callout variant="tip" title="Check how far it got">
+Ask something only the ending can answer:
+
+> What is the title of the final section, and what does its last paragraph say?
+
+A vague answer means everything else you have been told is based on a fragment.
+</Callout>
+
+Size is the limit people expect and the one that almost never bites. The ceiling is
+<Fact k="maxFileSize" />, and a text-based PDF of several hundred pages is usually a few megabytes.
+
+## Scanned PDFs spend a slot and return nothing
+
+Every plan except Enterprise handles documents as <Fact k="imagesInDocuments" />. So a scanned PDF,
+which is pictures of pages rather than digital text, uploads successfully, counts against your
+allowance, and yields no text to read.
+
+Three of those on Free is your entire day for nothing. Check before you spend the slot: open the
+PDF and try to select a sentence. If the cursor draws a box instead of highlighting words, it is a
+scan and it needs OCR first.
+
+## Projects and custom GPTs hold their files
+
+The project caps are not per conversation. Files you added to a project in March are still sitting
+in it, still counted, until you remove them. When a project refuses a new PDF, look at what is
+already in there rather than at your daily allowance.
+
+Custom GPTs are stricter and catch people out badly. <Fact k="filesPerGpt" />, for the lifetime of
+that GPT, not per chat and not per month. If your GPT needs to know twenty documents, combine them
+before you start rather than finding the ceiling at document eleven.
+
+Underneath everything sits <Fact k="userStorageCap" />, shared across chats, projects and GPT
+knowledge. PDFs are among the heaviest things people upload, so this fills faster with PDFs than with
+anything else. Settings, then Storage, shows you where it stands. It shows <Fact k="quotaVisibility" />,
+so there is no display anywhere for how much of the rolling upload rate is left.
+
+<InlineInstall
+  heading="A long PDF without spending upload slots"
+  body="FileUploadGPT reads the PDF in your browser, splits the text into pieces ChatGPT accepts, and sends them as ordinary messages in order, so a single long document does not eat an upload allowance it was never going to fit inside."
+/>
+
+## Stretching the allowance you have
+
+**Merge before uploading.** Any PDF tool will combine several files into one. The caps count files,
+so ten short reports become one slot.
+
+**Send the pages you need.** Extracting chapter four into its own PDF costs the same one slot and
+usually produces a better answer, because there is less irrelevant material competing for attention.
+
+**Convert to text.** A .txt export of a PDF is a fraction of the size and drops the images that were
+going to be discarded anyway on every plan except Enterprise. It does nothing for length, but it
+removes size and image handling from the equation.
+
+**Paste instead of uploading.** Pasted text is a message, not an upload, so it touches none of the
+counts above. When you are completely out of uploads, this still works.
+
+## What to check before you upload
+
+The count is the easiest limit to reason about and usually the least relevant. Before you spend a
+slot, two questions settle most of it.
+
+Does the PDF contain selectable text, or is it a scan that will return nothing? And is it short
+enough to fit inside <Fact k="maxTextTokens" />, or should you send the section you actually care
+about instead of the whole thing?
+
+Get those right and you will rarely notice the counts. Get them wrong and you can burn a day of
+allowance on files ChatGPT never really read.

@@ -74,23 +74,27 @@ export function StickyInstallBar() {
             className="flex items-center gap-3 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-sticky backdrop-blur"
             style={{ minHeight: 'var(--sticky-cta-height)' }}
           >
+            {/* Copy is kept short rather than truncated. At 390px the bar has roughly 175px of
+                room beside the button, and the previous wording ran out of it mid-word: visitors
+                saw "File too big for Chat..." above "Free Chrome extension for co". A call to
+                action that is itself visibly broken is worse than none. */}
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[0.9375rem] font-semibold leading-tight text-ink">
+              <p className="text-[0.9375rem] font-semibold leading-tight text-ink">
                 {isMobile
-                  ? 'File too big for ChatGPT?'
+                  ? 'Too big for ChatGPT?'
                   : canInstall
-                    ? 'Stop hitting the upload limit'
-                    : 'Works in Chrome, Edge and Brave'}
+                    ? 'Stop hitting the limit'
+                    : 'Works in Chrome and Edge'}
               </p>
               <button
                 type="button"
                 onClick={() => setExplainerOpen((open) => !open)}
                 aria-expanded={explainerOpen}
                 aria-controls="sticky-explainer"
-                className="mt-0.5 flex items-center gap-1 text-[0.75rem] leading-tight text-ink-muted"
+                className="mt-0.5 flex max-w-full items-center gap-1 text-[0.75rem] leading-tight text-ink-muted"
               >
                 <span className="truncate">
-                  {isMobile ? 'Free Chrome extension for computers' : 'Free, no account needed'}
+                  {isMobile ? 'Free, for desktop Chrome' : 'Free, no account needed'}
                 </span>
                 <svg
                   className={`h-3 w-3 shrink-0 transition-transform ${explainerOpen ? 'rotate-180' : ''}`}

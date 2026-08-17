@@ -7,7 +7,7 @@ import { faqSchema } from '@/lib/jsonld';
 import { CHATGPT_FACTS, FACTS_VERIFIED_ON } from '@/lib/chatgpt-facts';
 
 export const metadata: Metadata = {
-  title: 'FileUploadGPT FAQ',
+  title: 'ChatGPT File Upload Questions, Answered | FAQ',
   description:
     'Answers on ChatGPT upload limits, what the extension does with your files, why it needs a computer, and what it will not help with.',
   alternates: { canonical: '/faq' },

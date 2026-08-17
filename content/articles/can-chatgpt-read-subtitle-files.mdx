@@ -1,0 +1,177 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-subtitle-files',
+  title: 'Can ChatGPT read SRT and VTT subtitle files?',
+  heading: 'Can ChatGPT read SRT and VTT subtitle files?',
+  description:
+    'Yes. SRT and VTT are plain text and upload fine. Strip the timestamps on long files, and use subtitles to get the content of a video into ChatGPT.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read srt subtitle files',
+  related: [
+    'can-chatgpt-read-mp3-audio-files',
+    'chatgpt-meeting-transcript-analysis',
+    'chatgpt-file-types-supported',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT accept .srt and .vtt uploads?',
+      a: 'Yes. Both are plain text files with a very simple structure, and they upload and read like any other text file. If an extension is ever refused, renaming the file to .txt changes nothing inside it and gets it through.',
+    },
+    {
+      q: 'Should I remove the timestamps first?',
+      a: 'On a short clip it makes no difference. On a feature length film or a long course, the cue numbers and timing lines can outweigh the dialogue, so stripping them roughly halves the file and leaves cleaner text to work from. Keep them if you want answers that cite a moment in the video.',
+    },
+    {
+      q: 'Can I use subtitles to get a video analysed?',
+      a: 'That is the practical route. Video is not among the file types OpenAI lists for uploads, so a subtitle file is how the spoken content gets in. What you lose is everything visual: slides, charts on screen, anything shown rather than said.',
+    },
+    {
+      q: 'Are auto generated captions good enough?',
+      a: 'Usually fine for the gist, weaker on detail. Machine captions carry no speaker labels, little punctuation, and they mishear names, acronyms and technical terms. Read the first screen of one before you trust a summary built on it.',
+    },
+  ],
+});
+
+<AnswerBox>
+Yes. An .srt or .vtt file is plain text with a very simple structure, and it uploads and reads like
+any other text file. The one thing worth doing on a long file is stripping the timestamps, which on
+a feature length film take up more room than the dialogue does. And since video is not among the
+file types OpenAI lists for uploads, a subtitle file is usually the most practical way to get what
+was said in a video into ChatGPT.
+</AnswerBox>
+
+Subtitle files are the least glamorous format on this site and one of the best behaved. Nothing to
+parse, no embedded images, no compression, no formatting layer to strip. Just text with some
+scaffolding around it.
+
+## What is inside an SRT file
+
+Open one in any text editor and you get repeating blocks like this:
+
+```
+127
+00:14:22,180 --> 00:14:25,640
+The second quarter numbers came in
+about four points under plan.
+```
+
+A cue number, a timing line, the words, then a blank line. A .vtt file is the same idea with small
+differences:
+
+| Format | Header | Timing | Extras |
+| --- | --- | --- | --- |
+| .srt | none | comma before the milliseconds | numbered cues |
+| .vtt | `WEBVTT` line | full stop before the milliseconds | optional cue ids, positioning and styling tags |
+
+The test for any format is whether you can open it in a text editor and see readable words. Subtitle
+files pass it more plainly than almost anything else.
+
+## Why it uploads without trouble
+
+OpenAI describes what it supports as &quot;<Fact k="supportedTypesStatement" />&quot; A subtitle
+file is a text file, and both extensions go through in practice.
+
+If one is ever refused, rename it to .txt. Nothing inside changes. The bytes are identical and only
+the extension differs, so this is not a conversion and costs you nothing.
+
+## The timestamps are most of the file
+
+This is the part people miss.
+
+Count the characters in one cue. A timing line like `00:14:22,180 --> 00:14:25,640` is 29
+characters on its own, and the cue number and blank line add a few more. Subtitle text is
+deliberately short, often six to twelve words, because it has to fit on screen and be read at
+speed. So the scaffolding can easily match or exceed the dialogue it wraps.
+
+That costs you twice. It burns length you might rather spend on content, and it feeds the model a
+steady stream of numbers that mean nothing to your question. Summaries of raw subtitle files
+commonly come back with timecodes sprinkled through them for no reason.
+
+There is a subtler problem too. Subtitle lines break wherever they fit on screen, not where
+sentences end, so one sentence can be split across three cues. ChatGPT copes with this most of the
+time, but on dense technical material the broken lines make the text harder to follow than a clean
+transcript would be.
+
+## Stripping the timestamps
+
+Two line types need to go: the one that is only a number, and the one containing the arrow.
+
+<Steps>
+  <Step title="Open the file in a text editor">
+    VS Code, Sublime, Notepad++, anything with find and replace across a whole file.
+  </Step>
+  <Step title="Turn on regular expressions">
+    Usually a small `.*` button beside the search box.
+  </Step>
+  <Step title="Delete the two structural line types">
+    Find `^\d+$\n` and replace with nothing, then find `^.*-->.*$\n` and replace with nothing. What
+    is left is the dialogue.
+  </Step>
+  <Step title="Save it as .txt">
+    You now have a plain transcript, usually well under half the size of what you started with.
+  </Step>
+</Steps>
+
+If you would rather not touch a regular expression, subtitle editing software can export plain text
+directly, and there are converters that do the same job in a browser.
+
+## When to keep the timestamps
+
+They are not always noise. If you want to cite the moment something was said and jump back to it, if
+you are building chapter markers or a clip list, or if the order and spacing of statements matters
+to your question, the timings are the useful part of the file.
+
+In that case leave them in and say so in your prompt. Tell ChatGPT it is looking at a subtitle file
+and ask for timecodes in the answer.
+
+<Callout variant="tip" title="Ask for timestamped output">
+With the timings left in, "give me the five key moments with their timecodes" produces something you
+can act on. Without them, the same request has nothing to point at.
+</Callout>
+
+## Subtitles as the video workaround
+
+Video is not among the file types OpenAI lists for uploads. The four families named are text files,
+spreadsheets, presentations and documents, and video sits in none of them. Attaching an MP4 is not
+the route.
+
+A subtitle file is. Most of the value in a lecture, an interview, a webinar or a deposition is in
+what was said, and that is exactly what the subtitle file holds. YouTube videos usually have a
+transcript you can open and copy. Downloaded videos often ship with an .srt beside them. Failing
+both, any transcription tool will produce one from the audio.
+
+What you give up is everything visual. Slides, charts on screen, someone pointing at a diagram, an
+expression that changed the meaning of a sentence. If your question depends on what was shown rather
+than what was said, the subtitles will not answer it and nothing will warn you. Screenshot the
+frames that matter and upload those alongside the text.
+
+<Callout variant="warn" title="Auto generated captions are rougher than they look">
+Machine captions run without punctuation, without speaker labels, and they mishear names, acronyms
+and technical terms confidently. Read the first screen of one before you build anything on top of a
+summary of it.
+</Callout>
+
+## Length, and where it actually bites
+
+Speech runs at roughly ten thousand words an hour, so a single film or talk sits comfortably inside
+<Fact k="maxTextTokens" />. File size never matters here: subtitle files are tiny next to the
+<Fact k="maxFileSize" /> ceiling.
+
+Volume is what bites. A full series, a term of recorded lectures, or a year of webinars pasted into
+one file can pass the length cap. Past it nothing is rejected. The file uploads, part of it is read,
+and no message tells you which part. Ask what happens in the final scene, or what the last speaker
+said. If it cannot answer, it did not get that far.
+
+<InlineInstall
+  heading="For a subtitle archive that runs past the length cap"
+  body="FileUploadGPT splits long transcripts into pieces ChatGPT accepts and sends them in order, so a whole series gets read instead of the first few episodes of it."
+/>
+
+## The short version
+
+Upload the .srt or .vtt as it is for anything up to an hour or so. For a feature length film or a
+long course, delete the cue numbers and timing lines first, unless you want answers that cite
+timecodes, in which case leave them in and say so in the prompt. And when a video will not upload,
+which it will not, the subtitle file is how its content gets in.

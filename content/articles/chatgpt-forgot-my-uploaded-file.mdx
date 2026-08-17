@@ -1,0 +1,161 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-forgot-my-uploaded-file',
+  title: 'ChatGPT forgot my uploaded file: what happened and the fix',
+  heading: 'Why ChatGPT forgets a file you already uploaded',
+  description:
+    'The file uploads, works for a while, then ChatGPT acts like it never existed. What context eviction is, and how to work so it stops happening.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt forgot my uploaded file',
+  related: [
+    'did-chatgpt-read-my-whole-document',
+    'how-to-split-a-document-for-chatgpt',
+    'chatgpt-projects-file-limit',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT say it cannot see a file that is still visible in the chat?',
+      a: 'The attachment chip is a record of what you sent, not proof the model can still read it. Everything the model uses for one reply has to fit in a fixed context window, and when the conversation outgrows it the oldest content is dropped first. Your file was at the top of the chat, so it goes first.',
+    },
+    {
+      q: 'Does re-uploading the same file in the same chat fix it?',
+      a: 'Usually, for a while. Attaching the file to a new message puts the text back in front of the model. In a chat that has already run long, the window is crowded with the conversation itself, so it will be pushed out again sooner. Past a certain length, a fresh chat works better.',
+    },
+    {
+      q: 'Do uploaded files carry over into a new chat?',
+      a: 'No. A file belongs to the conversation you attached it to, so a new chat starts with nothing. The exception is Projects, where files attached at project level are available to every chat inside that project.',
+    },
+    {
+      q: 'If I delete the chat, is the file gone too?',
+      a: 'Yes. Files live as long as the chat, Project or custom GPT that holds them, and OpenAI states that deleted files are removed within 30 days unless already de-identified or retained for security or legal reasons. Keep your own copy of anything you may need to send again.',
+    },
+  ],
+});
+
+<AnswerBox>
+The chat ran out of room. Everything the model uses to write one reply has to fit in a fixed context
+window, and when the conversation outgrows it the oldest content is dropped to make space. Your file
+was at the very top, so it goes first. Re-attach the file to a new message, and for anything long,
+do the document work in the first few turns of a fresh chat.
+</AnswerBox>
+
+The attachment is still sitting there in the scrollback, which is why this reads like a bug. It is
+not. That chip is a record of what you sent, not a guarantee the contents are still in front of the
+model.
+
+Nothing announces the moment it happens either. Answers get vaguer, then generic, then at some point
+ChatGPT tells you it has no file and asks you to upload one.
+
+## What a context window actually is
+
+For every single reply, the model has to hold one bundle in view at once: the system instructions,
+every message you have sent, every reply it has written, and whatever text was extracted from your
+file. That bundle has a size ceiling.
+
+While there is room, the file text sits inside it and gets consulted. Once the conversation outgrows
+the ceiling, something has to leave, and the order is roughly oldest first. Your file arrived at the
+beginning of the chat, so it leaves at the beginning too.
+
+<Callout variant="info" title="Two different limits, constantly confused">
+<Fact k="maxTextTokens" /> is how much text one file may contain before upload truncates it. The
+context window is how much can be in view while a single reply is written, it is far smaller, and it
+is shared with the whole conversation. A file can clear the first limit comfortably and still be
+pushed out by the second an hour later. The window size varies by plan and model, so there is no one
+number to plan against.
+</Callout>
+
+## Rule out the other causes first
+
+Not every case of a forgotten file is eviction.
+
+| What you see | Usual cause | Fix |
+| --- | --- | --- |
+| Fine for twenty turns, then vague or blank | Context eviction | Re-attach, or start a fresh chat |
+| A new chat cannot see yesterday's file | Files belong to the chat they were sent in | Re-upload, or use a Project |
+| It never knew anything past the middle | Truncated on upload, past <Fact k="maxTextTokens" /> | Split the document and send it in parts |
+| A PDF it had nothing to say about from the start | Scanned pages, <Fact k="imagesInDocuments" /> | Run OCR, then upload again |
+| The file vanished after you edited an earlier message | Editing forks the conversation | Re-attach in the branch you are now in |
+
+## Test it rather than asking it
+
+When the file drops out, the conversation about the file does not. Earlier summaries, your questions,
+the points you settled, all of that is still in view and still readable. So it carries on sounding
+informed while working from its own notes rather than your document, which is exactly where invented
+quotes and half-remembered figures come from.
+
+Which is why asking whether it still has the file is useless. That question gets a reassuring yes.
+Ask for something only the file can supply instead:
+
+> Quote the first sentence under the heading "Termination", exactly as written.
+
+Three outcomes worth reading carefully. An exact quote means the file is still there. A paraphrase,
+or a sentence that sounds right but is not in your copy, means it is reconstructing from the
+conversation. A straight admission that it cannot find the file is the honest failure, and the least
+common one.
+
+## Getting it back mid conversation
+
+<Steps>
+  <Step title="Ask it to check the file again, once">
+    ChatGPT can sometimes reopen an attachment rather than relying on what is in the window, so
+    "check the attached file again" occasionally recovers it. OpenAI does not document when this
+    works, so treat it as one attempt, not a reliable fix.
+  </Step>
+  <Step title="Re-attach the file to a new message">
+    The dependable move. Attaching it again puts the text back in view, along with a short note of
+    what you want from it now.
+  </Step>
+  <Step title="Re-run the quote test">
+    Before you trust another answer. Ten seconds, and it tells you whether the re-attach actually
+    landed.
+  </Step>
+</Steps>
+
+Re-attaching into a chat that has run for hours buys less than you would hope, because the window is
+mostly full of the conversation before the file even arrives. At that point, start again.
+
+## Carry the conclusions, not the transcript
+
+When a chat is spent, move your findings rather than your history. Ask for a digest while the file is
+still present: "List every finding so far as bullets, each with the section it came from." Copy that
+out, start a new chat, attach the file and paste the digest underneath.
+
+The new chat opens with the document plus a compressed version of the last hour of thinking, in a few
+hundred words instead of a few thousand. That is a far longer runway than the old chat had left.
+
+<InlineInstall
+  heading="For documents that were never going to fit in one go"
+  body="FileUploadGPT cuts a long document into pieces ChatGPT accepts, sends the hold-your-answer instruction first, then feeds the parts in order. Re-sending the section you actually need takes seconds when a chat starts drifting."
+/>
+
+## Working so it stops happening
+
+**One document, one chat.** The most effective habit here. Every unrelated tangent is space the file
+is competing with, and so is every long reply, which is a good reason to ask for bullets rather than
+essays.
+
+**Front-load the extraction.** Pull the quotes, figures and structure you need in the first few
+turns, while the file is certainly present. Analysis of that extract survives eviction. Questions
+needing a fresh look at page 300 do not.
+
+**Send only the part you need.** A twelve page section stays in the window far longer than a four
+hundred page book, and usually produces a sharper answer anyway.
+
+**Use a Project for anything you will revisit.** Files attached at project level are reachable from
+every chat inside it, which makes starting fresh cheap. Limits are <Fact k="projectFilesPlus" /> on
+Plus and <Fact k="projectFilesPro" /> on Pro, Team, Education and Business. It fixes the new chat
+case, not eviction inside one long chat.
+
+**Custom GPT knowledge suits reference documents.** For a style guide or a policy you consult
+constantly, <Fact k="filesPerGpt" /> is the allowance, and it covers the lifetime of that GPT rather
+than each conversation.
+
+## The practical decision
+
+If the chat is young, re-attach the file and run the quote test. If the chat is long, take a digest
+of what you have learned, open a new one, and start again with the file and the digest.
+
+Run that test before you act on anything important. A forgotten file does not produce an error
+message. It produces a good-sounding answer about a document nobody is reading.

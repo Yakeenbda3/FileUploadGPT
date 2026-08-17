@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
 
 export const metadata: Metadata = {
-  title: 'About FileUploadGPT',
+  title: 'About FileUploadGPT: Who Builds It and Why',
   description:
     'Why this extension exists, what it deliberately does not try to be, and how the facts on this site are checked.',
   alternates: { canonical: '/about' },

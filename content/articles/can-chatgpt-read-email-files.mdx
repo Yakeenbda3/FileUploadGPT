@@ -1,0 +1,150 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'can-chatgpt-read-email-files',
+  title: 'Can ChatGPT read EML and MSG email files?',
+  heading: 'Can ChatGPT read .eml and .msg email files?',
+  description:
+    'EML is plain text underneath and usually uploads fine. MSG is Outlook binary and usually does not. What to convert to, and why attachments never come out.',
+  category: 'file-types',
+  updated: '2026-08-17',
+  targetQuery: 'can chatgpt read eml and msg files',
+  related: [
+    'chatgpt-file-types-supported',
+    'can-chatgpt-read-zip-files',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'Does ChatGPT support .eml files?',
+      a: 'OpenAI does not list email formats anywhere. In practice .eml files upload and read, because the format is plain text with headers on top of the message body. Treat that as observed behaviour rather than a guarantee, and keep a .txt copy ready in case an upload comes back empty.',
+    },
+    {
+      q: 'Why does my .msg file not work?',
+      a: 'A .msg is Outlook binary, not text. There is no readable text sitting in the file for ChatGPT to extract without a parser built for that format, so the upload either fails or produces nothing useful. Save the message as Text Only from Outlook, or forward it and save the result as .eml.',
+    },
+    {
+      q: 'Can ChatGPT open an attachment inside an email file?',
+      a: 'No. An attachment sits inside an .eml as base64 encoded text, and it is not detached or decoded. All it contributes is a long block of unreadable characters that eats your length budget. Save the attachment to your machine and upload it as its own file.',
+    },
+    {
+      q: 'How do I get a whole email thread in at once?',
+      a: 'Copy the thread into a single .txt file in date order, or print it to PDF, then delete the quoted replies that repeat under every message. One file reads far better than twenty separate messages and costs one upload instead of twenty.',
+    },
+  ],
+});
+
+<AnswerBox>
+.eml usually works. It is a plain text format underneath, so ChatGPT can read it the same way it
+reads any text file. .msg usually does not, because it is Outlook binary with no readable text to
+extract. OpenAI does not name either format in its supported types, so both are observed behaviour
+rather than policy. The route that always works: save the email as .txt or PDF, and save any
+attachment separately.
+</AnswerBox>
+
+OpenAI describes what it accepts as &quot;<Fact k="supportedTypesStatement" />&quot; Email messages
+are not in that sentence in either direction. Nothing says they are supported and nothing says they
+are excluded, which is why the answer comes down to what the format actually is.
+
+## Why one works and the other does not
+
+Open an .eml in Notepad or TextEdit. You will see a block of headers, then the message body in
+readable words. That is all an .eml is: a MIME message saved to disk as text. The same test that
+decides every format applies here. If you can open it in a text editor and read it, so can ChatGPT.
+
+Now open a .msg the same way. You get binary noise with occasional fragments of text scattered
+through it. Outlook stores messages in a compound binary container of its own, and reading it takes
+software written for that specific format. ChatGPT has no reason to have that, so a .msg either gets
+rejected on upload or comes back as an unusable mess.
+
+<Callout variant="info" title="An empty answer is the common failure, not an error">
+When a format cannot be read properly, you often get a confident summary built from the few
+recognisable scraps rather than a refusal. Ask what the subject line and the date on the message
+were. If those come back wrong or vague, nothing useful was extracted.
+</Callout>
+
+## Turning a .msg into something readable
+
+Three routes, in order of how little you lose.
+
+<Steps>
+  <Step title="Save as Text Only from Outlook">
+    In the classic desktop app, open the message, then File, Save As, and pick Text Only for the
+    file type. You get a .txt with the headers and the body. Nothing that ChatGPT would have used
+    is lost.
+  </Step>
+  <Step title="Forward it to yourself and save as .eml">
+    Most webmail clients let you save a message as .eml. That keeps the structure and stays
+    readable, which .msg never was.
+  </Step>
+  <Step title="Print to PDF">
+    Worth it only when the visual layout matters, for instance a formatted invoice in the body.
+    Otherwise it is a heavier file carrying the same words.
+  </Step>
+</Steps>
+
+If you do not have Outlook at all, ask the sender to forward the message rather than send the .msg
+again. A forwarded message you can save as text in any client.
+
+## Attachments inside an email do not come out
+
+This is the part that catches people, and it applies to .eml files that upload perfectly well.
+
+Attachments are stored inside the message as base64 encoded text, which is roughly a third larger
+than the original file. That encoded block is not detached and it is not decoded. A 4 MB PDF
+attached to a two line email becomes several megabytes of characters that mean nothing, sitting in
+a file ChatGPT otherwise reads fine.
+
+So the email body gets read and the attachment does not, and nothing tells you which happened. If
+the attachment is the point, save it out of the email and upload the PDF or the spreadsheet on its
+own. If the covering message matters too, upload both as separate files.
+
+## Whole mailboxes are a different problem
+
+| Format | What it is | What to upload instead |
+| --- | --- | --- |
+| .eml | One MIME message as text | Usually fine as is, once attachments are out |
+| .msg | Outlook binary container | .txt saved from Outlook, or .eml |
+| .mbox | Many messages concatenated as text | A trimmed extract, or a CSV of the fields you need |
+| .pst, .ost | Outlook archive, binary | Export the messages that matter, then convert |
+
+Gmail Takeout hands you .mbox, which is readable text in principle. Size is what stops it. A real
+inbox exported this way runs to hundreds of megabytes, and even under the <Fact k="maxFileSize" />
+file cap you are far past <Fact k="maxTextTokens" />, so most of it is silently ignored.
+
+For anything at mailbox scale, extract the fields you actually want, usually date, sender, subject
+and body, into a CSV. A year of email reduced to those four columns is a manageable file, and it is
+far easier to ask questions about than a raw dump.
+
+## Strip the noise before uploading
+
+Email is mostly repetition. In a thread of thirty replies, the same quoted trail appears thirty
+times, along with thirty signatures and thirty legal footers. That can be the majority of the file,
+and every character of it competes with the content you care about.
+
+Before you upload a thread, delete the quoted history under each message and keep only what was new
+in that reply. Delete the routing headers as well, the Received and DKIM lines, since they say
+nothing about what the email means.
+
+<Callout variant="warn" title="Emails carry other people's details">
+Addresses, phone numbers, client names and internal figures travel with the message. Uploading it
+sends all of that to OpenAI, and on consumer plans content may be used to improve models unless you
+have turned that setting off. Redact before you upload rather than after.
+</Callout>
+
+One more reason to bundle: sixty separate .eml files is sixty uploads, against
+<Fact k="freeDailyUploads" /> on Free and <Fact k="rollingUploadRate" /> on any plan. The same
+sixty messages pasted into one text file in date order is a single upload, and the chronology
+survives, which it does not when files arrive one at a time.
+
+<InlineInstall
+  heading="When the thread is longer than one message can hold"
+  body="FileUploadGPT splits a long email export into pieces ChatGPT accepts and sends them in order, so a full thread or an mbox extract gets read end to end instead of just the start."
+/>
+
+## What to do, in one line
+
+For a single email, save it as .txt. For a thread, export the whole thread into one text file with
+the quoted trails removed. For a mailbox, pull the fields you need into a CSV. And for attachments,
+always save them out and upload them separately, whatever the email format was. Fighting a .msg is
+never worth it when saving it as text takes ten seconds.

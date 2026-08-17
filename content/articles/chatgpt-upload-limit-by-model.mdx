@@ -1,0 +1,173 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-upload-limit-by-model',
+  title: 'Does the ChatGPT upload limit depend on the model?',
+  heading: 'Which upload limits change when you switch model',
+  description:
+    'Upload caps come from your plan and account, not the model you pick. What the model changes is how much of the file it holds at once.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'does the chatgpt upload limit depend on the model',
+  related: [
+    'chatgpt-plus-file-upload-limit',
+    'chatgpt-message-length-limit',
+    'did-chatgpt-read-my-whole-document',
+  ],
+  faq: [
+    {
+      q: 'Will switching model let me upload more files?',
+      a: 'No. The daily and rolling upload caps are counted against your account and your plan, not against a model. Changing the model in the picker leaves the count exactly where it was.',
+    },
+    {
+      q: 'Does a model with a bigger context window accept a bigger file?',
+      a: 'No. The 512 MB per file ceiling and the 2 million token cap on text and document files are applied when the file is uploaded, before any model is involved. A larger context window helps the model use more of what did get through, which is a different problem.',
+    },
+    {
+      q: 'My file was truncated. Does re-uploading it to another model help?',
+      a: 'No. Truncation happens at the token cap during upload, so the same file is cut at the same point regardless of which model you ask afterwards. The fix is to send less per file, not to change model.',
+    },
+    {
+      q: 'Why did ChatGPT move me to a different model after I uploaded files?',
+      a: 'That is a message allowance on the model you were using, not an upload limit. The two are counted separately. Files you already uploaded stay attached to the conversation and the new model can still read them.',
+    },
+  ],
+});
+
+<AnswerBox>
+No. Upload limits belong to your plan and your account, and they are checked when the file arrives,
+before a model is involved at all. Switching model gives you no extra uploads, no larger file
+allowance and no higher token cap. What the model does change is how much of the extracted text it
+holds in view at once, which is why the same document can produce a better answer on one model than
+another.
+</AnswerBox>
+
+Both things are true at the same time, and that is what makes the question confusing. Model choice
+genuinely affects how well a long document is handled. It affects none of the numbers that decide
+whether the document is accepted in the first place.
+
+## The limits are enforced before a model sees anything
+
+An upload happens in two stages, and they are easy to blur together.
+
+**Stage one is acceptance.** The file is measured against <Fact k="maxFileSize" /> per file,
+<Fact k="maxTextTokens" /> for text and document files, <Fact k="maxSpreadsheetSize" /> for
+spreadsheets and <Fact k="maxImageSize" /> per image. Your recent activity is measured too, against
+<Fact k="freeDailyUploads" /> on Free and <Fact k="rollingUploadRate" /> generally, and against your
+<Fact k="userStorageCap" /> of storage. Then the file is converted to text.
+
+**Stage two is reading.** A model receives whatever text came out of stage one and answers your
+question about it.
+
+The model picker sits in stage two. Every published upload limit belongs to stage one, and none of
+them is stated per model. That is the whole answer, and the rest of this page is about the part of
+the question that does have a real answer.
+
+## What actually varies with the model
+
+The context window. How much of the conversation, including the extracted text of your file, the
+model holds in front of it at one time.
+
+OpenAI does not publish per-model context windows in its file uploads documentation, and the figures
+for models in the ChatGPT picker change as those models are updated, so treat any specific number
+you find on a blog with suspicion. The direction is the useful part. A model with a larger window
+keeps more of a long document available at once, which shows up as fewer answers that are confident
+about chapter one and vague about chapter nine.
+
+| Limit | Set by the model? |
+| --- | --- |
+| Size per file, <Fact k="maxFileSize" /> | No |
+| Text and document length, <Fact k="maxTextTokens" /> | No |
+| Spreadsheet size, <Fact k="maxSpreadsheetSize" /> | No |
+| Image size, <Fact k="maxImageSize" /> | No |
+| Uploads per day and per 3 hours | No, your plan |
+| Files per project or per custom GPT | No, your plan |
+| Storage, <Fact k="userStorageCap" /> | No, your account |
+| Whether images inside a document are read | No, Enterprise only |
+| How much of the extracted text is in view at once | Yes |
+
+One row out of nine. It is an important row, but it is not the row people are asking about when they
+go looking for a model that allows bigger uploads.
+
+## Why a bigger model does not un-truncate a file
+
+The per-file token cap is a ceiling on the file, not a promise that any model reads all of it.
+<Fact k="maxTextTokens" /> is far larger than the context window of the models you can pick, so on a
+genuinely long document two separate reductions are happening. The cap decides how much of the file
+survives upload. The window decides how much of the surviving text the model can consider at once.
+
+<Callout variant="warn" title="Truncation is already done by the time you choose a model">
+If a document was cut at the token cap, the text that was cut never entered the conversation. Asking
+a different model about it, or re-uploading the same file and then switching model, produces the
+same cut in the same place. Nothing downstream can recover text that was never extracted.
+</Callout>
+
+Beyond the window, ChatGPT tends to search the document rather than read it end to end. That is
+observed behaviour rather than published policy, but it explains the pattern people report: precise,
+correct quotations from some passages, and blank spots elsewhere in the same file.
+
+## Three different walls that get mistaken for each other
+
+**Model message allowances.** On Free and Plus, some models can be used only so much before you are
+moved to another one. This is a message limit and it has nothing to do with files. It is also the
+one limit in this list that involves model choice, and it points the opposite way to what people
+assume: the model changes because you ran out, not to give you more room.
+
+**Upload caps.** <Fact k="freeDailyUploads" /> on Free, <Fact k="rollingUploadRate" /> generally,
+counted per account. Failed attempts can count toward the rolling cap, which is why people reach it
+having successfully uploaded very little.
+
+**Storage.** <Fact k="userStorageCap" /> per user, shared across chats, Projects and custom GPT
+knowledge. Full storage produces an upload error that looks like a rate limit and is not one.
+
+Only the first has anything to do with the model picker, and none of the three is fixed by using it.
+
+<InlineInstall
+  heading="The limit that no model changes"
+  body="FileUploadGPT splits a document that exceeds the per-file cap into pieces ChatGPT accepts, sends them in order, and tells it to wait until the last one arrives. It behaves the same whichever model you have selected, because the limit it works around is not a model limit."
+/>
+
+## Switching model in the middle of a conversation
+
+The file stays attached to the conversation, and the text was extracted once at upload, so a new
+model works from the same extracted text rather than re-parsing your original file. What does not
+carry over cleanly is whatever the previous model had built up in view.
+
+<Steps>
+  <Step title="Name the document again">
+    Say which attached file you mean rather than saying "the document". It removes the ambiguity in
+    a thread that already contains several.
+  </Step>
+  <Step title="Ask for a quotation before analysis">
+    "Quote the first two sentences of section 4." A model that cannot produce them does not have that
+    part in view, and you have learned that in one message instead of after a wrong summary.
+  </Step>
+  <Step title="Re-state conclusions you want kept">
+    Paste back the short summary the earlier model produced. Treat it as input to the new model, not
+    as shared memory.
+  </Step>
+</Steps>
+
+## What to change instead of the model
+
+**Send less per file.** Convert to plain text, drop appendices, references and boilerplate you will
+not ask about. A long report often loses a third of its length with nothing of value gone.
+
+**Split by section and ask per section.** One chat per section keeps everything relevant inside the
+window, whichever model is answering.
+
+**Split and send in order** when the document has to arrive whole, with an instruction to hold the
+answer until the final part lands.
+
+**Run OCR first** if the pages are scans. No model in the picker reads an image inside a document,
+because the images were discarded during extraction, on every plan except Enterprise.
+
+## The practical decision
+
+If your problem is a rejected upload, an exhausted allowance or a truncated file, the model picker
+is the wrong control and no setting in it will help. Change what you send.
+
+If your problem is that the upload worked but the answers go thin over a long document, model choice
+is worth trying, alongside cutting the document down. Those are two different failures with two
+different fixes, and reaching for the model picker on the first one is the reason this question gets
+asked so often.

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageShell } from '@/components/layout/PageShell';
 
 export const metadata: Metadata = {
-  title: 'FileUploadGPT changelog',
+  title: 'FileUploadGPT Changelog: Every Release',
   description:
     'What has changed in the extension and on this site, with dates. Short, because the extension does one thing and does not need much changing.',
   alternates: { canonical: '/changelog' },

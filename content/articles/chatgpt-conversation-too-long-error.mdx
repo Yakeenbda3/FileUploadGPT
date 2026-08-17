@@ -1,0 +1,163 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-conversation-too-long-error',
+  title: '"Conversation too long" is not about your file',
+  heading: 'Why ChatGPT says your conversation is too long',
+  description:
+    'The error is about the chat, not the document. Why an old conversation rejects a file a new one accepts, and how to move across cleanly.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt conversation too long error',
+  related: [
+    'chatgpt-message-length-limit',
+    'chatgpt-file-is-too-large-error',
+    'did-chatgpt-read-my-whole-document',
+  ],
+  faq: [
+    {
+      q: 'Why does the same file upload fine in a new chat?',
+      a: 'Because the limit you hit is the conversation total, not the file. File limits are checked against the file on its own. The conversation ceiling is checked against everything already in the chat, and an old chat has spent most of that room before your file arrives.',
+    },
+    {
+      q: 'Can I delete old messages to make room?',
+      a: 'Editing one of your earlier messages starts a new branch from that point, which drops everything after it and can free room. It is fiddly and it loses work. Starting a fresh chat and pasting in a short summary of what you had established is usually faster and cleaner.',
+    },
+    {
+      q: 'Does upgrading to Plus or Pro remove this?',
+      a: 'It does not remove it. The ceiling depends on the model answering and on your plan, so a paid plan gives you more room per conversation, but any chat still fills eventually. Long chats with documents in them fill faster than most people expect.',
+    },
+    {
+      q: 'Does this error mean my document was not read?',
+      a: 'It means the last thing you sent did not go through. Anything ChatGPT answered about earlier may also have been working from a partial view, because a chat quietly drops the oldest content before it ever shows you this error. Verify before trusting a summary from a long chat.',
+    },
+  ],
+});
+
+<AnswerBox>
+This is about the conversation, not the document. Every message, every reply and the text of every
+file you uploaded counts toward one running total for that chat, and once it is full nothing more
+fits, however small the new file is. Start a new chat and upload the document as the first thing in
+it. Carry across a short summary of what you had established rather than the whole history.
+</AnswerBox>
+
+The confusing part is that the same file will upload into a new chat without complaint. Nothing is
+wrong with it. You ran out of conversation, not out of file allowance.
+
+## What the message is actually about
+
+A chat is not a series of independent messages. Each time you send something, the model is given the
+conversation so far, and it has a ceiling on how much of that it can hold at once. Your messages
+count. Its replies count. The extracted text of every document you uploaded counts, and that is
+usually the largest part by far.
+
+Two things happen as you approach the ceiling, and only the second one is visible.
+
+First, the oldest content quietly falls out of view. The chat keeps working, but it stops being able
+to refer to what you said near the beginning. There is no notice when this starts.
+
+Then you get the hard stop, and are told to start a new conversation.
+
+<Callout variant="info" title="There is no published number here">
+OpenAI publishes precise file limits, <Fact k="maxFileSize" /> per file and
+<Fact k="maxTextTokens" /> for text and document files. It publishes no equivalent figure for how
+long a single conversation can run, because the ceiling depends on which model is answering and
+changes as models change. Anyone quoting you an exact message count is guessing.
+</Callout>
+
+## Why an old chat refuses a file a new chat accepts
+
+File limits and the conversation ceiling are checked against different things.
+
+The file limits look at the file on its own. A 40 page report is well inside them, in an empty chat
+and in a two hour old chat alike.
+
+The conversation ceiling looks at the whole chat. By the time you have gone forty messages deep,
+attached two earlier documents and had long answers back, most of the room is already spent. Your
+report is not too big. It is simply arriving late, and there is nowhere left to put it.
+
+That is also why the usual reflexes do nothing. Reattaching the file, compressing the PDF, retrying:
+the room was gone before you attached anything.
+
+## Which of the three size errors you have
+
+They sound alike and they have nothing in common except the word.
+
+| What you see | What it is really about | What actually fixes it |
+| --- | --- | --- |
+| The file is too large | One file, on its own, over <Fact k="maxFileSize" /> or over <Fact k="maxTextTokens" /> as text | Split the file or send less of it |
+| Upload limit reached | Your account allowance: <Fact k="rollingUploadRate" />, <Fact k="freeDailyUploads" /> on Free, or the <Fact k="userStorageCap" /> storage cap | Wait, or delete stored files |
+| The conversation is too long | Everything in this one chat added together | A new chat |
+
+The third one is the only one where the file is innocent, which is why it is the one people spend the
+longest fighting.
+
+## The fix, in the right order
+
+<Steps>
+  <Step title="Start a new chat">
+    Not a new branch, not a cleared composer. A new conversation, with an empty running total.
+  </Step>
+  <Step title="Upload the document first, before you ask anything">
+    The document is the largest thing you will put in the chat. Putting it in first means everything
+    else builds on top of it, instead of arriving after the room has been spent on discussion.
+  </Step>
+  <Step title="Paste in a short brief of what you already worked out">
+    A paragraph or two, not a transcript. See the next section for how to get it.
+  </Step>
+  <Step title="Keep the chat to one job">
+    One document, one line of questioning. The habit of running everything in a single long chat is
+    what produces this error in the first place.
+  </Step>
+</Steps>
+
+## Carrying the useful part of the old chat across
+
+You rarely need the old conversation. You need its conclusions. Ask for them before you abandon it:
+
+> Summarise what we have established so far as a short brief I can paste into a new chat. Include
+> decisions made, constraints, and anything still open. Do not repeat the document text.
+
+That last line matters. Without it you get several pages of quoted document, which is exactly the
+weight you are trying to leave behind. Paste the brief into the new chat after the document and you
+are back where you were in two messages instead of forty.
+
+<Callout variant="tip" title="If the document is one you keep coming back to">
+Put it in a Project instead. Files added to a Project stay available to every chat inside it, so you
+can start a fresh conversation without uploading again. Projects hold
+<Fact k="projectFilesPlus" /> files on Plus and <Fact k="projectFilesPro" /> on Pro. Each chat in the
+project still has its own conversation ceiling, so this saves you the re-upload, not the fresh start.
+</Callout>
+
+## When a fresh chat is not enough
+
+Sometimes the document alone is most of the room. A book, a full case file, a year of transcripts.
+The new chat accepts the upload and then fills almost immediately.
+
+Nothing removes that ceiling, so the answer is sending less at a time. Send the chapter your question
+concerns rather than the book. Or work through it in parts, in order, with an instruction to hold the
+answer until the last part has arrived, then ask for a written summary you can carry into the next
+chat as its starting point.
+
+<InlineInstall
+  heading="Feeding a long document into a fresh chat"
+  body="FileUploadGPT reads the file on your computer, splits it into parts ChatGPT accepts, sends the hold-your-answer instruction first, then feeds them in order. It does not make the conversation ceiling bigger, so start it in a new chat where the room is still there."
+/>
+
+## Do not trust the old chat's last few answers
+
+The quiet stage comes before the error. If the chat had been dropping its oldest content for a while,
+any summary it gave you of a document uploaded early on was built from whatever was still in view,
+and it will have sounded entirely confident about it.
+
+In the new chat, ask something only answerable from the end of the document, such as what the final
+section is called. If the new chat can answer it and the old one could not, you know which answer to
+keep.
+
+## The short version
+
+Do not shrink the file and do not retry. The file was never the problem.
+
+Open a new chat, put the document in first, bring a paragraph of context with you, and keep that chat
+to one piece of work. Documents are heavy and conversations accumulate, so the fix is a clean start
+rather than a smaller file.

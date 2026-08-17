@@ -1,0 +1,150 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-you-can-send-up-to-1-files-error',
+  title: '"You can send up to -1 files" is a counter bug',
+  heading: 'Why ChatGPT says "you can send up to -1 files"',
+  description:
+    'A negative file count is a display fault, not a real limit. What pushes it below zero, and the fixes that clear it, in order.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt you can send up to -1 files',
+  related: [
+    'chatgpt-upload-limit-reached-error',
+    'chatgpt-only-upload-one-file-at-a-time',
+    'chatgpt-file-upload-troubleshooting',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT say I can send up to -1 files?',
+      a: 'The number in that message is a remainder, worked out by subtracting what is already counted against you from your allowance. When the subtraction goes below zero the interface prints the negative result instead of stopping at zero. It is a display fault, not an instruction.',
+    },
+    {
+      q: 'Does a negative number mean my account is restricted?',
+      a: 'No. It is not a penalty state and it is not a ban. In most cases it is the browser tab holding a stale count, which a reload clears. In the rest, you are simply past the rolling upload cap and the window has not moved on yet.',
+    },
+    {
+      q: 'Will reloading lose my conversation?',
+      a: 'No. The conversation is stored on OpenAI servers, so reloading brings it back exactly as it was. You only lose unsent draft text and any attachment you had staged but not yet sent, which is the point of reloading in the first place.',
+    },
+    {
+      q: 'How long do I have to wait if reloading does not fix it?',
+      a: 'The general cap is 80 files per 3 hours and it rolls rather than resetting at a fixed time, so slots free up gradually as your oldest uploads age out. An hour is usually enough. The Free plan cap of 3 uploads per day is different, and that one is a daily reset.',
+    },
+  ],
+});
+
+<AnswerBox>
+You cannot send a negative number of files, and no attachment will satisfy that message. The number
+is whatever the web client thinks is left of your upload allowance, and its arithmetic has dropped
+below zero. Clearing the composer and reloading the tab fixes most cases. If it survives a fresh
+incognito window, you are genuinely past the rolling cap of <Fact k="rollingUploadRate" /> and only
+time clears that.
+</AnswerBox>
+
+OpenAI does not document this message, so everything below is observed behaviour rather than stated
+policy. It is consistent enough to work with.
+
+## The number is a remainder, not a rule
+
+Normally that message reads "you can send up to 3 files" or "up to 10 files". People read the number
+as a ceiling. It is not. It is a subtraction: your allowance minus whatever is already counted
+against you.
+
+Subtraction with no floor at zero can produce -1, and the interface prints the result it was given.
+
+That is worth sitting with for a second, because it tells you what will not work. You cannot comply
+by attaching fewer files. There is no number below one. The count itself has to be reset, which
+means the fix is never on the attachment side.
+
+## What pushes the count below zero
+
+| What happened | Why the count goes negative | What clears it |
+| --- | --- | --- |
+| An upload failed or is still spinning | The client still counts it as attached after the chip vanishes from view | Clear the composer |
+| The tab has been open for hours | The local count has drifted away from the server's | Reload |
+| You switched chats or projects quickly | A count from the previous context carried over | New chat |
+| A page-modifying browser extension is running | The composer was rewritten underneath the counter | Disable and retest |
+| You really are past the cap | The remainder is honestly negative and the display is just showing it badly | Wait |
+
+The first four are cosmetic. The last one is real, and telling them apart takes about a minute.
+
+## Fixes, in the order worth trying
+
+<Steps>
+  <Step title="Empty the composer">
+    Remove every attachment chip, including greyed out ones and anything stuck at 0 per cent. Delete
+    the draft text as well. A half attached file is the single most common cause, and it is often
+    invisible.
+  </Step>
+  <Step title="Reload the page">
+    A hard reload, so Cmd+Shift+R on Mac or Ctrl+F5 on Windows. Your conversation comes back from the
+    server. Only the unsent draft is lost.
+  </Step>
+  <Step title="Start a new chat">
+    If the number is still negative, open a fresh conversation and try one small file there. This
+    rules out a count tied to the specific thread.
+  </Step>
+  <Step title="Open an incognito window with extensions off">
+    Sign in and attach one small file. This is the test that matters, because it removes every piece
+    of local state at once.
+  </Step>
+  <Step title="If it still fails, stop and wait">
+    At this point it is not your browser. You are against a server side allowance and nothing you do
+    in the interface will move it.
+  </Step>
+</Steps>
+
+## Telling a display fault from a real block
+
+Step four is the whole diagnosis. A clean session with no extensions and no cached composer state
+either works or it does not, and each outcome points somewhere different.
+
+If the file uploads in incognito, the problem was local. Go back to your normal window, clear the
+composer properly, and carry on.
+
+If incognito fails the same way, you have hit the rolling cap of <Fact k="rollingUploadRate" />, or
+on Free the much lower allowance of <Fact k="freeDailyUploads" />, which is a daily reset. The
+general cap rolls rather than resetting at a fixed time, so slots free up gradually as your oldest
+uploads age past three hours. An hour is usually enough.
+
+<Callout variant="info" title="Storage is a separate thing">
+The <Fact k="userStorageCap" /> storage cap produces its own message and is cumulative across every
+chat you have ever had, so it never clears on its own. Check Settings then Storage. If you are near
+the cap, waiting is pointless and deleting old chats is the only route.
+</Callout>
+
+## Retrying is the one thing that makes it worse
+
+OpenAI's own documentation notes that failed upload attempts can count toward the rate cap. So a
+message that started as a stale counter becomes a real block if you sit there clicking.
+
+Six frustrated retries against a broken display spend six slots and upload nothing. Reload once,
+test once, then either fix the local state or wait.
+
+## Getting the document in while the count is stuck
+
+If you are blocked and the work is not optional, there is a route that sidesteps the counter
+entirely.
+
+Pasting text into the message box is not a file upload. It does not touch the upload allowance, it
+does not depend on the composer's attachment state, and the negative number has no bearing on it.
+Open the document, copy the text, paste it in.
+
+The catch is length. Anything past a few thousand words has to go in as several messages, in order,
+with a note at the start telling ChatGPT to wait until you say the last piece has arrived.
+
+<InlineInstall
+  heading="When the document is too long to paste by hand"
+  body="FileUploadGPT reads your file locally and sends the text as ordered messages rather than as a file upload, so a stuck upload counter does not stand in the way."
+/>
+
+## What to actually do
+
+Treat the negative number as information about the interface, not about you. Clear the composer,
+reload once, and try a clean incognito session. Three minutes of work covers the large majority of
+cases.
+
+If a clean session fails identically, the counter was telling the truth in a clumsy way and you are
+over the cap. Waiting is the fix, pasting is the workaround, and retrying is the one move that costs
+you something.

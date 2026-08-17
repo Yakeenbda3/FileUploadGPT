@@ -1,0 +1,143 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-desktop-app-file-limits',
+  title: 'ChatGPT desktop app upload limits are the same as web',
+  heading: 'Do the Mac and Windows apps have different upload limits?',
+  description:
+    'The macOS and Windows apps share one allowance with chatgpt.com, so nothing gets bigger. What the desktop app makes easier, and what only a browser can do.',
+  category: 'limits',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt desktop app file upload limit',
+  related: [
+    'chatgpt-plus-file-upload-limit',
+    'chatgpt-file-upload-troubleshooting',
+    'chatgpt-file-upload-limit-workaround',
+  ],
+  faq: [
+    {
+      q: 'Does the ChatGPT desktop app allow larger file uploads?',
+      a: 'No. The 512 MB per file ceiling and the 2 million token cap on text and documents belong to your account, not to the client you use. A file rejected in the browser is rejected in the desktop app for the same reason.',
+    },
+    {
+      q: 'Do desktop and browser uploads share the same daily limit?',
+      a: 'Yes. There is one pool per account. Three uploads from the desktop app on the Free plan is the whole day, and opening chatgpt.com in a browser afterwards does not reset anything.',
+    },
+    {
+      q: 'Can I use a Chrome extension inside the ChatGPT desktop app?',
+      a: 'No. The desktop app is not a browser and does not load browser extensions. If your workflow depends on one, run ChatGPT in Chrome or Edge instead, using the same account and the same conversations.',
+    },
+    {
+      q: 'Is the desktop app better for large documents?',
+      a: 'Only for getting the file in, since dragging from Finder or File Explorer is quicker. Once uploaded, a long document is truncated at exactly the same point, because that cap is set on the account rather than the app.',
+    },
+  ],
+});
+
+<AnswerBox>
+No. The macOS and Windows apps sign in to the same account and draw on the same allowance as
+chatgpt.com, so <Fact k="maxFileSize" />, <Fact k="maxTextTokens" /> for text and documents, and
+<Fact k="freeDailyUploads" /> on the Free plan all apply exactly as they do in a browser. The
+desktop app changes how you hand a file over, not how much it will take. The one real difference
+runs the other way: browser extensions do not work inside it.
+</AnswerBox>
+
+People search for this because OpenAI's own wording on where uploads work is
+<Fact k="availability" />, which does not name the desktop apps at all. That silence reads like
+there might be a separate rule for them. There is not. The apps are a client for the same service,
+and every upload limit is attached to your account rather than to the thing you opened.
+
+## The numbers, side by side
+
+| Limit | Desktop app | Browser |
+| --- | --- | --- |
+| Size per file | <Fact k="maxFileSize" /> | Same |
+| Text and document length | <Fact k="maxTextTokens" /> | Same |
+| Spreadsheets | <Fact k="maxSpreadsheetSize" /> | Same |
+| Images | <Fact k="maxImageSize" /> | Same |
+| Free plan daily | <Fact k="freeDailyUploads" /> | Same |
+| Rolling rate | <Fact k="rollingUploadRate" /> | Same |
+| Storage | <Fact k="userStorageCap" /> | Same |
+| Images inside documents | <Fact k="imagesInDocuments" /> | Same |
+
+One pool, shared between clients. If you use the app on your work laptop in the morning and the
+browser on a different machine that evening, the allowance you spent in the app is already gone.
+
+## Nothing is processed on your machine
+
+This is the assumption worth correcting, because it is the reason people expect the desktop app to
+be more generous. A native app sounds like it should be able to read a file locally and skip the
+upload entirely.
+
+It does not. Dragging a PDF onto the app window uploads it to OpenAI in the same way the browser
+does, and the same extraction runs on the same servers. The app is a window onto the service, not a
+local document reader. So a 600 MB file is refused in both, a scanned PDF yields nothing in both,
+and a 400 page report is cut off at the same sentence in both.
+
+## What the desktop app genuinely does better
+
+The gains are all about handling, and some of them matter more than they sound.
+
+**Dragging files in.** You can drag from Finder or File Explorer straight onto the window, with no
+browser upload dialog in between. For someone attaching documents all day, this is the whole point
+of the app.
+
+**A window that is not a tab.** ChatGPT stops competing with thirty other tabs, and it does not
+disappear when you close the browser to clear your head.
+
+**A global keyboard shortcut.** A small companion window opens from anywhere without switching
+apps, Option and Space on macOS by default, Alt and Space on Windows, and both can be changed in
+settings. Good for a quick question about something you are already looking at.
+
+**Reading other apps on macOS.** The app can pull in the contents of certain applications you have
+open, such as supported code editors and terminals, which OpenAI calls working with apps. That is a
+genuinely desktop-only route for getting text in without producing a file at all. It is bounded by
+which apps are supported, so treat it as a convenience rather than a way in for arbitrary content.
+
+## What only the browser can do
+
+**Run extensions.** This is the one that matters for long documents. The desktop app has no
+extension system, so any tool that automates splitting, pasting or sending is browser only. If your
+workflow depends on one, the answer is to open chatgpt.com in Chrome or Edge, where the same
+account shows the same conversation history.
+
+**Switch accounts quickly.** Browser profiles keep a personal and a work account open side by side.
+The desktop app is happier with one at a time.
+
+**Show you what actually happened.** When an upload fails silently, a browser lets you check the
+network tab and see whether the file was refused or the request never left. The app gives you the
+message and nothing behind it.
+
+<Callout variant="warn" title="The cap that neither client moves">
+Long documents are truncated at <Fact k="maxTextTokens" /> and nothing about the desktop app changes
+that. The upload succeeds, part of the file is read, and no warning appears in either client. If a
+report came back with a summary that quietly stopped covering the last third, switching from browser
+to app or app to browser will produce the identical result.
+</Callout>
+
+<InlineInstall
+  heading="For the documents that are too long either way"
+  body="FileUploadGPT splits a document past the length cap into pieces ChatGPT accepts and sends them in order, holding the answer until the last one lands. It runs in Chrome, so use it on chatgpt.com rather than in the desktop app."
+/>
+
+## When an upload fails in the desktop app
+
+Work through it the same way you would in a browser, since the causes are the same. Check the file
+size against <Fact k="maxFileSize" />, check the format, and check Settings then Storage, because a
+full account at <Fact k="userStorageCap" /> produces a limit message that looks like a rate limit.
+Failed attempts appear to count toward the rolling rate as well, so several retries in a row can put
+you closer to <Fact k="rollingUploadRate" /> than you expected.
+
+Having two clients does give you one diagnostic. Try the same file at chatgpt.com in a browser. If
+it uploads there and not in the app, the app is the problem and a restart or an update is the first
+thing to try. If it fails in both, the file is the problem and no amount of switching will change
+that.
+
+## Which one to use
+
+Use the desktop app if you attach files often and want them one drag away. It is faster in daily
+use and the limits cost you nothing extra.
+
+Use the browser when you need an extension, when you are juggling two accounts, or when something
+has gone wrong and you want to see why. Everything else is preference, because the two clients hold
+the same conversations and answer to the same limits.

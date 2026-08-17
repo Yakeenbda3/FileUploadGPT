@@ -1,0 +1,163 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'upload-large-excel-to-chatgpt',
+  title: 'How to upload a large Excel file to ChatGPT',
+  heading: 'How to upload a large Excel file to ChatGPT',
+  description:
+    'Excel files are capped on size but exempt from the token limit. Export to CSV, trim the columns, and send a sample when the whole sheet will not fit.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to upload a large excel file to chatgpt',
+  related: [
+    'chatgpt-file-is-too-large-error',
+    'how-to-upload-large-files-to-chatgpt',
+    'chatgpt-file-types-supported',
+  ],
+  faq: [
+    {
+      q: 'What is the maximum Excel file size for ChatGPT?',
+      a: 'Around 50 MB, and OpenAI describes it as approximate because it depends on the size of each row. A wide sheet with long text fields hits the ceiling at fewer rows than a narrow numeric one.',
+    },
+    {
+      q: 'Does the 2 million token limit apply to spreadsheets?',
+      a: 'No. OpenAI states the token cap on text and document files and then says it does not apply to spreadsheets. That is why a CSV with hundreds of thousands of rows often goes through when a report of similar length gets silently truncated.',
+    },
+    {
+      q: 'Should I upload XLSX or CSV?',
+      a: 'CSV in almost every case. It carries no formatting, styles, charts or cached pivot data, so it is usually a fraction of the size while holding exactly the same numbers. Export one CSV per sheet that matters.',
+    },
+    {
+      q: 'Can I split a workbook across several uploads?',
+      a: 'Yes, and splitting by period or category usually works better than splitting arbitrarily. Twelve monthly CSVs let you ask each question against the relevant slice. Just remember every upload counts against your rolling file allowance.',
+    },
+  ],
+});
+
+<AnswerBox>
+Spreadsheets are capped on size, around <Fact k="maxSpreadsheetSize" />, but they are exempt from the
+<Fact k="maxTextTokens" /> cap that truncates documents. So a large Excel file needs to be made
+smaller, not shorter. Export each sheet to CSV, delete the columns your question does not touch, and
+upload a representative sample if the full sheet still will not fit.
+</AnswerBox>
+
+An XLSX that gets refused is rarely a data problem. Most of the weight in a workbook is presentation,
+and none of it is what you want analysed. Strip it and the same numbers usually fit with room to
+spare.
+
+## Size is the limit here, not length
+
+For documents, length is what stops you. A long report uploads cleanly and then gets read in part,
+with no warning. Spreadsheets work the other way round.
+
+| | Documents | Spreadsheets |
+| --- | --- | --- |
+| Size ceiling | <Fact k="maxFileSize" /> | <Fact k="maxSpreadsheetSize" /> |
+| Token cap | <Fact k="maxTextTokens" /> | Exempt |
+| How it fails | Quietly, mid file | Loudly, at upload |
+
+The loud failure is the better one. You know immediately, and the fix is mechanical.
+
+## Why the workbook is heavy when the data is not
+
+A few things bloat XLSX files far beyond their contents:
+
+Conditional formatting applied to whole columns rather than the used range. Embedded charts and
+images. Cell styles, fonts and borders on every populated cell. Cached pivot table data, which stores
+a second copy of the source. Formatting that extends to the last row of the sheet because someone
+once selected a column header and clicked a colour.
+
+None of that is read. ChatGPT works from the values.
+
+## Export each sheet to CSV
+
+This is the first thing to try and it resolves most cases on its own.
+
+<Steps>
+  <Step title="Open the workbook">
+    Excel, Numbers, LibreOffice or Google Sheets. Any of them export CSV.
+  </Step>
+  <Step title="Save each sheet you need as CSV">
+    CSV holds one sheet only, so a workbook becomes several files. Export just the sheets your
+    question involves, not all fourteen.
+  </Step>
+  <Step title="Check the new size">
+    Dropping from tens of megabytes to a few hundred kilobytes is normal, not remarkable.
+  </Step>
+</Steps>
+
+<Callout variant="warn" title="Two things CSV drops">
+Formulas become their computed values, which is usually what you want. Cell colour disappears
+entirely, which matters if colour carried meaning in your sheet. If red meant flagged, add a column
+called `flagged` with yes or no before you export, otherwise that information is simply gone.
+</Callout>
+
+## Trim columns before you trim rows
+
+Column width costs more than people expect, because every column you keep is paid for on every single
+row. A sheet with 40 columns and 200,000 rows carries eight million cells. Delete the 30 columns your
+question does not touch and roughly three quarters of the file goes with them.
+
+Rows are the last thing to cut, not the first. Most analyses genuinely need all the rows and genuinely
+need about six of the columns.
+
+While you are in there, make the remaining columns readable. One header row at the top, no merged
+cells, no blank rows in the middle, and no title row sitting above the headers. Consistent types in
+each column matter too, since a column of numbers with a few text entries is a reliable source of
+confidently wrong answers.
+
+## When a sample beats the whole sheet
+
+This is the part people skip, and it is often the right answer rather than a compromise.
+
+Ask what your question actually requires. Exact totals, precise counts and outlier hunting need the
+full dataset. Understanding structure, spotting patterns, deciding what analysis to run, or getting a
+formula written do not. For those, a few hundred representative rows produce the same answer as two
+hundred thousand.
+
+The strongest version of this is to stop asking ChatGPT to do the arithmetic at all:
+
+> Here are the first 500 rows and the column definitions. Write me the Excel formula, or the pivot
+> table setup, that answers this question. I will run it on the full dataset myself.
+
+You get a method you can check and reuse, computed by Excel rather than estimated from a large paste.
+For a big spreadsheet that is usually both faster and more accurate.
+
+<Callout variant="tip" title="Make the sample honest">
+Take rows from across the file, not just the top. The first 500 rows of a sales export are often one
+region or one month, and any pattern found in them will be wrong about the rest.
+</Callout>
+
+## Aggregate before you upload
+
+If your question is about totals rather than transactions, upload the totals.
+
+Pivot to revenue by region by month and you have a few hundred rows instead of a few hundred
+thousand, with nothing lost that the question needed. This handles most reporting work, and it sits
+comfortably inside every limit.
+
+<InlineInstall
+  heading="For the long documents that come with the numbers"
+  body="Spreadsheets fit once you convert them to CSV. The reports and appendices around them often do not, because documents hit a length cap rather than a size cap. FileUploadGPT splits a long document in your browser and feeds it into ChatGPT in order, with the hold-your-answer instruction first. Free, and nothing is uploaded to us."
+/>
+
+## What does not help
+
+| Attempt | Result |
+| --- | --- |
+| Zipping the workbook | Archives are not unpacked. The file is still unread. |
+| Renaming .xlsx to .csv | Contents are inspected, not the extension. It breaks the file. |
+| Consolidating sheets into one tab | Same data, same size, no improvement. |
+| Upgrading to Plus | Plus raises file counts and Project allowances. The spreadsheet size ceiling is not one of them. |
+| Pasting the sheet into a message | You hit the message length limit long before the file limit. |
+| Retrying the upload repeatedly | It fails the same way, and failed attempts count against your rolling allowance of <Fact k="rollingUploadRate" />. |
+
+## The order to try it in
+
+Export to CSV first. That alone clears most refused uploads and takes a minute. If it is still too
+large, delete the columns you do not need, then split by month or category so each question is asked
+against the relevant slice.
+
+If it is still too large after all that, the honest conclusion is that the dataset is bigger than the
+chat interface is for. Use a sample to get the method, then run the method in Excel or a database
+where it belongs.

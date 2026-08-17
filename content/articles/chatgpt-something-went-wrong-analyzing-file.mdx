@@ -1,0 +1,166 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'chatgpt-something-went-wrong-analyzing-file',
+  title: '"Something went wrong while analyzing your file" fixed',
+  heading: 'What "something went wrong while analyzing your file" means',
+  description:
+    'The error comes from the analysis step, not the upload. How to tell a broken file from a timeout from an OpenAI fault, and the order to check them in.',
+  category: 'errors',
+  updated: '2026-08-17',
+  targetQuery: 'chatgpt something went wrong while analyzing your file',
+  related: [
+    'chatgpt-file-upload-troubleshooting',
+    'chatgpt-file-is-too-large-error',
+    'chatgpt-scanned-pdf-not-working',
+  ],
+  faq: [
+    {
+      q: 'Why does ChatGPT say something went wrong while analyzing my file?',
+      a: 'The file reached OpenAI and then failed when a tool tried to open or process it. Three causes cover nearly all of them: a file that cannot be opened at all, such as a password protected or corrupt one, a file heavy enough that the processing step gives up, and a temporary fault on OpenAI\'s side.',
+    },
+    {
+      q: 'Is it my file or is ChatGPT broken?',
+      a: 'Upload a two line text file in a new chat. If that also fails, the platform is the problem and status.openai.com will usually confirm it. If the tiny file works, the fault is with your document and no amount of retrying will change it.',
+    },
+    {
+      q: 'Can a password protected PDF cause this?',
+      a: 'Yes. ChatGPT cannot open a PDF that asks for a password, and restrictions that only block copying and printing can also stop text extraction. Open it yourself, save an unprotected copy, and upload that instead.',
+    },
+    {
+      q: 'Should I keep retrying?',
+      a: 'Once, maybe twice, then stop. A corrupt file or one too heavy to process fails the same way every time, and every attempt is another upload counted against the rolling cap of 80 files per 3 hours. Retrying twenty times leaves you blocked as well as stuck.',
+    },
+  ],
+});
+
+<AnswerBox>
+This error comes from the analysis step, not the upload. Your file reached OpenAI and then something
+failed while opening or processing it. Three causes account for almost every case: a file that
+cannot be opened at all, a file heavy enough that processing gives up, and a passing fault on
+OpenAI's side. Retry once, then test with a tiny file, then look hard at the file itself.
+</AnswerBox>
+
+The wording is vague because the failure happens inside a sandbox you cannot see. It still tells you
+something useful: where in the pipeline it broke.
+
+## What the message actually means
+
+Attaching a file starts two separate things. First the file transfers to OpenAI. Then a tool opens
+it, either text extraction for documents or a Python sandbox for spreadsheets and data files. This
+message is the second stage failing.
+
+That rules a few things out straight away. It is not the <Fact k="maxFileSize" /> ceiling, because
+size is checked on the way in and produces a size error instead. It is not usually an unsupported
+file type either, since those are refused rather than analysed. Your file got in. It just could not
+be read once it was there.
+
+## Work through it in this order
+
+<Steps>
+  <Step title="Retry once">
+    Transient failures are real and one retry costs you almost nothing. One.
+  </Step>
+  <Step title="Try again in a fresh chat">
+    Attaching the same file to a brand new conversation sometimes works when a long one keeps
+    failing.
+  </Step>
+  <Step title="Upload a tiny test file">
+    A two line CSV, or a text file with one sentence in it. If that fails too, your document is
+    innocent. Check status.openai.com and wait.
+  </Step>
+  <Step title="Open the file on your own machine">
+    Not a preview pane. Open it properly. Does it ask for a password? Is it zero bytes? Does the
+    application complain about the format?
+  </Step>
+  <Step title="Re-export it to something plain">
+    CSV instead of XLSX, plain text instead of DOCX. If a plain export of the same content works,
+    the original file was the problem.
+  </Step>
+</Steps>
+
+<Callout variant="warn" title="Do not retry twenty times">
+OpenAI's FAQ notes that failed upload attempts count toward the rolling cap of
+<Fact k="rollingUploadRate" />. A file that fails in analysis did upload, so those attempts count
+too. Hammering the button turns one problem into two, and you end up rate limited on top of a file
+that was never going to work.
+</Callout>
+
+## Cause one: the file cannot be opened at all
+
+This one is deterministic. It fails at the same point every time, usually quickly.
+
+**It is protected.** A PDF with an open password cannot be read. Less obviously, permissions
+passwords that only restrict copying and printing can also block text extraction. Open the file,
+save an unprotected copy, upload that.
+
+**It is truncated or corrupt.** Interrupted downloads, files dragged out of an email preview, and
+exports that failed halfway through all produce something that looks like a file and is not one.
+
+**The extension is lying.** An old .xls renamed to .xlsx, a .doc renamed to .docx, or an HTML table
+that a reporting tool saved with a spreadsheet extension. The upload trusts the name. The parser
+does not. Open it in the real application and save it again in the format it claims to be.
+
+**It is a cloud placeholder.** iCloud Drive, OneDrive and Dropbox all show files that are not
+actually on your disk. Make sure the file is downloaded locally before you attach it.
+
+**It is empty.** Check the size in Finder or Explorer. Zero byte exports happen more often than
+people expect.
+
+## Cause two: it opens, then processing gives up
+
+Different signature. It thinks for a while first, sometimes tens of seconds, and it can fail at a
+different point on each attempt. Occasionally it half works and then breaks partway through an
+answer.
+
+The published ceilings are <Fact k="maxSpreadsheetSize" /> for spreadsheets and
+<Fact k="maxTextTokens" /> for text and document files. Under those numbers a file can still be too
+much work. OpenAI does not publish a time or memory budget for the analysis sandbox, so treat this
+as observed behaviour rather than a stated rule.
+
+The files that trigger it tend to share traits: spreadsheets with hundreds of thousands of rows,
+workbooks stuffed with formulas, pivot tables and multiple sheets, CSVs with hundreds of columns,
+PDFs running to thousands of pages, and anything with an unusual text encoding.
+
+The fix is to give it less work. Export the one sheet you care about as CSV. Delete the columns you
+will not ask about. Split by date range or by section. Converting XLSX to CSV drops formulas,
+formatting and charts, which is exactly the weight that was causing trouble.
+
+## Telling the three apart
+
+| Clue | Broken file | Too heavy to process | OpenAI fault |
+| --- | --- | --- | --- |
+| Fails almost instantly | Usually | No, it works first | Varies |
+| A tiny test file fails too | No | No | Yes |
+| Fails the same way every time | Yes | Usually | No, it comes and goes |
+| Opens normally on your machine | Often not | Yes | Yes |
+| A smaller export works | No | Yes | Not reliably |
+
+If the tiny test file uploads and analyses fine, stop blaming OpenAI. If it does not, stop editing
+your document.
+
+## The route that skips the analysis step
+
+For reading work rather than data work, there is a way around all of this. Pasting text into the
+chat is not a file upload, so there is no file for a parser to choke on and no sandbox to time out.
+The content arrives as ordinary messages.
+
+That will not help you if you need charts, pivot tables or code run over a dataset, because those
+need the file. It helps a great deal when the file is a long report, a contract or a book and all
+you wanted was for ChatGPT to read it.
+
+<InlineInstall
+  heading="For long documents that keep failing"
+  body="FileUploadGPT reads your document locally, splits it into pieces ChatGPT accepts, and sends them in order as messages, so there is no upload to fail and no analysis step to time out."
+/>
+
+## If none of it works
+
+Report it, but only once you have the evidence. A tiny file that analyses correctly, a clear status
+page, a document that opens fine on your machine, and a plain text or CSV export that still fails
+together make a real bug report. OpenAI asks for your account email, a screenshot, the timestamp
+with your timezone, your platform and browser, and the request ID if you have one.
+
+Until then the practical decision is simple. If you need calculations run over the file, shrink it
+or split it until the analysis step copes. If you only need the content read, stop uploading and
+send the text instead.

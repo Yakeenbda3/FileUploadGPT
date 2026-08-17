@@ -1,0 +1,182 @@
+import { defineArticle } from '@/lib/articles';
+
+export const meta = defineArticle({
+  slug: 'upload-large-zip-file-to-chatgpt',
+  title: 'How to upload a large ZIP file to ChatGPT',
+  heading: 'How to upload a large ZIP file to ChatGPT',
+  description:
+    'A 700 MB archive is never 700 MB of text. How to see what is inside, pick the handful of files that matter, and send them as one upload.',
+  category: 'bypass',
+  updated: '2026-08-17',
+  targetQuery: 'how to upload a large zip file to chatgpt',
+  related: [
+    'can-chatgpt-read-zip-files',
+    'how-to-upload-large-files-to-chatgpt',
+    'upload-large-code-files-to-chatgpt',
+  ],
+  faq: [
+    {
+      q: 'Can ChatGPT open a ZIP file if I make the archive smaller?',
+      a: 'No. Size is not what stops it. Archives are not unpacked at all, so a 5 MB zip is exactly as unreadable as a 700 MB one. The only route in is to extract it yourself and upload the files that came out.',
+    },
+    {
+      q: 'What is the largest ZIP file I can upload to ChatGPT?',
+      a: 'The per-file ceiling is 512 MB, so a 700 MB archive is refused before anything else happens. That number is academic though, because a 10 MB archive that uploads perfectly still cannot be read. No archive size works.',
+    },
+    {
+      q: 'How do I send a whole project folder instead?',
+      a: 'Not as a folder and not as an archive. Concatenate the text files into one file with a header line naming each one, and leave out dependencies, build output and binaries. That is one upload, it is readable, and the structure survives.',
+    },
+    {
+      q: 'Does RAR, 7z or tar.gz work any better?',
+      a: 'No, the behaviour is identical for all of them. The container format is not the problem. Nothing is unpacked, so switching from zip to 7z changes nothing about the outcome.',
+    },
+  ],
+});
+
+<AnswerBox>
+ChatGPT does not unpack archives, so the 700 MB is beside the point. Extract the archive on your own
+machine, look at what is actually inside it, and upload only the files your question depends on.
+The readable text in a huge archive is usually a tiny fraction of its weight, and once the media and
+build output are gone it often fits in a single upload.
+</AnswerBox>
+
+The instinct with a big archive is to find a way to make it acceptable: compress it harder, split it
+into volumes, upload it to a drive and paste the link. None of that helps, because the obstacle is
+not size. It is that the archive is never opened.
+
+So the work is on your machine, before anything is uploaded. It takes about ten minutes and it is
+mostly deciding what not to send.
+
+## Why the archive size is beside the point
+
+A 700 MB zip fails twice over. It is above the <Fact k="maxFileSize" /> per-file ceiling, so it will
+not upload at all. And even if it were 50 MB and went through cleanly, nothing inside it would be
+read.
+
+Worth sitting with the first fact for a second, because it tells you what is in there. Text
+compresses extremely well. An archive that is genuinely full of documents and code is small, usually
+single-digit megabytes. When an archive reaches 700 MB, the weight is almost always things that
+could not be read even if you uploaded them individually: video, audio, high-resolution images,
+executables, database dumps, virtual machine images, or a dependency folder that has been
+duplicated across four project copies.
+
+<Callout variant="info" title="The number that actually stops you comes later">
+Once you have extracted and picked your files, the limit you will run into is not size but length.
+Text and document files are capped at <Fact k="maxTextTokens" />, and going over it does not produce
+an error. The file uploads and part of it is read.
+</Callout>
+
+## Look inside before you extract anything
+
+Do not double-click a 700 MB archive and let it spray thousands of files across your disk. List it
+first and decide from the listing.
+
+On macOS or Linux, the largest entries and the composition by type:
+
+```
+unzip -l big-archive.zip | sort -rn | head -40
+unzip -l big-archive.zip | grep -oE '\.[A-Za-z0-9]+$' | sort | uniq -c | sort -rn | head -20
+```
+
+On Windows PowerShell, expand to a scratch folder and inspect there:
+
+```
+Expand-Archive big-archive.zip -DestinationPath .\scratch
+Get-ChildItem .\scratch -Recurse -File |
+  Group-Object Extension |
+  Sort-Object Count -Descending | Select-Object Count, Name -First 20
+```
+
+Two minutes of this usually reveals that the archive is one export folder of images, or a backup
+with three near-identical copies of the same directory. That changes what you extract.
+
+## Sort what is inside into what can be read
+
+| What you find | What to do with it |
+| --- | --- |
+| Text, Markdown, code, JSON, docx, digital PDFs | These are the candidates. Almost all of your signal is here. |
+| CSV and spreadsheets | Upload separately rather than bundling. They are capped near <Fact k="maxSpreadsheetSize" /> but are exempt from the token cap. |
+| Images | Only if one specific image answers the question. Cap is <Fact k="maxImageSize" /> each, and images inside documents are <Fact k="imagesInDocuments" />. |
+| Scanned PDFs | No extractable text. Run OCR first or leave them out. |
+| Video and audio | Not among the file families OpenAI lists for uploads. Transcribe them first, then send the transcript. |
+| Binaries, build output, `node_modules`, `vendor`, lock files | Leave out. They consume length and add nothing. |
+
+That table alone typically removes 95 percent of a large archive.
+
+## Choose against the question, not against the folder
+
+The most common mistake at this stage is trying to be complete. People extract the archive, feel
+that everything is potentially relevant, and upload forty files.
+
+Write your actual question down first. Then keep only the files that could change the answer. Three
+or four is a normal number. A reviewer asked to read four relevant documents gives you a better
+answer than one handed forty, and the same is true here, because the irrelevant material competes
+for attention with the parts that matter.
+
+If you cannot tell which files matter, that is a sign you need the listing rather than the contents.
+Paste the directory tree first and ask which files are likely to contain the answer, then upload
+those.
+
+## Bundle what survives into one upload
+
+Uploading fifteen separate files costs fifteen slots against the <Fact k="rollingUploadRate" />
+rolling cap, and on Free you only get <Fact k="freeDailyUploads" />. One bundled text file costs one.
+
+<Steps>
+  <Step title="Start the bundle with a map">
+    Put a plain listing of the full extracted tree at the top, then a line saying which of those
+    files are included below. That tells ChatGPT what exists and what it has not been given, which
+    stops it inventing the contents of files you left out.
+  </Step>
+  <Step title="Concatenate with a header before each file">
+    A delimiter line naming the file lets it tell where one ends and the next begins.
+  </Step>
+  <Step title="Check the length, not the size">
+    A rough guide is four characters per token, so a bundle of a few hundred thousand characters is
+    comfortable, and one running into the millions of words is not.
+  </Step>
+</Steps>
+
+```
+cd extracted
+find . -type f \( -name '*.md' -o -name '*.txt' -o -name '*.py' \) | sort > manifest.txt
+{ echo "=== MANIFEST ==="; cat manifest.txt; echo;
+  while read -r f; do printf '\n===== FILE: %s =====\n' "$f"; cat "$f"; done < manifest.txt
+} > bundle.txt
+```
+
+<Callout variant="warn" title="Read the bundle before it leaves your machine">
+Archives are backups, and backups contain `.env` files, API keys in config, connection strings in
+test fixtures, and occasionally somebody's personal data. Sweeping a directory into one file sweeps
+all of it. Search the bundle for the obvious markers before you upload, because uploading sends it
+to OpenAI, and on consumer plans content may be used to improve models unless you have turned that
+setting off.
+</Callout>
+
+<InlineInstall
+  heading="When the bundle is longer than one message"
+  body="FileUploadGPT reads the bundle in your browser, splits it into pieces ChatGPT accepts, tells it to hold its answer until the last part lands, then feeds them in order. Nothing is uploaded to us."
+/>
+
+## When the bundle is still too long
+
+Extraction and selection fix most 700 MB archives. Occasionally the honest answer is that the text
+really is enormous: a decade of exported email, a full monorepo, hundreds of contracts.
+
+Splitting works up to a point. Send the parts in order with an explicit instruction not to answer
+until the last one arrives, and check afterwards by asking something that can only be answered from
+the final part. If it cannot tell you what the last file in the bundle was, it did not read that
+far.
+
+Past a few hundred thousand words, stop splitting. A retrieval tool that searches the corpus and
+surfaces the relevant passages will beat any amount of chunking, because the problem is no longer
+getting the text in, it is finding the right part of it.
+
+## What this comes down to
+
+Never upload the archive. Extract it, list what is inside, delete the media and build output from
+your shortlist, keep the three or four files your question actually depends on, and bundle them into
+one text file with a manifest at the top. A 700 MB archive routinely becomes a 200 KB bundle that
+reads cleanly in a single upload, and the answer you get back is better than it would have been from
+the whole thing.

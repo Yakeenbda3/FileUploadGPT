@@ -82,7 +82,10 @@ function RelatedArticles({ related }: { related: ArticleMeta[] }) {
             <p className="text-[0.9375rem] font-semibold leading-snug text-ink group-hover:text-brand-700">
               {meta.heading}
             </p>
-            <p className="mt-1.5 line-clamp-2 text-[0.8125rem] leading-relaxed text-ink-muted">
+            {/* Three lines, not two. Descriptions are capped at 160 characters, which lands on
+                three lines in a half-width card, so clamping at two was truncating almost every
+                one of them into an ellipsis for no reason. */}
+            <p className="mt-1.5 line-clamp-3 text-[0.8125rem] leading-relaxed text-ink-muted">
               {meta.description}
             </p>
           </Link>

@@ -12,7 +12,18 @@ import type { Config } from 'tailwindcss';
 //   ink   on accent-500 (#F59E0B) ... 7.4:1  passes AA for all text sizes
 // The accent button therefore uses DARK text, not white. White on amber is about 2:1 and fails.
 const config: Config = {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './content/**/*.{md,mdx}'],
+  // `mdx-components.tsx` sits at the project root, not under app/ or components/, and leaving it
+  // out of this list silently broke every table on the site. Tailwind tree-shakes the classes
+  // declared in @layer components too, so `.table-scroll` was purged for want of a single
+  // occurrence, tables lost their horizontal scroll container, and a four-column table dragged the
+  // whole page sideways on a phone. Nothing errors when this happens: the class simply is not in
+  // the stylesheet. Any file that names a Tailwind class has to be listed here.
+  content: [
+    './app/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './content/**/*.{md,mdx}',
+    './mdx-components.tsx',
+  ],
   theme: {
     extend: {
       colors: {

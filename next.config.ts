@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
+import remarkGfm from 'remark-gfm';
 import { LEGACY_REDIRECTS } from './lib/redirects';
 
 const nextConfig: NextConfig = {
@@ -46,6 +47,20 @@ const nextConfig: NextConfig = {
   },
 };
 
-const withMDX = createMDX({});
+// GitHub Flavoured Markdown, and specifically its table syntax.
+//
+// MDX v3 parses CommonMark, which has no tables at all. Without this plugin every `| a | b |`
+// row in an article was emitted as a literal paragraph, so readers saw a run-on line of pipe
+// characters and `---` sequences where a comparison table should have been. It affected 80
+// tables across 71 of the 102 articles, and it failed silently: the build passed, the link
+// checker passed, and nothing in the markup looked wrong to a script.
+//
+// Passed as an imported function rather than the string form because this project builds with
+// webpack. The string form exists only for Turbopack, which is not enabled here.
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+  },
+});
 
 export default withMDX(nextConfig);

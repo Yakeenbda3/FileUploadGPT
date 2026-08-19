@@ -53,6 +53,32 @@ export default function Header() {
     };
   }, []);
 
+  // Keeping an open panel inside the viewport.
+  //
+  // Each panel is positioned under its own button, and the widest of them is over 1000px, so the
+  // rightmost menus used to run off the right edge of a laptop screen: at 1440 the Workflows panel
+  // ended at 1610 and a column of it was simply unreachable. Rather than redesign the menu into a
+  // full-width bar, the panel is measured once when it opens and slid back by however much it
+  // overshoots, never past its own left margin.
+  const panelRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [panelShift, setPanelShift] = useState(0);
+
+  useEffect(() => {
+    if (!openMenu) {
+      setPanelShift(0);
+      return;
+    }
+    const panel = panelRefs.current[openMenu];
+    if (!panel) return;
+    const margin = 16;
+    // Measured with the previous shift cleared, so the correction always comes from the panel's
+    // natural position rather than compounding on the last one.
+    panel.style.transform = '';
+    const rect = panel.getBoundingClientRect();
+    const overshoot = rect.right - (document.documentElement.clientWidth - margin);
+    setPanelShift(overshoot > 0 ? -Math.min(overshoot, Math.max(rect.left - margin, 0)) : 0);
+  }, [openMenu]);
+
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
@@ -77,7 +103,7 @@ export default function Header() {
             </span>
           </Link>
 
-          <div className="mx-auto hidden w-full max-w-md md:block">
+          <div className="mx-auto hidden w-full max-w-md lg:block">
             <SiteSearch variant="bar" />
           </div>
 
@@ -96,7 +122,7 @@ export default function Header() {
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
             aria-label="Menu"
-            className="ml-auto rounded-lg p-2 text-ink-soft md:hidden"
+            className="ml-auto rounded-lg p-2 text-ink-soft lg:hidden"
           >
             <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               {mobileOpen ? (
@@ -110,7 +136,13 @@ export default function Header() {
       </div>
 
       {/* ── Navigation band ─────────────────────────────────────────────────────────────────── */}
-      <div ref={navRef} className="hidden border-b border-slate-200 bg-white md:block">
+      {/* The navigation band appears at lg, not md.
+          Six category buttons plus the three utility links need about 965px of room and the
+          group is shrink-0, so between 768 and 1023 the right-hand links used to hang past the
+          edge of the window and drag every page sideways with them. Below lg the drawer carries
+          the same tree, the same utility links, the search box and the install button, so nothing
+          is lost by handing tablets the drawer instead. */}
+      <div ref={navRef} className="hidden border-b border-slate-200 bg-white lg:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
           <nav className="flex items-stretch" aria-label="Guide categories">
             {NAV_TREE.map((category) => {
@@ -146,9 +178,23 @@ export default function Header() {
                     </svg>
                   </button>
 
+                  {/* Closed panels are display:none, not visibility:hidden.
+                      A hidden-but-laid-out panel still counts toward the document's scrollable
+                      width, and with six of them anchored under their own buttons the rightmost
+                      one pushed every page on the site 170px wider than the viewport, so every
+                      article scrolled sideways on a desktop with nothing to see out there. The
+                      links stay in the server HTML either way, which is the whole reason these
+                      panels are rendered up front rather than mounted on hover. */}
                   <div
-                    className={`absolute left-0 top-full z-50 ${open ? '' : 'pointer-events-none invisible'}`}
-                    style={{ width: `${panelWidth}px`, maxWidth: 'calc(100vw - 3rem)' }}
+                    ref={(node) => {
+                      panelRefs.current[category.key] = node;
+                    }}
+                    className={`absolute left-0 top-full z-50 ${open ? '' : 'hidden'}`}
+                    style={{
+                      width: `${panelWidth}px`,
+                      maxWidth: 'calc(100vw - 3rem)',
+                      transform: open && panelShift ? `translateX(${panelShift}px)` : undefined,
+                    }}
                   >
                     <div className="overflow-hidden rounded-b-xl border border-t-0 border-slate-200 bg-white shadow-lift">
                       <div className="h-0.5 bg-brand-600" />
@@ -208,7 +254,7 @@ export default function Header() {
         <nav
           id="mobile-nav"
           aria-label="Main"
-          className="animate-fade-in max-h-[calc(100vh-4rem)] overflow-y-auto border-b border-slate-200 bg-white px-4 pb-6 pt-4 md:hidden"
+          className="animate-fade-in max-h-[calc(100vh-4rem)] overflow-y-auto border-b border-slate-200 bg-white px-4 pb-6 pt-4 lg:hidden"
         >
           <SiteSearch variant="panel" onNavigate={() => setMobileOpen(false)} />
 

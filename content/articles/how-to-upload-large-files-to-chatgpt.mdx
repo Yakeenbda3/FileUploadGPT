@@ -34,11 +34,18 @@ export const meta = defineArticle({
   ],
 });
 
+{/* The answer box names the extension in the first sentence, and carries a direct install link,
+    rather than leaving it to a paragraph two thirds of the way down that most readers never reach.
+    The opening clause is still a real answer on its own, which is the shape Google lifts for a
+    featured snippet, and the diagnostic content that made this box useful is kept immediately
+    after it. */}
+
 <AnswerBox>
-Work out which limit you are hitting first, because the fixes are different. Size stops the upload
-with an error. Length lets the upload through and quietly reads only part of it. Count stops you
-sending more files today. Format is when the file goes in but has no readable text. Each one has its
-own answer below.
+Four limits refuse large files, and the one that stops most people is length. The quickest way past
+it is **FileUploadGPT**, a free Chrome extension that splits your document into pieces ChatGPT will
+accept and sends them in order, with the instruction that stops it answering early.
+<InstallLink>Add it to Chrome, free</InstallLink>, then pick your file. All four limits, and the
+manual fix for each, are below.
 </AnswerBox>
 
 "Large" turns out to mean four different things in ChatGPT, and picking the wrong fix wastes an
@@ -46,14 +53,19 @@ afternoon. Here is how to tell them apart and what to do about each.
 
 ## The four limits, side by side
 
-| What you hit | The number | How it fails |
-| --- | --- | --- |
-| File size | <Fact k="maxFileSize" /> | Upload refused, clear error |
-| Document length | <Fact k="maxTextTokens" /> | Uploads fine, read partly, no warning |
-| Spreadsheet size | <Fact k="maxSpreadsheetSize" /> | Upload refused |
-| How many files | <Fact k="rollingUploadRate" /> | Refused until slots free up |
+Each one carries its own number and fails in its own way. Find the row that matches what you are
+seeing, then jump to the fix in the last column.
 
-Free accounts have a tighter cap still, at <Fact k="freeDailyUploads" />.
+| Limit | The number | How it fails | The fix |
+| --- | --- | --- | --- |
+| **Size** | <Fact k="maxFileSize" /> per file | Refused, with a clear error | [Convert it to text](#step-1-convert-it-to-text) |
+| **Length** | <Fact k="maxTextTokens" /> per document | Uploads fine, only part read, no warning | [Split it into parts](#step-3-split-it-and-send-the-parts-in-order) |
+| **Count** | <Fact k="rollingUploadRate" />, <Fact k="freeDailyUploads" /> on Free | Refused until slots free up | Send fewer, or wait |
+| **Format** | No number, it either holds text or it does not | Goes in, nothing readable comes back | OCR it, then treat it as text |
+
+Spreadsheets are the exception worth knowing. CSV and spreadsheet files are capped at
+<Fact k="maxSpreadsheetSize" /> instead, and they are exempt from the token limit entirely, so a very
+long spreadsheet often goes through where a document of the same length would not.
 
 The second row is the one worth internalising. It is not a size limit, it is a length limit, and
 because it fails silently it is the reason people think ChatGPT read their document when it did not.

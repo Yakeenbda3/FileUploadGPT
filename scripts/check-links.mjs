@@ -43,7 +43,11 @@ try {
 // land on. They must not be in the sitemap, and they are not link targets, so they are excluded
 // from both checks below. Without this the orphan check reports every one of them as a page
 // declared nowhere, which is a false positive that would train everyone to ignore a real one.
-const ASSET_ROUTE = /\/(opengraph-image|twitter-image|icon|apple-icon|favicon)(\.[a-z0-9]+)?$/;
+// The trailing \d* covers Next's numbering for a second file of the same kind: with both
+// icon.svg and icon.png present they would collide on the /icon route, so the PNG is named
+// icon1.png and served at /icon1.png. Without the digits this check called that a page
+// declared nowhere and failed the build.
+const ASSET_ROUTE = /\/(opengraph-image|twitter-image|icon|apple-icon|favicon)\d*(\.[a-z0-9]+)?$/;
 
 const served = new Set(
   Object.keys(manifest.routes ?? {}).filter(
